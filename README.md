@@ -6,7 +6,7 @@ Useful when you don't want to write relative path yourself.
 
 ## Usage
 
-Instead of writing `var m = require('../../../../utils/myUtils')` or `import m from '../../../../myUtils'. You could just use `var m = require('utils/myUtils')` or the equivalent ES6 import `import m from 'utils/myUtils'.
+Instead of writing `var m = require('../../../../utils/myUtils')` or `import m from '../../../../myUtils'`. You could just use `var m = require('utils/myUtils')` or the equivalent ES6 import `import m from 'utils/myUtils'`.
 
 To do so, first install babel and the plugin
 ```
