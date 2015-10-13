@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-module-alias",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "description": "Babel plugin to rewrite the path in require() and ES6 import",
   "repository": "tleunen/babel-plugin-module-alias",

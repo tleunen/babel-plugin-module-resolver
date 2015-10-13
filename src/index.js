@@ -18,7 +18,7 @@ function mapModule(context, module) {
     }
 
     var moduleSplit = module.split('/');
-    if(moduleSplit.length < 2 || !filesMap.hasOwnProperty(moduleSplit[0])) {
+    if(!filesMap.hasOwnProperty(moduleSplit[0])) {
         return;
     }
 
