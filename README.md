@@ -6,7 +6,12 @@ Useful when you don't want to write relative path yourself.
 
 ## Usage
 
-Instead of writing `var m = require('../../../../utils/myUtils')` or `import m from '../../../../myUtils'`. You could just use `var m = require('utils/myUtils')` or the equivalent ES6 import `import m from 'utils/myUtils'`.
+Instead of writing `var m = require('../../../../utils/myUtils')` or `import m from '../../../../myUtils'`. This plugin will allow you to set an alias to access your plugin.
+```js
+var myUtils = require('utils/myUtils');
+// or
+import myUtils from 'utils/myUtils';
+```
 
 To do so, first install babel and the plugin
 ```
@@ -14,7 +19,7 @@ $ npm install --save babel babel-plugin-module-alias
 ```
 
 Then, the recommended way of using it is by using the file `.babelrc` to setup the configuration for Babel.
-```
+```json
 {
   "plugins": [
     "babel-plugin-module-alias"
@@ -29,7 +34,7 @@ Then, the recommended way of using it is by using the file `.babelrc` to setup t
 
 Module aliasing also works for a single modules. Given this config in `.babelrc`:
 
-```
+```json
 {
   "plugins": [
     "babel-plugin-module-alias"
