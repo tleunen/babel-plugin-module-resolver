@@ -16,7 +16,8 @@
     "module",
     "alias",
     "rewrite",
-    "rename"
+    "rename",
+    "mapping"
   ],
   "dependencies": {},
   "devDependencies": {

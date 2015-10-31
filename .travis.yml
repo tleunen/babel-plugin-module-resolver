@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "node"
+  - "4.2"
+  - "0.12"
+script:
+  - npm t

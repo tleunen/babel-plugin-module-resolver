@@ -1,62 +1,46 @@
-# Module alias plugin for Babel
+# babel-plugin-module-alias [![Build Status](https://travis-ci.org/tleunen/babel-plugin-module-alias.svg?branch=master)](https://travis-ci.org/tleunen/babel-plugin-module-alias)
 
-A [babel](http://babeljs.io) plugin to easily map directories as different directories when your required a module.
-Useful when you don't want to write relative path yourself.
+A [babel](http://babeljs.io) plugin to rewrite (map, alias) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
 
+> Compatible Babel 6.x
+
+## Description
+
+Instead of having long relative paths inside your code, use custom names to easily import your code.
+
+```js
+// Instead of using this
+import MyUtilFn from '../../../../utils/MyUtilFn';
+// or this (because in another file for example)
+import MyUtilFn from '../utils/MyUtilFn'
+
+// always use this:
+import MyUtilFn from 'utils/MyUtilFn';
+```
+
+_Note:_ It also works with the require statement (`var MyUtilFn = require('utils/MyUtilFn');`).
 
 ## Usage
 
-Instead of writing `var m = require('../../../../utils/myUtils')` or `import m from '../../../../myUtils'`. This plugin will allow you to set an alias to access your plugin.
-```js
-var myUtils = require('utils/myUtils');
-// or
-import myUtils from 'utils/myUtils';
-```
+Install the plugin
 
-To do so, first install babel and the plugin
 ```
 $ npm install --save babel babel-plugin-module-alias
 ```
+
+Specify the plugin in your `.babelrc` and specify your custom alias mapping
 
 Then, the recommended way of using it is by using the file `.babelrc` to setup the configuration for Babel.
 ```json
 {
   "plugins": [
-    "babel-plugin-module-alias"
-  ],
-  "extra": {
-    "module-alias": [
-      { "src": "./src/utils", "expose": "utils" }
-    ]
-  }
+    ["babel-plugin-module-alias", [
+      { "src": "./src/utils", "expose": "utils" },
+      { "src": "./src/components", "expose": "components" }
+    ]]
+  ]
 }
 ```
-
-Module aliasing also works for a single modules. Given this config in `.babelrc`:
-
-```json
-{
-  "plugins": [
-    "babel-plugin-module-alias"
-  ],
-  "extra": {
-    "module-alias": [
-      {
-        "src": "../some-path/more-folders/my-awesome-lib",
-        "expose": "my-awesome-lib"
-      }
-    ]
-  }
-}
-```
-
-In your code you can simply do:
-
-```js
-import MyAwesomeLib from 'my-awesome-lib'; 
-```
-
-_Note:_ the section `extra` is a custom section commonly used by plugins to take options. There's currently no better way in Babel to pass options to plugins.
 
 ## License
 
