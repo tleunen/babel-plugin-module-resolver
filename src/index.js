@@ -1,83 +1,82 @@
-var path = require('path');
-var glob = require('glob');
-var _ = require('lodash');
+const path = require('path');
 
-var pluginName = 'module-alias';
-var filesMap = {};
-
-function mapModule(context, module) {
-    if(!_.keys(filesMap).length) {
-        _.each(context.state.opts.extra[pluginName] || [], function(moduleMapData) {
-            filesMap[moduleMapData.expose] = filesMap[moduleMapData.expose] || {
-                src: moduleMapData.src,
-                files: []
-            };
-            var src = path.join(moduleMapData.src, '**', '*');
-            _.merge(filesMap[moduleMapData.expose].files, glob.sync(src));
-        });
+function createFilesMap(state) {
+    const result = {};
+    if(!Array.isArray(state.opts)) {
+        state.opts = [state.opts];
     }
 
-    var moduleSplit = module.split('/');
+    state.opts.forEach(moduleMapData => {
+        result[moduleMapData.expose] = moduleMapData.src;
+    });
+
+    return result;
+}
+
+function mapModule(modulePath, state, filesMap) {
+    const moduleSplit = modulePath.split('/');
+
     if(!filesMap.hasOwnProperty(moduleSplit[0])) {
-        return;
+        return null;
     }
 
-    var currentFile = context.state.opts.filename;
+    const currentFile = state.file.opts.filename;
+    moduleSplit[0] = filesMap[moduleSplit[0]];
+    let moduleMapped = path.relative(path.dirname(currentFile), path.normalize(moduleSplit.join('/')));
 
-    moduleSplit[0] = filesMap[moduleSplit[0]].src;
-    var moduleMapped = path.relative(path.dirname(currentFile), path.normalize(moduleSplit.join('/')));
-    if(moduleMapped[0] != '.') moduleMapped = './' + moduleMapped;
-
+    if(moduleMapped[0] !== '.') moduleMapped = './' + moduleMapped;
     return moduleMapped;
 }
 
 
-export default function({ Plugin, types: t }) {
-    function transformRequireCall(context, call) {
+export default function({ types: t }) {
+    function transformRequireCall(nodePath, state, filesMap) {
         if(
-            !t.isIdentifier(call.callee, {name: 'require'}) &&
+            !t.isIdentifier(nodePath.node.callee, {name: 'require'}) &&
                 !(
-                    t.isMemberExpression(call.callee) &&
-                    t.isIdentifier(call.callee.object, {name: 'require'})
+                    t.isMemberExpression(nodePath.node.callee) &&
+                    t.isIdentifier(nodePath.node.callee.object, {name: 'require'})
                 )
         ) {
-            return;
+            return null;
         }
 
-        var moduleArg = call.arguments[0];
-        if(moduleArg && moduleArg.type === 'Literal') {
-            var module = mapModule(context, moduleArg.value);
-            if(module) {
-                return t.callExpression(call.callee, [t.literal(module)]);
+        const moduleArg = nodePath.node.arguments[0];
+        if(moduleArg && moduleArg.type === 'StringLiteral') {
+            const modulePath = mapModule(moduleArg.value, state, filesMap);
+            if(modulePath) {
+                nodePath.replaceWith(t.callExpression(
+                    nodePath.node.callee, [t.stringLiteral(modulePath)]
+                ));
             }
         }
     }
 
-    function transformImportCall(context, call) {
-        var moduleArg = call.source;
-        if(moduleArg && moduleArg.type === 'Literal') {
-            var module = mapModule(context, moduleArg.value);
-            if(module) {
-                return t.importDeclaration(
-                    call.specifiers,
-                    t.literal(module)
-                );
+    function transformImportCall(nodePath, state, filesMap) {
+        const moduleArg = nodePath.node.source;
+        if(moduleArg && moduleArg.type === 'StringLiteral') {
+            const modulePath = mapModule(moduleArg.value, state, filesMap);
+            if(modulePath) {
+                nodePath.replaceWith(t.importDeclaration(
+                    nodePath.node.specifiers,
+                    t.stringLiteral(modulePath)
+                ));
             }
         }
     }
 
-    return new Plugin(pluginName, {
+    return {
         visitor: {
             CallExpression: {
-                exit(node, parent, scope) {
-                    return transformRequireCall(this, node);
+                exit(nodePath, state) {
+                    return transformRequireCall(nodePath, state, createFilesMap(state));
                 }
             },
             ImportDeclaration: {
-                exit(node) {
-                    return transformImportCall(this, node);
+                exit(nodePath, state) {
+                    return transformImportCall(nodePath, state, createFilesMap(state));
                 }
             }
         }
-    });
-};
+    };
+}
