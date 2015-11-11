@@ -22,7 +22,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.0.14",
-    "babel-core": "^6.0.14",
+    "babel-core": "^6.1.4",
     "babel-eslint": "^4.1.3",
     "babel-preset-es2015": "^6.0.14",
     "eslint": "^1.7.3",
