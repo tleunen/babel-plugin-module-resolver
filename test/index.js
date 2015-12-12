@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import assert from 'assert';
-import {transform} from 'babel-core';
+import { transform } from 'babel-core';
 import plugin from '../src';
 
 describe('Babel plugin module alias', () => {

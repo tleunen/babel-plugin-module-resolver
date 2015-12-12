@@ -29,13 +29,13 @@ function mapModule(modulePath, state, filesMap) {
 }
 
 
-export default function({ types: t }) {
+export default ({ types: t }) => {
     function transformRequireCall(nodePath, state, filesMap) {
         if(
-            !t.isIdentifier(nodePath.node.callee, {name: 'require'}) &&
+            !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
                 !(
                     t.isMemberExpression(nodePath.node.callee) &&
-                    t.isIdentifier(nodePath.node.callee.object, {name: 'require'})
+                    t.isIdentifier(nodePath.node.callee.object, { name: 'require' })
                 )
         ) {
             return null;
@@ -79,4 +79,4 @@ export default function({ types: t }) {
             }
         }
     };
-}
+};

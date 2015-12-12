@@ -1,9 +1,10 @@
 {
     "extends": "airbnb/base",
     "rules": {
+        "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
         "comma-dangle": 0,
-        "indent": [2, 4],
+        "indent": [2, 4, {"SwitchCase": 1}],
         "no-const-assign": 2,
-        "space-after-keywords": [2, 'never']
+        "space-after-keywords": 0
     }
 }
