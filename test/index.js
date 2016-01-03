@@ -1,7 +1,9 @@
 /* eslint-env mocha */
+import path from 'path';
+
 import assert from 'assert';
 import { transform } from 'babel-core';
-import plugin from '../src';
+import plugin, { mapToRelative } from '../src';
 
 describe('Babel plugin module alias', () => {
     const transformerOpts = {
@@ -60,6 +62,32 @@ describe('Babel plugin module alias', () => {
             const result = transform(code, transformerOpts);
 
             assert.equal(result.code, 'import otherLib from "other-lib";');
+        });
+    });
+
+    describe('should map to relative path when cwd has been changed', () => {
+        const cwd = process.cwd();
+
+        before(() => {
+            process.chdir(path.join(process.env.PWD, './test'));
+        });
+
+        after(() => {
+            process.chdir(cwd);
+        });
+
+        it('with relative filename', () => {
+            const currentFile = './utils/test/file.js';
+            const result = mapToRelative(currentFile, 'utils/dep');
+
+            assert.equal(result, '../dep');
+        });
+
+        it('with absolute filename', () => {
+            const currentFile = path.join(process.env.PWD, './utils/test/file.js');
+            const result = mapToRelative(currentFile, 'utils/dep');
+
+            assert.equal(result, '../dep');
         });
     });
 });

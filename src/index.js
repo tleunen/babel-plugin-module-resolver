@@ -13,6 +13,19 @@ function createFilesMap(state) {
     return result;
 }
 
+export function mapToRelative(currentFile, module) {
+    let from = path.dirname(currentFile);
+    let to = path.normalize(module);
+
+    from = path.isAbsolute(from) ? from : path.resolve(process.env.PWD, from);
+    to = path.isAbsolute(to) ? to : path.resolve(process.env.PWD, to);
+
+    let moduleMapped = path.relative(from, to);
+
+    if(moduleMapped[0] !== '.') moduleMapped = './' + moduleMapped;
+    return moduleMapped;
+}
+
 function mapModule(modulePath, state, filesMap) {
     const moduleSplit = modulePath.split('/');
 
@@ -20,12 +33,8 @@ function mapModule(modulePath, state, filesMap) {
         return null;
     }
 
-    const currentFile = state.file.opts.filename;
     moduleSplit[0] = filesMap[moduleSplit[0]];
-    let moduleMapped = path.relative(path.dirname(currentFile), path.normalize(moduleSplit.join('/')));
-
-    if(moduleMapped[0] !== '.') moduleMapped = './' + moduleMapped;
-    return moduleMapped;
+    return mapToRelative(state.file.opts.filename, moduleSplit.join('/'));
 }
 
 
