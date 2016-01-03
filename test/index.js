@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 import path from 'path';
-import process from 'process';
 
 import assert from 'assert';
 import { transform } from 'babel-core';
