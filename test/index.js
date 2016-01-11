@@ -7,10 +7,10 @@ import plugin, { mapToRelative } from '../src';
 
 describe('Babel plugin module alias', () => {
     const transformerOpts = {
-        'plugins': [
+        plugins: [
             [plugin, {
-                'src': './src/mylib/subfolder/utils',
-                'expose': 'utils'
+                src: './src/mylib/subfolder/utils',
+                expose: 'utils'
             }]
         ]
     };

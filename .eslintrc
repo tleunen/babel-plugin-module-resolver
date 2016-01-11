@@ -5,6 +5,7 @@
         "comma-dangle": 0,
         "indent": [2, 4, {"SwitchCase": 1}],
         "no-const-assign": 2,
-        "space-after-keywords": 0
+        "space-after-keywords": 0,
+        "max-len": 0
     }
 }
