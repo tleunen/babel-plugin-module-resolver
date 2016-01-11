@@ -14,12 +14,18 @@ function createFilesMap(state) {
     return result;
 }
 
+function resolve(filename) {
+    if (path.isAbsolute(filename)) return filename;
+    if (process.env.PWD) return path.resolve(process.env.PWD, filename);
+    return path.resolve(filename);
+}
+
 export function mapToRelative(currentFile, module) {
     let from = path.dirname(currentFile);
     let to = path.normalize(module);
 
-    from = path.isAbsolute(from) ? from : path.resolve(process.env.PWD, from);
-    to = path.isAbsolute(to) ? to : path.resolve(process.env.PWD, to);
+    from = resolve(from);
+    to = resolve(to);
 
     let moduleMapped = path.relative(from, to);
 
