@@ -36,6 +36,10 @@ export function mapToRelative(currentFile, module) {
 function mapModule(modulePath, state, filesMap) {
     const moduleSplit = modulePath.split('/');
 
+    if (moduleSplit.length > 1 && filesMap.hasOwnProperty(modulePath)) {
+        return mapToRelative(state.file.opts.filename, filesMap[modulePath]);
+    }
+
     if(!filesMap.hasOwnProperty(moduleSplit[0])) {
         return null;
     }
