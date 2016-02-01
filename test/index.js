@@ -8,10 +8,16 @@ import plugin, { mapToRelative } from '../src';
 describe('Babel plugin module alias', () => {
     const transformerOpts = {
         plugins: [
-            [plugin, {
-                src: './src/mylib/subfolder/utils',
-                expose: 'utils'
-            }]
+            [plugin, [
+                {
+                    src: './src/mylib/subfolder/utils',
+                    expose: 'utils'
+                },
+                {
+                    src: './src/mylib/subfolder/utils2',
+                    expose: 'myapp/utils2'
+                }
+            ]]
         ]
     };
 
@@ -29,6 +35,22 @@ describe('Babel plugin module alias', () => {
                 const result = transform(code, transformerOpts);
 
                 assert.equal(result.code, 'import utils from "./src/mylib/subfolder/utils";');
+            });
+        });
+
+        describe('when requiring the exposed with full path', () => {
+            it('with a require statement', () => {
+                const code = 'var utils = require("myapp/utils2");';
+                const result = transform(code, transformerOpts);
+
+                assert.equal(result.code, 'var utils = require("./src/mylib/subfolder/utils2");');
+            });
+
+            it('with an import statement', () => {
+                const code = 'import utils from "myapp/utils2";';
+                const result = transform(code, transformerOpts);
+
+                assert.equal(result.code, 'import utils from "./src/mylib/subfolder/utils2";');
             });
         });
 

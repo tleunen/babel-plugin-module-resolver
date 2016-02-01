@@ -8,10 +8,7 @@ function createFilesMap(state) {
     }
 
     opts.forEach(moduleMapData => {
-        result[moduleMapData.expose] = {
-            src: moduleMapData.src,
-            useFullPath: !!moduleMapData.useFullPath
-        };
+        result[moduleMapData.expose] = moduleMapData.src;
     });
 
     return result;
@@ -37,19 +34,17 @@ export function mapToRelative(currentFile, module) {
 }
 
 function mapModule(modulePath, state, filesMap) {
-    const fileMap = filesMap[modulePath];
-
-    if (fileMap && fileMap.useFullPath) {
-        return mapToRelative(state.file.opts.filename, fileMap.src);
-    }
-
     const moduleSplit = modulePath.split('/');
+
+    if (moduleSplit.length > 1 && filesMap.hasOwnProperty(modulePath)) {
+        return mapToRelative(state.file.opts.filename, filesMap[modulePath]);
+    }
 
     if(!filesMap.hasOwnProperty(moduleSplit[0])) {
         return null;
     }
 
-    moduleSplit[0] = filesMap[moduleSplit[0]].src;
+    moduleSplit[0] = filesMap[moduleSplit[0]];
     return mapToRelative(state.file.opts.filename, moduleSplit.join('/'));
 }
 
