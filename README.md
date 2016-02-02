@@ -36,7 +36,7 @@ Then, the recommended way of using it is by using the file `.babelrc` to setup t
   "plugins": [
     ["babel-plugin-module-alias", [
       { "src": "./src/utils", "expose": "utils" },
-      { "src": "./src/components", "expose": "components" }
+      { "src": "./src/components", "expose": "awesome/components" }
     ]]
   ]
 }
