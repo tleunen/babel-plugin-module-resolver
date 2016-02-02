@@ -36,12 +36,22 @@ export function mapToRelative(currentFile, module) {
 function mapModule(modulePath, state, filesMap) {
     const moduleSplit = modulePath.split('/');
 
-    if(!filesMap.hasOwnProperty(moduleSplit[0])) {
+    let src;
+    while(moduleSplit.length) {
+        const m = moduleSplit.join('/');
+        if(filesMap.hasOwnProperty(m)) {
+            src = filesMap[m];
+            break;
+        }
+        moduleSplit.pop();
+    }
+
+    if(!moduleSplit.length) {
         return null;
     }
 
-    moduleSplit[0] = filesMap[moduleSplit[0]];
-    return mapToRelative(state.file.opts.filename, moduleSplit.join('/'));
+    const newPath = modulePath.replace(moduleSplit.join('/'), src);
+    return mapToRelative(state.file.opts.filename, newPath);
 }
 
 
