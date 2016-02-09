@@ -29,7 +29,7 @@ export function mapToRelative(currentFile, module) {
 
     let moduleMapped = path.relative(from, to);
 
-    if(moduleMapped[0] !== '.') moduleMapped = './' + moduleMapped;
+    if(moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
     return moduleMapped;
 }
 
