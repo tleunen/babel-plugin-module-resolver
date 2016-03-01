@@ -5,7 +5,14 @@
         "comma-dangle": 0,
         "indent": [2, 4, {"SwitchCase": 1}],
         "no-const-assign": 2,
-        "space-after-keywords": 0,
+        "keyword-spacing": [2, {
+            "before": true,
+            "after": true,
+            "overrides": {
+                "if": { "after": false },
+                "while": { "after": false }
+            }
+        }],
         "max-len": 0
     }
 }
