@@ -1,6 +1,6 @@
 # babel-plugin-module-alias [![Build Status](https://travis-ci.org/tleunen/babel-plugin-module-alias.svg?branch=master)](https://travis-ci.org/tleunen/babel-plugin-module-alias)
 
-A [babel](http://babeljs.io) plugin to rewrite (map, alias) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
+A [babel](http://babeljs.io) plugin to rewrite (map, alias, resolve) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
 
 > Compatible Babel 6.x
 
