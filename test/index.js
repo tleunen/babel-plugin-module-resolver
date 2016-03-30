@@ -14,6 +14,9 @@ describe('Babel plugin module alias', () => {
             }, {
                 src: './src/components',
                 expose: 'awesome/components'
+            }, {
+                src: 'npm:concrete',
+                expose: 'abstract'
             }]]
         ]
     };
@@ -127,6 +130,22 @@ describe('Babel plugin module alias', () => {
             const result = mapToRelative(currentFile, 'utils/dep');
 
             assert.strictEqual(result, '../dep');
+        });
+    });
+
+    describe('should support remapping to node modules with "npm:"', () => {
+        it('with a require statement', () => {
+            const code = 'var concrete = require("abstract/thing");';
+            const result = transform(code, transformerOpts);
+
+            assert.strictEqual(result.code, 'var concrete = require("concrete/thing");');
+        });
+
+        it('with an import statement', () => {
+            const code = 'import concrete from "abstract/thing";';
+            const result = transform(code, transformerOpts);
+
+            assert.strictEqual(result.code, 'import concrete from "concrete/thing";');
         });
     });
 });
