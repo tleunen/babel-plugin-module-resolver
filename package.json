@@ -33,8 +33,7 @@
   },
   "scripts": {
     "lint": "eslint src test",
-    "build": "babel-plugin build",
-    "push": "babel-plugin publish",
+    "compile": "babel src --out-dir lib",
     "pretest": "npm run lint",
     "test": "mocha --compilers js:babel-core/register"
   }

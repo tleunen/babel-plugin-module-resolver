@@ -2,23 +2,21 @@
 
 A [babel](http://babeljs.io) plugin to rewrite (map, alias, resolve) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
 
-> Compatible Babel 6.x
-
 ## Description
 
-Instead of having long relative paths inside your code, use custom names to easily import your code.
-
+Instead of using relative paths in your project, you'll be able to use an alias. Here an simple example:
 ```js
-// Instead of using this
+// Instead of using this;
 import MyUtilFn from '../../../../utils/MyUtilFn';
-// or this (because in another file for example)
-import MyUtilFn from '../utils/MyUtilFn'
-
-// always use this:
+// Use that:
 import MyUtilFn from 'utils/MyUtilFn';
 ```
+With this plugin, you'll be able to map files or directories to the path you want.
 
-_Note:_ It also works with the require statement (`var MyUtilFn = require('utils/MyUtilFn');`).
+_Note:_ It also work for `require()`.
+
+_Note 2:_ You can use the `npm:` prefix in your plugin confiration to map a node module.
+
 
 ## Usage
 
@@ -28,15 +26,14 @@ Install the plugin
 $ npm install --save babel babel-plugin-module-alias
 ```
 
-Specify the plugin in your `.babelrc` and specify your custom alias mapping
-
-Then, the recommended way of using it is by using the file `.babelrc` to setup the configuration for Babel.
+Specify the plugin in your `.babelrc` with the custom mapping.
 ```json
 {
   "plugins": [
-    ["babel-plugin-module-alias", [
+    ["module-alias", [
       { "src": "./src/utils", "expose": "utils" },
-      { "src": "./src/components", "expose": "awesome/components" }
+      { "src": "./src/components", "expose": "awesome/components" },
+      { "src": "npm:lodash", "expose": "underscore" }
     ]]
   ]
 }
