@@ -35,7 +35,10 @@ export function mapToRelative(currentFile, module) {
     }
 
     if(moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
-    return moduleMapped;
+	
+	var sepExp = new RegExp('\\\\', 'g');
+
+    return moduleMapped.replace(sepExp, '/');
 }
 
 function mapModule(modulePath, state, filesMap) {
@@ -80,7 +83,22 @@ export default ({ types: t }) => {
                     nodePath.node.callee, [t.stringLiteral(modulePath)]
                 ));
             }
-        }
+        } else if (moduleArg && moduleArg.type === 'BinaryExpression' &&  moduleArg.left.type === 'StringLiteral') {
+		    const modulePath = mapModule(moduleArg.left.value, state, filesMap);
+		    if (modulePath) {
+			    moduleArg.left = t.stringLiteral(modulePath);
+			    nodePath.replaceWith(t.callExpression(nodePath.node.callee, [moduleArg]));
+		    }
+	    } else if (moduleArg && moduleArg.type === 'TemplateLiteral' && moduleArg.quasis.length) {
+		    const modulePath = mapModule(moduleArg.quasis[0].value.raw, state, filesMap);
+		    if (modulePath) {
+			    moduleArg.quasis[0].value = {
+				    raw: modulePath,
+				    cooked: modulePath
+			    };
+			    nodePath.replaceWith(t.callExpression(nodePath.node.callee, [moduleArg]));
+		    }
+	    }
     }
 
     function transformImportCall(nodePath, state, filesMap) {
