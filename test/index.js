@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 import path from 'path';
-
 import assert from 'assert';
 import { transform } from 'babel-core';
 import plugin, { mapToRelative } from '../src';
@@ -108,7 +107,7 @@ describe('Babel plugin module alias', () => {
         const cwd = process.cwd();
 
         before(() => {
-            process.chdir(path.join(process.env.PWD, './test'));
+            process.chdir('./test');
         });
 
         after(() => {
@@ -123,7 +122,7 @@ describe('Babel plugin module alias', () => {
         });
 
         it('with absolute filename', () => {
-            const currentFile = path.join(process.env.PWD, './utils/test/file.js');
+            const currentFile = path.join(process.cwd(), './utils/test/file.js');
             const result = mapToRelative(currentFile, 'utils/dep');
 
             assert.strictEqual(result, '../dep');

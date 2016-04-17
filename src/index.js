@@ -16,8 +16,7 @@ function createFilesMap(state) {
 
 function resolve(filename) {
     if(path.isAbsolute(filename)) return filename;
-    if(process.env.PWD) return path.resolve(process.env.PWD, filename);
-    return path.resolve(filename);
+    return path.resolve(process.cwd(), filename);
 }
 
 export function mapToRelative(currentFile, module) {
