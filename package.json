@@ -49,6 +49,7 @@
     "compile": "babel src --out-dir lib",
     "pretest": "npm run lint",
     "test": "mocha --compilers js:babel-core/register",
+    "prepublish": "npm run compile",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   }
 }
