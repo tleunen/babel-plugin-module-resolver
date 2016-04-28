@@ -3,7 +3,7 @@ const path = require('path');
 function createFilesMap(state) {
     const result = {};
     let opts = state.opts;
-    if(!Array.isArray(opts)) {
+    if (!Array.isArray(opts)) {
         opts = [opts];
     }
 
@@ -15,7 +15,7 @@ function createFilesMap(state) {
 }
 
 function resolve(filename) {
-    if(path.isAbsolute(filename)) return filename;
+    if (path.isAbsolute(filename)) return filename;
     return path.resolve(process.cwd(), filename);
 }
 
@@ -29,12 +29,12 @@ export function mapToRelative(currentFile, module) {
     let moduleMapped = path.relative(from, to);
 
     // Support npm modules instead of directories
-    if(moduleMapped.indexOf('npm:') !== -1) {
+    if (moduleMapped.indexOf('npm:') !== -1) {
         const [, npmModuleName] = moduleMapped.split('npm:');
         return npmModuleName;
     }
 
-    if(moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
+    if (moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
     return moduleMapped;
 }
 
@@ -42,16 +42,16 @@ function mapModule(modulePath, state, filesMap) {
     const moduleSplit = modulePath.split('/');
 
     let src;
-    while(moduleSplit.length) {
+    while (moduleSplit.length) {
         const m = moduleSplit.join('/');
-        if(filesMap.hasOwnProperty(m)) {
+        if (filesMap.hasOwnProperty(m)) {
             src = filesMap[m];
             break;
         }
         moduleSplit.pop();
     }
 
-    if(!moduleSplit.length) {
+    if (!moduleSplit.length) {
         return null;
     }
 
@@ -62,7 +62,7 @@ function mapModule(modulePath, state, filesMap) {
 
 export default ({ types: t }) => {
     function transformRequireCall(nodePath, state, filesMap) {
-        if(
+        if (
             !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
                 !(
                     t.isMemberExpression(nodePath.node.callee) &&
@@ -73,9 +73,9 @@ export default ({ types: t }) => {
         }
 
         const moduleArg = nodePath.node.arguments[0];
-        if(moduleArg && moduleArg.type === 'StringLiteral') {
+        if (moduleArg && moduleArg.type === 'StringLiteral') {
             const modulePath = mapModule(moduleArg.value, state, filesMap);
-            if(modulePath) {
+            if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
                     nodePath.node.callee, [t.stringLiteral(modulePath)]
                 ));
@@ -85,9 +85,9 @@ export default ({ types: t }) => {
 
     function transformImportCall(nodePath, state, filesMap) {
         const moduleArg = nodePath.node.source;
-        if(moduleArg && moduleArg.type === 'StringLiteral') {
+        if (moduleArg && moduleArg.type === 'StringLiteral') {
             const modulePath = mapModule(moduleArg.value, state, filesMap);
-            if(modulePath) {
+            if (modulePath) {
                 nodePath.replaceWith(t.importDeclaration(
                     nodePath.node.specifiers,
                     t.stringLiteral(modulePath)
