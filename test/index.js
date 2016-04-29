@@ -91,18 +91,36 @@ describe('Babel plugin module alias', () => {
     });
 
     describe('should not alias a unknown path', () => {
-        it('with a require statement', () => {
-            const code = 'var otherLib = require("other-lib");';
-            const result = transform(code, transformerOpts);
+        describe('when requiring a node module', () => {
+            it('with a require statement', () => {
+                const code = 'var otherLib = require("other-lib");';
+                const result = transform(code, transformerOpts);
 
-            assert.strictEqual(result.code, 'var otherLib = require("other-lib");');
+                assert.strictEqual(result.code, 'var otherLib = require("other-lib");');
+            });
+
+            it('with an import statement', () => {
+                const code = 'import otherLib from "other-lib";';
+                const result = transform(code, transformerOpts);
+
+                assert.strictEqual(result.code, 'import otherLib from "other-lib";');
+            });
         });
 
-        it('with an import statement', () => {
-            const code = 'import otherLib from "other-lib";';
-            const result = transform(code, transformerOpts);
+        describe('when requiring a specific un-mapped file', () => {
+            it('with a require statement', () => {
+                const code = 'var otherLib = require("./l/otherLib");';
+                const result = transform(code, transformerOpts);
 
-            assert.strictEqual(result.code, 'import otherLib from "other-lib";');
+                assert.strictEqual(result.code, 'var otherLib = require("./l/otherLib");');
+            });
+
+            it('with an import statement', () => {
+                const code = 'import otherLib from "./l/otherLib";';
+                const result = transform(code, transformerOpts);
+
+                assert.strictEqual(result.code, 'import otherLib from "./l/otherLib";');
+            });
         });
     });
 

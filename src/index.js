@@ -38,8 +38,8 @@ export function mapToRelative(currentFile, module) {
     return moduleMapped;
 }
 
-function mapModule(modulePath, state, filesMap) {
-    const moduleSplit = modulePath.split('/');
+export function mapModule(source, file, filesMap) {
+    const moduleSplit = source.split('/');
 
     let src;
     while (moduleSplit.length) {
@@ -52,11 +52,12 @@ function mapModule(modulePath, state, filesMap) {
     }
 
     if (!moduleSplit.length) {
+        // no mapping available
         return null;
     }
 
-    const newPath = modulePath.replace(moduleSplit.join('/'), src);
-    return mapToRelative(state.file.opts.filename, newPath);
+    const newPath = source.replace(moduleSplit.join('/'), src);
+    return mapToRelative(file, newPath);
 }
 
 
@@ -74,7 +75,7 @@ export default ({ types: t }) => {
 
         const moduleArg = nodePath.node.arguments[0];
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state, filesMap);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
                     nodePath.node.callee, [t.stringLiteral(modulePath)]
@@ -86,7 +87,7 @@ export default ({ types: t }) => {
     function transformImportCall(nodePath, state, filesMap) {
         const moduleArg = nodePath.node.source;
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state, filesMap);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
             if (modulePath) {
                 nodePath.replaceWith(t.importDeclaration(
                     nodePath.node.specifiers,
