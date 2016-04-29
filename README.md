@@ -1,4 +1,4 @@
-# babel-plugin-module-alias [![Build Status][travis-image]][travis-url] [![semantic-release][semantic-release-image]][semantic-release-url]
+# babel-plugin-module-alias [![Build Status][travis-image]][travis-url]
 
 A [babel](http://babeljs.io) plugin to rewrite (map, alias, resolve) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
 
@@ -39,6 +39,8 @@ Specify the plugin in your `.babelrc` with the custom mapping.
 }
 ```
 
+If you're using [eslint-plugin-import][eslint-plugin-import], you should use [eslint-import-resolver-babel-module-alias][resolver-module-alias] to avoid having false errors.
+
 ## License
 
 MIT, see [LICENSE.md](/LICENSE.md) for details.
@@ -46,5 +48,5 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 
 [travis-image]: https://travis-ci.org/tleunen/babel-plugin-module-alias.svg?branch=master
 [travis-url]: https://travis-ci.org/tleunen/babel-plugin-module-alias
-[semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
-[semantic-release-url]: https://github.com/semantic-release/semantic-release
+[resolver-module-alias]: https://github.com/tleunen/eslint-import-resolver-babel-module-alias
+[eslint-plugin-import]: https://github.com/benmosher/eslint-plugin-import
