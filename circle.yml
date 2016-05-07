@@ -5,14 +5,15 @@ dependencies:
     - nvm install 4
 test:
   override:
-    - case $CIRCLE_NODE_INDEX in 0) nvm use stable && npm t ;; 1) nvm use 5 && npm t ;; 2) nvm use 4 && npm t ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) nvm use stable && npm t ;; 1) nvm use 5 && npm run test:suite ;; 2) nvm use 4 && npm run test:suite ;; esac:
         parallel: true
 deployment:
-  codecov:
-    branch: /.*/
-    commands:
-      - bash <(curl -s https://codecov.io/bash)
   release:
     branch: master
     commands:
+      - bash <(curl -s https://codecov.io/bash)
       - npm run semantic-release || true
+  coverage:
+    branch: /.*/
+    commands:
+      - bash <(curl -s https://codecov.io/bash)
