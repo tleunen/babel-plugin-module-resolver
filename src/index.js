@@ -2,10 +2,9 @@ const path = require('path');
 
 function createFilesMap(state) {
     const result = {};
-    let opts = state.opts;
-    if (!Array.isArray(opts)) {
-        opts = [opts];
-    }
+    const opts = Array.isArray(state.opts)
+        ? state.opts
+        : [state.opts];
 
     opts.forEach(moduleMapData => {
         result[moduleMapData.expose] = moduleMapData.src;

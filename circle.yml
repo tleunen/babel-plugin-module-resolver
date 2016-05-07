@@ -8,6 +8,10 @@ test:
     - case $CIRCLE_NODE_INDEX in 0) nvm use stable && npm t ;; 1) nvm use 5 && npm t ;; 2) nvm use 4 && npm t ;; esac:
         parallel: true
 deployment:
+  codecov:
+    branch: /.*/
+    commands:
+      - bash <(curl -s https://codecov.io/bash)
   release:
     branch: master
     commands:
