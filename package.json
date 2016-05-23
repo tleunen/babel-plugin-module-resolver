@@ -35,7 +35,7 @@
     "eslint": "^2.9.0",
     "eslint-config-airbnb-base": "^2.0.0",
     "eslint-plugin-import": "^1.7.0",
-    "mocha": "^2.4.5",
+    "mocha": "^2.5.0",
     "nyc": "^6.4.3",
     "semantic-release": "^4.3.5"
   },
