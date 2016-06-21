@@ -18,6 +18,10 @@ function resolve(filename) {
     return path.resolve(process.cwd(), filename);
 }
 
+function toPosixPath(modulePath) {
+    return modulePath.replace(/\\/g, '/');
+}
+
 export function mapToRelative(currentFile, module) {
     let from = path.dirname(currentFile);
     let to = path.normalize(module);
@@ -27,6 +31,8 @@ export function mapToRelative(currentFile, module) {
 
     let moduleMapped = path.relative(from, to);
 
+    moduleMapped = toPosixPath(moduleMapped);
+
     // Support npm modules instead of directories
     if (moduleMapped.indexOf('npm:') !== -1) {
         const [, npmModuleName] = moduleMapped.split('npm:');
@@ -34,6 +40,7 @@ export function mapToRelative(currentFile, module) {
     }
 
     if (moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
+
     return moduleMapped;
 }
 
