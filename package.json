@@ -46,7 +46,7 @@
   },
   "scripts": {
     "lint": "eslint src test",
-    "compile": "babel src --out-dir lib",
+    "compile": "cross-env NODE_ENV=production babel src --out-dir lib",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test nyc npm run test:suite",
     "test:suite": "mocha --compilers js:babel-register",
