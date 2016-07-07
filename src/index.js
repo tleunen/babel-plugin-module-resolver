@@ -50,7 +50,7 @@ export function mapModule(source, file, filesMap) {
     let src;
     while (moduleSplit.length) {
         const m = moduleSplit.join('/');
-        if (filesMap.hasOwnProperty(m)) {
+        if ({}.hasOwnProperty.call(filesMap, m)) {
             src = filesMap[m];
             break;
         }

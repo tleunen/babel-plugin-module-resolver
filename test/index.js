@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import path from 'path';
 import assert from 'assert';
-import { transform } from 'babel-core';
+import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
 import plugin, { mapToRelative } from '../src';
 
 describe('Babel plugin module alias', () => {
