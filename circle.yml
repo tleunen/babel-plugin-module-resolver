@@ -5,11 +5,6 @@ test:
   override:
     - npm t
 deployment:
-  release:
-    branch: master
-    commands:
-      - bash <(curl -s https://codecov.io/bash)
-      - npm run semantic-release || true
   coverage:
     branch: /.*/
     commands:
