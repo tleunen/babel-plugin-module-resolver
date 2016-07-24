@@ -1,4 +1,5 @@
-# babel-plugin-module-alias [![Build Status][ci-image]][ci-url] [![Coverage Status][coverage-image]][coverage-url]
+# babel-plugin-module-alias
+[![npm][npm-version-image]][npm-url] [![Build Status][ci-image]][ci-url] [![Coverage Status][coverage-image]][coverage-url]
 
 A [babel](http://babeljs.io) plugin to rewrite (map, alias, resolve) directories as different directories during the Babel process. It's particularly useful when you have files you don't want to use with relative paths (especially in big projects).
 
@@ -50,5 +51,7 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 [ci-url]: https://circleci.com/gh/tleunen/babel-plugin-module-alias
 [coverage-image]: https://codecov.io/gh/tleunen/babel-plugin-module-alias/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/gh/tleunen/babel-plugin-module-alias
+[npm-version-image]: https://img.shields.io/npm/v/babel-plugin-module-alias.svg
+[npm-url]: https://www.npmjs.com/package/babel-plugin-module-alias
 [resolver-module-alias]: https://github.com/tleunen/eslint-import-resolver-babel-module-alias
 [eslint-plugin-import]: https://github.com/benmosher/eslint-plugin-import
