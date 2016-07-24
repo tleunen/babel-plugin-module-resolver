@@ -23,7 +23,7 @@ _Note 2:_ You can use the `npm:` prefix in your plugin configuration to map a no
 Install the plugin
 
 ```
-$ npm install --save babel babel-plugin-module-alias
+$ npm install --save-dev babel babel-plugin-module-alias
 ```
 
 Specify the plugin in your `.babelrc` with the custom mapping.
