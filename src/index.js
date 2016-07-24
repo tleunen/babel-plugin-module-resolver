@@ -68,7 +68,7 @@ export function mapModule(source, file, filesMap) {
 
 
 export default ({ types: t }) => {
-    function transformRequireCall(nodePath, state, filesMap) {
+    function transformRequireCall(nodePath, state) {
         if (
             !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
                 !(
@@ -81,6 +81,7 @@ export default ({ types: t }) => {
 
         const moduleArg = nodePath.node.arguments[0];
         if (moduleArg && moduleArg.type === 'StringLiteral') {
+            const filesMap = createFilesMap(state);
             const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
@@ -90,9 +91,10 @@ export default ({ types: t }) => {
         }
     }
 
-    function transformImportCall(nodePath, state, filesMap) {
+    function transformImportCall(nodePath, state) {
         const moduleArg = nodePath.node.source;
         if (moduleArg && moduleArg.type === 'StringLiteral') {
+            const filesMap = createFilesMap(state);
             const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
             if (modulePath) {
                 nodePath.replaceWith(t.importDeclaration(
@@ -107,12 +109,12 @@ export default ({ types: t }) => {
         visitor: {
             CallExpression: {
                 exit(nodePath, state) {
-                    return transformRequireCall(nodePath, state, createFilesMap(state));
+                    return transformRequireCall(nodePath, state);
                 }
             },
             ImportDeclaration: {
                 exit(nodePath, state) {
-                    return transformImportCall(nodePath, state, createFilesMap(state));
+                    return transformImportCall(nodePath, state);
                 }
             }
         }
