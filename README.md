@@ -46,7 +46,7 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 
 ## ESLint plugin
 
-If you're using ESLint, you should use the [eslint-plugin-import][eslint-plugin-import], and this [eslint-import-resolver-babel-module-resolver][eslint-import-resolver-babel-module-resolver] in order to remove falsy unresolved modules.
+If you're using ESLint, you should use the [eslint-plugin-import][eslint-plugin-import], and this [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] in order to remove falsy unresolved modules.
 
 ## Editors autocompletion
 
@@ -64,6 +64,6 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 [coverage-url]: https://codecov.io/gh/tleunen/babel-plugin-module-resolver
 [npm-version-image]: https://img.shields.io/npm/v/babel-plugin-module-resolver.svg
 [npm-url]: https://www.npmjs.com/package/babel-plugin-module-resolver
-[eslint-import-resolver-babel-module-resolver]: https://github.com/tleunen/eslint-import-resolver-babel-module-resolver
+[eslint-import-resolver-babel-module]: https://github.com/tleunen/eslint-import-resolver-babel-module
 [eslint-plugin-import]: https://github.com/benmosher/eslint-plugin-import
 [atom-autocomplete-modules]: https://github.com/nkt/atom-autocomplete-modules
