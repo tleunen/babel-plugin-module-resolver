@@ -1,168 +1,132 @@
 /* eslint-env mocha */
-import path from 'path';
 import assert from 'assert';
 import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
-import plugin, { mapToRelative } from '../src';
+import plugin from '../src';
 
-describe('Babel plugin module alias', () => {
+function testRequireImport(source, output, transformerOpts) {
+    it('with a require statement', () => {
+        const code = `var something = require("${source}");`;
+        const result = transform(code, transformerOpts);
+
+        assert.strictEqual(result.code, `var something = require("${output}");`);
+    });
+
+    it('with an import statement', () => {
+        const code = `import something from "${source}";`;
+        const result = transform(code, transformerOpts);
+
+        assert.strictEqual(result.code, `import something from "${output}";`);
+    });
+}
+
+describe('modulesDirectories', () => {
     const transformerOpts = {
         plugins: [
-            [plugin, [{
-                src: './src/mylib/subfolder/utils',
-                expose: 'utils'
-            }, {
-                src: './src/components',
-                expose: 'awesome/components'
-            }, {
-                src: 'npm:concrete',
-                expose: 'abstract'
-            }]]
+            [plugin, {
+                root: ['./test/examples/components']
+            }]
+        ]
+    };
+
+    describe('should rewrite the file path inside a root directory', () => {
+        testRequireImport(
+            'c1',
+            './test/examples/components/c1',
+            transformerOpts
+        );
+    });
+
+    describe('should rewrite the sub file path inside a root directory', () => {
+        testRequireImport(
+            'sub/sub1',
+            './test/examples/components/sub/sub1',
+            transformerOpts
+        );
+    });
+
+    describe('should not rewrite a path outisde of the root directory', () => {
+        testRequireImport(
+            'example-file',
+            'example-file',
+            transformerOpts
+        );
+    });
+});
+
+describe('alias', () => {
+    const transformerOpts = {
+        plugins: [
+            [plugin, {
+                alias: {
+                    utils: './src/mylib/subfolder/utils',
+                    'awesome/components': './src/components',
+                    abstract: 'npm:concrete'
+                }
+            }]
         ]
     };
 
     describe('should alias a known path', () => {
         describe('using a simple exposed name', () => {
             describe('when requiring the exact name', () => {
-                it('with a require statement', () => {
-                    const code = 'var utils = require("utils");';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'var utils = require("./src/mylib/subfolder/utils");');
-                });
-
-                it('with an import statement', () => {
-                    const code = 'import utils from "utils";';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'import utils from "./src/mylib/subfolder/utils";');
-                });
+                testRequireImport(
+                    'utils',
+                    './src/mylib/subfolder/utils',
+                    transformerOpts
+                );
             });
 
             describe('when requiring a sub file of the exposed name', () => {
-                it('with a require statement', () => {
-                    const code = 'var myUtil = require("utils/my-util-file");';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'var myUtil = require("./src/mylib/subfolder/utils/my-util-file");');
-                });
-
-                it('with an import statement', () => {
-                    const code = 'import myUtil from "utils/my-util-file";';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'import myUtil from "./src/mylib/subfolder/utils/my-util-file";');
-                });
+                testRequireImport(
+                    'utils/my-util-file',
+                    './src/mylib/subfolder/utils/my-util-file',
+                    transformerOpts
+                );
             });
         });
 
         describe('using a "complex" exposed name', () => {
             describe('when requiring the exact name', () => {
-                it('with a require statement', () => {
-                    const code = 'var comps = require("awesome/components");';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'var comps = require("./src/components");');
-                });
-
-                it('with an import statement', () => {
-                    const code = 'import comps from "awesome/components";';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'import comps from "./src/components";');
-                });
+                testRequireImport(
+                    'awesome/components',
+                    './src/components',
+                    transformerOpts
+                );
             });
 
             describe('when requiring a sub file of the exposed name', () => {
-                it('with a require statement', () => {
-                    const code = 'var myComp = require("awesome/components/my-comp");';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'var myComp = require("./src/components/my-comp");');
-                });
-
-                it('with an import statement', () => {
-                    const code = 'import myComp from "awesome/components/my-comp";';
-                    const result = transform(code, transformerOpts);
-
-                    assert.strictEqual(result.code, 'import myComp from "./src/components/my-comp";');
-                });
+                testRequireImport(
+                    'awesome/components/my-comp',
+                    './src/components/my-comp',
+                    transformerOpts
+                );
             });
         });
     });
 
     describe('should not alias a unknown path', () => {
         describe('when requiring a node module', () => {
-            it('with a require statement', () => {
-                const code = 'var otherLib = require("other-lib");';
-                const result = transform(code, transformerOpts);
-
-                assert.strictEqual(result.code, 'var otherLib = require("other-lib");');
-            });
-
-            it('with an import statement', () => {
-                const code = 'import otherLib from "other-lib";';
-                const result = transform(code, transformerOpts);
-
-                assert.strictEqual(result.code, 'import otherLib from "other-lib";');
-            });
+            testRequireImport(
+                'other-lib',
+                'other-lib',
+                transformerOpts
+            );
         });
 
         describe('when requiring a specific un-mapped file', () => {
-            it('with a require statement', () => {
-                const code = 'var otherLib = require("./l/otherLib");';
-                const result = transform(code, transformerOpts);
-
-                assert.strictEqual(result.code, 'var otherLib = require("./l/otherLib");');
-            });
-
-            it('with an import statement', () => {
-                const code = 'import otherLib from "./l/otherLib";';
-                const result = transform(code, transformerOpts);
-
-                assert.strictEqual(result.code, 'import otherLib from "./l/otherLib";');
-            });
-        });
-    });
-
-    describe('should map to relative path when cwd has been changed', () => {
-        const cwd = process.cwd();
-
-        before(() => {
-            process.chdir('./test');
-        });
-
-        after(() => {
-            process.chdir(cwd);
-        });
-
-        it('with relative filename', () => {
-            const currentFile = './utils/test/file.js';
-            const result = mapToRelative(currentFile, 'utils/dep');
-
-            assert.strictEqual(result, '../dep');
-        });
-
-        it('with absolute filename', () => {
-            const currentFile = path.join(process.cwd(), './utils/test/file.js');
-            const result = mapToRelative(currentFile, 'utils/dep');
-
-            assert.strictEqual(result, '../dep');
+            testRequireImport(
+                './l/otherLib',
+                './l/otherLib',
+                transformerOpts
+            );
         });
     });
 
     describe('should support remapping to node modules with "npm:"', () => {
-        it('with a require statement', () => {
-            const code = 'var concrete = require("abstract/thing");';
-            const result = transform(code, transformerOpts);
-
-            assert.strictEqual(result.code, 'var concrete = require("concrete/thing");');
-        });
-
-        it('with an import statement', () => {
-            const code = 'import concrete from "abstract/thing";';
-            const result = transform(code, transformerOpts);
-
-            assert.strictEqual(result.code, 'import concrete from "concrete/thing";');
-        });
+        testRequireImport(
+            'abstract/thing',
+            'concrete/thing',
+            transformerOpts
+        );
     });
 });
