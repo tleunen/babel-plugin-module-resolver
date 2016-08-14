@@ -1,11 +1,11 @@
 {
-  "name": "babel-plugin-module-alias",
+  "name": "babel-plugin-module-resolver",
   "version": "1.6.0",
   "main": "lib/index.js",
   "description": "Babel plugin to rewrite the path in require() and ES6 import",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tleunen/babel-plugin-module-alias.git"
+    "url": "https://github.com/tleunen/babel-plugin-module-resolver.git"
   },
   "author": {
     "name": "Tommy Leunen",
