@@ -1,8 +1,8 @@
 {
-    "extends": "airbnb-base",
-    "rules": {
-        "comma-dangle": 0,
-        "indent": [2, 4, {"SwitchCase": 1}],
-        "max-len": 0,
-    }
+  "extends": "airbnb-base",
+  "rules": {
+    "comma-dangle": 0,
+    "indent": [2, 4, {"SwitchCase": 1}],
+    "max-len": 0
+  }
 }

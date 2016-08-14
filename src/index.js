@@ -1,68 +1,54 @@
-const path = require('path');
+import path from 'path';
+import mapToRelative from './mapToRelative';
 
-function createFilesMap(state) {
-    const result = {};
-    const opts = Array.isArray(state.opts)
-        ? state.opts
-        : [state.opts];
-
-    opts.forEach(moduleMapData => {
-        result[moduleMapData.expose] = moduleMapData.src;
-    });
-
-    return result;
+function createAliasFileMap(pluginOpts) {
+    const alias = pluginOpts.alias || {};
+    return Object.keys(alias).reduce((memo, expose) => (
+        Object.assign(memo, {
+            [expose]: alias[expose]
+        })
+    ), {});
 }
 
-function resolve(filename) {
-    if (path.isAbsolute(filename)) return filename;
-    return path.resolve(process.cwd(), filename);
-}
-
-function toPosixPath(modulePath) {
-    return modulePath.replace(/\\/g, '/');
-}
-
-export function mapToRelative(currentFile, module) {
-    let from = path.dirname(currentFile);
-    let to = path.normalize(module);
-
-    from = resolve(from);
-    to = resolve(to);
-
-    let moduleMapped = path.relative(from, to);
-
-    moduleMapped = toPosixPath(moduleMapped);
-
-    // Support npm modules instead of directories
-    if (moduleMapped.indexOf('npm:') !== -1) {
-        const [, npmModuleName] = moduleMapped.split('npm:');
-        return npmModuleName;
+export function mapModule(source, file, pluginOpts) {
+    // Do not map source starting with a dot
+    if (source[0] === '.') {
+        return null;
     }
 
-    if (moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
+    // Search the file under the custom root directories
+    const rootDirs = pluginOpts.root || [];
+    for (let i = 0; i < rootDirs.length; i++) {
+        try {
+            // check if the file exists (will throw if not)
+            const p = path.resolve(rootDirs[i], source);
+            require.resolve(p);
+            return mapToRelative(file, p);
+        } catch (e) {
+            // empty...
+        }
+    }
 
-    return moduleMapped;
-}
-
-export function mapModule(source, file, filesMap) {
+    // The source file wasn't found in any of the root directories. Lets try the alias
+    const aliasMapping = createAliasFileMap(pluginOpts);
     const moduleSplit = source.split('/');
 
-    let src;
+    let aliasPath;
     while (moduleSplit.length) {
         const m = moduleSplit.join('/');
-        if ({}.hasOwnProperty.call(filesMap, m)) {
-            src = filesMap[m];
+        if ({}.hasOwnProperty.call(aliasMapping, m)) {
+            aliasPath = aliasMapping[m];
             break;
         }
         moduleSplit.pop();
     }
 
-    if (!moduleSplit.length) {
-        // no mapping available
+    // no alias mapping found
+    if (!aliasPath) {
         return null;
     }
 
-    const newPath = source.replace(moduleSplit.join('/'), src);
+    const newPath = source.replace(moduleSplit.join('/'), aliasPath);
     return mapToRelative(file, newPath);
 }
 
@@ -81,8 +67,7 @@ export default ({ types: t }) => {
 
         const moduleArg = nodePath.node.arguments[0];
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const filesMap = createFilesMap(state);
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
                     nodePath.node.callee, [t.stringLiteral(modulePath)]
@@ -94,8 +79,7 @@ export default ({ types: t }) => {
     function transformImportCall(nodePath, state) {
         const moduleArg = nodePath.node.source;
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const filesMap = createFilesMap(state);
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, filesMap);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts);
             if (modulePath) {
                 nodePath.replaceWith(t.importDeclaration(
                     nodePath.node.specifiers,
