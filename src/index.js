@@ -1,17 +1,9 @@
 import path from 'path';
 import resolve from 'resolve';
 import glob from 'glob';
+import findBabelConfig from 'find-babel-config';
 import mapToRelative from './mapToRelative';
 import { toLocalPath, toPosixPath } from './utils';
-
-function createAliasFileMap(pluginOpts) {
-    const alias = pluginOpts.alias || {};
-    return Object.keys(alias).reduce((memo, expose) => (
-        Object.assign(memo, {
-            [expose]: alias[expose]
-        })
-    ), {});
-}
 
 function replaceExt(p, ext) {
     const filename = path.basename(p, path.extname(p)) + ext;
@@ -20,7 +12,7 @@ function replaceExt(p, ext) {
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 
-export function mapModule(source, file, pluginOpts) {
+export function mapModule(source, file, pluginOpts, cwd) {
     // Do not map source starting with a dot
     if (source[0] === '.') {
         return null;
@@ -28,23 +20,28 @@ export function mapModule(source, file, pluginOpts) {
 
     // Search the file under the custom root directories
     const rootDirs = pluginOpts.root || [];
-    for (let i = 0; i < rootDirs.length; i++) {
+    const extensions = pluginOpts.extensions || defaultBabelExtensions;
+    let resolvedSourceFile;
+    rootDirs.some((dir) => {
         try {
             // check if the file exists (will throw if not)
-            const extensions = pluginOpts.extensions || defaultBabelExtensions;
-            const resolvedSourceFile = resolve.sync(`./${source}`, { basedir: path.resolve(rootDirs[i]), extensions });
-            const realSourceFileExtension = path.extname(resolvedSourceFile);
-            const sourceFileExtension = path.extname(source);
-            // map the source and keep its extension if the import/require had one
-            const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
-            return toLocalPath(toPosixPath(replaceExt(mapToRelative(file, resolvedSourceFile), ext)));
+            resolvedSourceFile = resolve.sync(`./${source}`, { basedir: path.resolve(cwd, dir), extensions });
+            return true;
         } catch (e) {
-            // empty...
+            return false;
         }
+    });
+
+    if (resolvedSourceFile) {
+        const realSourceFileExtension = path.extname(resolvedSourceFile);
+        const sourceFileExtension = path.extname(source);
+        // map the source and keep its extension if the import/require had one
+        const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
+        return toLocalPath(toPosixPath(replaceExt(mapToRelative(cwd, file, resolvedSourceFile), ext)));
     }
 
     // The source file wasn't found in any of the root directories. Lets try the alias
-    const aliasMapping = createAliasFileMap(pluginOpts);
+    const aliasMapping = pluginOpts.alias || {};
     const moduleSplit = source.split('/');
 
     let aliasPath;
@@ -71,12 +68,11 @@ export function mapModule(source, file, pluginOpts) {
         return newPath;
     }
     // relative alias
-    return toLocalPath(toPosixPath(mapToRelative(file, newPath)));
+    return toLocalPath(toPosixPath(mapToRelative(cwd, file, newPath)));
 }
 
-
 export default ({ types: t }) => {
-    function transformRequireCall(nodePath, state) {
+    function transformRequireCall(nodePath, state, cwd) {
         if (
             !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
                 !(
@@ -89,7 +85,7 @@ export default ({ types: t }) => {
 
         const moduleArg = nodePath.node.arguments[0];
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
                     nodePath.node.callee, [t.stringLiteral(modulePath)]
@@ -98,10 +94,10 @@ export default ({ types: t }) => {
         }
     }
 
-    function transformImportCall(nodePath, state) {
+    function transformImportCall(nodePath, state, cwd) {
         const moduleArg = nodePath.node.source;
         if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts);
+            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
                 nodePath.replaceWith(t.importDeclaration(
                     nodePath.node.specifiers,
@@ -112,6 +108,17 @@ export default ({ types: t }) => {
     }
 
     return {
+        pre(file) {
+            const startPath = (file.opts.filename === 'unknown')
+                ? './'
+                : file.opts.filename;
+
+            const { file: babelFile } = findBabelConfig.sync(startPath);
+            this.moduleResolverCWD = babelFile
+                ? path.dirname(babelFile)
+                : process.cwd();
+        },
+
         manipulateOptions(babelOptions) {
             const findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
             if (findPluginOptions.root) {
@@ -123,17 +130,18 @@ export default ({ types: t }) => {
                 }, []);
             }
         },
+
         visitor: {
             CallExpression: {
                 exit(nodePath, state) {
-                    return transformRequireCall(nodePath, state);
-                }
+                    return transformRequireCall(nodePath, state, this.moduleResolverCWD);
+                },
             },
             ImportDeclaration: {
                 exit(nodePath, state) {
-                    return transformImportCall(nodePath, state);
-                }
-            }
-        }
+                    return transformImportCall(nodePath, state, this.moduleResolverCWD);
+                },
+            },
+        },
     };
 };
