@@ -1,4 +1,5 @@
 import path from 'path';
+import resolve from 'resolve';
 import mapToRelative from './mapToRelative';
 
 function createAliasFileMap(pluginOpts) {
@@ -9,6 +10,13 @@ function createAliasFileMap(pluginOpts) {
         })
     ), {});
 }
+
+function replaceExt(p, ext) {
+    const filename = path.basename(p, path.extname(p)) + ext;
+    return path.join(path.dirname(p), filename);
+}
+
+const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 
 export function mapModule(source, file, pluginOpts) {
     // Do not map source starting with a dot
@@ -21,9 +29,10 @@ export function mapModule(source, file, pluginOpts) {
     for (let i = 0; i < rootDirs.length; i++) {
         try {
             // check if the file exists (will throw if not)
-            const p = path.resolve(rootDirs[i], source);
-            require.resolve(p);
-            return mapToRelative(file, p);
+            const extensions = pluginOpts.extensions || defaultBabelExtensions;
+            const fileAbsPath = resolve.sync(`./${source}`, { basedir: path.resolve(rootDirs[i]), extensions });
+            // map the source and keep its extension if the import/require had one
+            return mapToRelative(file, replaceExt(fileAbsPath, path.extname(source)));
         } catch (e) {
             // empty...
         }

@@ -19,7 +19,7 @@ function testRequireImport(source, output, transformerOpts) {
     });
 }
 
-describe('modulesDirectories', () => {
+describe('root', () => {
     const transformerOpts = {
         plugins: [
             [plugin, {
@@ -40,6 +40,14 @@ describe('modulesDirectories', () => {
         testRequireImport(
             'sub/sub1',
             './test/examples/components/sub/sub1',
+            transformerOpts
+        );
+    });
+
+    describe('should rewrite the file while keeping the extension', () => {
+        testRequireImport(
+            'sub/sub1.css',
+            './test/examples/components/sub/sub1.css',
             transformerOpts
         );
     });
@@ -102,6 +110,14 @@ describe('alias', () => {
                 );
             });
         });
+    });
+
+    describe('should alias the path with its extension', () => {
+        testRequireImport(
+            'awesome/components/my-comp.css',
+            './src/components/my-comp.css',
+            transformerOpts
+        );
     });
 
     describe('should not alias a unknown path', () => {
