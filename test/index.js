@@ -68,7 +68,8 @@ describe('alias', () => {
                 alias: {
                     utils: './src/mylib/subfolder/utils',
                     'awesome/components': './src/components',
-                    abstract: 'npm:concrete'
+                    abstract: 'npm:concrete',
+                    underscore: 'lodash'
                 }
             }]
         ]
@@ -138,10 +139,18 @@ describe('alias', () => {
         });
     });
 
-    describe('should support remapping to node modules with "npm:"', () => {
+    describe('(legacy) should support aliasing a node module with "npm:"', () => {
         testRequireImport(
             'abstract/thing',
             'concrete/thing',
+            transformerOpts
+        );
+    });
+
+    describe('should support aliasing a node modules', () => {
+        testRequireImport(
+            'underscore/map',
+            'lodash/map',
             transformerOpts
         );
     });

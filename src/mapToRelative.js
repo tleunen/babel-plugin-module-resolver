@@ -20,12 +20,6 @@ export default function mapToRelative(currentFile, module) {
 
     moduleMapped = toPosixPath(moduleMapped);
 
-    // Support npm modules instead of directories
-    if (moduleMapped.indexOf('npm:') !== -1) {
-        const [, npmModuleName] = moduleMapped.split('npm:');
-        return npmModuleName;
-    }
-
     if (moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
 
     return moduleMapped;

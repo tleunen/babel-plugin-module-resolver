@@ -57,7 +57,15 @@ export function mapModule(source, file, pluginOpts) {
         return null;
     }
 
+    // remove legacy "npm:" prefix for npm packages
+    aliasPath = aliasPath.replace(/^(npm:)/, '');
     const newPath = source.replace(moduleSplit.join('/'), aliasPath);
+
+    // alias to npm module don't need relative mapping
+    if (aliasPath[0] !== '.') {
+        return newPath;
+    }
+    // relative alias
     return mapToRelative(file, newPath);
 }
 
