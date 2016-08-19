@@ -14,11 +14,7 @@ import MyUtilFn from '../../../../utils/MyUtilFn';
 // Use that:
 import MyUtilFn from 'utils/MyUtilFn';
 ```
-
-_Note:_ It also work for `require()`.
-
-_Note 2:_ You can use the `npm:` prefix in your plugin configuration to map a node module.
-
+_Note:_ It also works with `require()`, and you can alias a NPM module.
 
 ## Usage
 
@@ -27,7 +23,6 @@ Install the plugin
 ```
 $ npm install --save-dev babel-plugin-module-resolver
 ```
-
 
 Specify the plugin in your `.babelrc` with the custom root or alias. Here's an example:
 ```json
@@ -43,6 +38,7 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
     ]
 }
 ```
+_Note:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
 
 ## ESLint plugin
 

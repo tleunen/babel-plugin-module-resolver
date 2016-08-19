@@ -26,6 +26,9 @@
     "require",
     "import"
   ],
+  "dependencies": {
+    "resolve": "^1.1.7"
+  },
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
