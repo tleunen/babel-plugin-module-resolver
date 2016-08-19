@@ -32,7 +32,8 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
       ["module-resolver", {
         "root": ["./src"],
         "alias": {
-          "test": "./test"
+          "test": "./test",
+          "underscore": "lodash"
         }
       }]
     ]
