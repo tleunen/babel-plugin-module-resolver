@@ -31,8 +31,11 @@ export function mapModule(source, file, pluginOpts) {
             // check if the file exists (will throw if not)
             const extensions = pluginOpts.extensions || defaultBabelExtensions;
             const fileAbsPath = resolve.sync(`./${source}`, { basedir: path.resolve(rootDirs[i]), extensions });
+            const realFileExt = path.extname(fileAbsPath);
+            const sourceFileExt = path.extname(source);
             // map the source and keep its extension if the import/require had one
-            return mapToRelative(file, replaceExt(fileAbsPath, path.extname(source)));
+            const ext = realFileExt === sourceFileExt ? realFileExt : '';
+            return mapToRelative(file, replaceExt(fileAbsPath, ext));
         } catch (e) {
             // empty...
         }
