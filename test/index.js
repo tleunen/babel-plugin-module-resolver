@@ -52,6 +52,14 @@ describe('root', () => {
         );
     });
 
+    describe('should rewrite the file with a filename containing a dot', () => {
+        testRequireImport(
+            'sub/custom.modernizr3',
+            './test/examples/components/sub/custom.modernizr3',
+            transformerOpts
+        );
+    });
+
     describe('should not rewrite a path outisde of the root directory', () => {
         testRequireImport(
             'example-file',
@@ -110,6 +118,14 @@ describe('alias', () => {
                     transformerOpts
                 );
             });
+        });
+
+        describe('with a dot in the filename', () => {
+            testRequireImport(
+                'utils/custom.modernizr3',
+                './src/mylib/subfolder/utils/custom.modernizr3',
+                transformerOpts
+            );
         });
     });
 
