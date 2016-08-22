@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-module-resolver",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "lib/index.js",
   "description": "Babel plugin to rewrite the path in require() and ES6 import",
   "repository": {

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.1"></a>
+## [2.1.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.1.0...v2.1.1) (2016-08-22)
+
+
+### Bug Fixes
+
+* Fix resolver with filename containing a dot ([#75](https://github.com/tleunen/babel-plugin-module-resolver/issues/75)) ([bb6c903](https://github.com/tleunen/babel-plugin-module-resolver/commit/bb6c903)), closes [#74](https://github.com/tleunen/babel-plugin-module-resolver/issues/74)
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.0.0...v2.1.0) (2016-08-19)
 
