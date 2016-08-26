@@ -1,5 +1,6 @@
 import path from 'path';
 import resolve from 'resolve';
+import glob from 'glob';
 import mapToRelative from './mapToRelative';
 
 function createAliasFileMap(pluginOpts) {
@@ -110,6 +111,17 @@ export default ({ types: t }) => {
     }
 
     return {
+        manipulateOptions(babelOptions) {
+            const findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
+            if (findPluginOptions.root) {
+                findPluginOptions.root = findPluginOptions.root.reduce((resolvedDirs, dirPath) => {
+                    if (glob.hasMagic(dirPath)) {
+                        return resolvedDirs.concat(glob.sync(dirPath));
+                    }
+                    return resolvedDirs.concat(dirPath);
+                }, []);
+            }
+        },
         visitor: {
             CallExpression: {
                 exit(nodePath, state) {
