@@ -2,7 +2,7 @@ import path from 'path';
 import resolve from 'resolve';
 import glob from 'glob';
 import mapToRelative from './mapToRelative';
-import { toLocalPath } from './utils';
+import { toLocalPath, toPosixPath } from './utils';
 
 function createAliasFileMap(pluginOpts) {
     const alias = pluginOpts.alias || {};
@@ -32,12 +32,12 @@ export function mapModule(source, file, pluginOpts) {
         try {
             // check if the file exists (will throw if not)
             const extensions = pluginOpts.extensions || defaultBabelExtensions;
-            const fileAbsPath = resolve.sync(`./${source}`, { basedir: path.resolve(rootDirs[i]), extensions });
-            const realFileExt = path.extname(fileAbsPath);
-            const sourceFileExt = path.extname(source);
+            const resolvedSourceFile = resolve.sync(`./${source}`, { basedir: path.resolve(rootDirs[i]), extensions });
+            const realSourceFileExtension = path.extname(resolvedSourceFile);
+            const sourceFileExtension = path.extname(source);
             // map the source and keep its extension if the import/require had one
-            const ext = realFileExt === sourceFileExt ? realFileExt : '';
-            return toLocalPath(replaceExt(mapToRelative(file, fileAbsPath), ext));
+            const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
+            return toLocalPath(toPosixPath(replaceExt(mapToRelative(file, resolvedSourceFile), ext)));
         } catch (e) {
             // empty...
         }
@@ -71,7 +71,7 @@ export function mapModule(source, file, pluginOpts) {
         return newPath;
     }
     // relative alias
-    return toLocalPath(mapToRelative(file, newPath));
+    return toLocalPath(toPosixPath(mapToRelative(file, newPath)));
 }
 
 
