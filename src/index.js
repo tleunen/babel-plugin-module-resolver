@@ -2,6 +2,7 @@ import path from 'path';
 import resolve from 'resolve';
 import glob from 'glob';
 import mapToRelative from './mapToRelative';
+import { toLocalPath } from './utils';
 
 function createAliasFileMap(pluginOpts) {
     const alias = pluginOpts.alias || {};
@@ -36,7 +37,7 @@ export function mapModule(source, file, pluginOpts) {
             const sourceFileExt = path.extname(source);
             // map the source and keep its extension if the import/require had one
             const ext = realFileExt === sourceFileExt ? realFileExt : '';
-            return mapToRelative(file, replaceExt(fileAbsPath, ext));
+            return toLocalPath(replaceExt(mapToRelative(file, fileAbsPath), ext));
         } catch (e) {
             // empty...
         }
@@ -70,7 +71,7 @@ export function mapModule(source, file, pluginOpts) {
         return newPath;
     }
     // relative alias
-    return mapToRelative(file, newPath);
+    return toLocalPath(mapToRelative(file, newPath));
 }
 
 

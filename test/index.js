@@ -1,109 +1,124 @@
 /* eslint-env mocha */
-/* eslint-disable prefer-arrow-callback  */
-/* eslint-disable func-names  */
 import assert from 'assert';
 import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
 import plugin from '../src';
 
-function testRequireImport(source, output, transformerOpts) {
-    it('with a require statement', function () {
-        const code = `var something = require("${source}");`;
-        const result = transform(code, transformerOpts);
+describe('module-resolver', () => {
+    function testRequireImport(source, output, transformerOpts) {
+        it('with a require statement', () => {
+            const code = `var something = require("${source}");`;
+            const result = transform(code, transformerOpts);
 
-        assert.strictEqual(result.code, `var something = require("${output}");`);
-    });
+            assert.strictEqual(result.code, `var something = require("${output}");`);
+        });
 
-    it('with an import statement', function () {
-        const code = `import something from "${source}";`;
-        const result = transform(code, transformerOpts);
+        it('with an import statement', () => {
+            const code = `import something from "${source}";`;
+            const result = transform(code, transformerOpts);
 
-        assert.strictEqual(result.code, `import something from "${output}";`);
-    });
-}
+            assert.strictEqual(result.code, `import something from "${output}";`);
+        });
+    }
 
-describe('root', function () {
-    const transformerOpts = {
-        plugins: [
-            [plugin, {
-                root: ['./test/examples/components']
-            }]
-        ]
-    };
+    describe('root', () => {
+        const transformerOpts = {
+            babelrc: false,
+            plugins: [
+                [plugin, {
+                    root: [
+                        './test/examples/components',
+                        './test/examples/foo'
+                    ]
+                }]
+            ]
+        };
 
-    const transformerOptsGlob = {
-        plugins: [
-            [plugin, {
-                root: ['./test/**/components']
-            }]
-        ]
-    };
+        const transformerOptsGlob = {
+            plugins: [
+                [plugin, {
+                    root: ['./test/**/components']
+                }]
+            ]
+        };
 
-    describe('should rewrite the file path inside a root directory', function () {
-        testRequireImport(
-            'c1',
-            './test/examples/components/c1',
-            transformerOpts
-        );
-    });
+        describe('should resolve the file path', () => {
+            testRequireImport(
+                'c1',
+                './test/examples/components/c1',
+                transformerOpts
+            );
+        });
 
-    describe('should rewrite the sub file path inside a root directory', function () {
-        testRequireImport(
-            'sub/sub1',
-            './test/examples/components/sub/sub1',
-            transformerOpts
-        );
-    });
+        describe('should resolve the sub file path', () => {
+            testRequireImport(
+                'sub/sub1',
+                './test/examples/components/sub/sub1',
+                transformerOpts
+            );
+        });
 
-    describe('should rewrite the file while keeping the extension', function () {
-        testRequireImport(
-            'sub/sub1.css',
-            './test/examples/components/sub/sub1.css',
-            transformerOpts
-        );
-    });
+        describe('should resolve the file path while keeping the extension', () => {
+            testRequireImport(
+                'sub/sub1.css',
+                './test/examples/components/sub/sub1.css',
+                transformerOpts
+            );
+        });
 
-    describe('should rewrite the file with a filename containing a dot', function () {
-        testRequireImport(
-            'sub/custom.modernizr3',
-            './test/examples/components/sub/custom.modernizr3',
-            transformerOpts
-        );
-    });
+        describe('should resolve the file path with a filename containing a dot', () => {
+            testRequireImport(
+                'sub/custom.modernizr3',
+                './test/examples/components/sub/custom.modernizr3',
+                transformerOpts
+            );
+        });
 
-    describe('should not rewrite a path outisde of the root directory', function () {
-        testRequireImport(
-            'example-file',
-            'example-file',
-            transformerOpts
-        );
-    });
+        describe('should resolve the file path according to a glob', () => {
+            testRequireImport(
+                'c1',
+                './test/examples/components/c1',
+                transformerOptsGlob
+            );
+        });
 
-    describe('should rewrite the file path inside a root directory according to glob', function () {
-        testRequireImport(
-            'c1',
-            './test/examples/components/c1',
-            transformerOptsGlob
-        );
-    });
-});
-
-describe('alias', function () {
-    const transformerOpts = {
-        plugins: [
-            [plugin, {
-                alias: {
-                    utils: './src/mylib/subfolder/utils',
-                    'awesome/components': './src/components',
-                    abstract: 'npm:concrete',
-                    underscore: 'lodash'
+        describe('should resolve to a file instead of a directory', () => {
+            // When a file and a directory on the same level share the same name,
+            // the file has priority according to the Node require mechanism
+            testRequireImport(
+                'bar',
+                '../bar',
+                {
+                    ...transformerOpts,
+                    filename: './test/examples/foo/bar/x.js'
                 }
-            }]
-        ]
-    };
+            );
+        });
 
-    describe('should alias a known path', function () {
-        describe('using a simple exposed name', function () {
-            describe('when requiring the exact name', function () {
+        describe('should not resolve a path outisde of the root directory', () => {
+            testRequireImport(
+                'example-file',
+                'example-file',
+                transformerOpts
+            );
+        });
+    });
+
+    describe('alias', () => {
+        const transformerOpts = {
+            plugins: [
+                [plugin, {
+                    alias: {
+                        utils: './src/mylib/subfolder/utils',
+                        'awesome/components': './src/components',
+                        abstract: 'npm:concrete',
+                        underscore: 'lodash'
+                    }
+                }]
+            ]
+        };
+
+        describe('with a simple alias', () => {
+            describe('should alias the file path', () => {
                 testRequireImport(
                     'utils',
                     './src/mylib/subfolder/utils',
@@ -111,7 +126,7 @@ describe('alias', function () {
                 );
             });
 
-            describe('when requiring a sub file of the exposed name', function () {
+            describe('should alias the sub file path', () => {
                 testRequireImport(
                     'utils/my-util-file',
                     './src/mylib/subfolder/utils/my-util-file',
@@ -120,8 +135,8 @@ describe('alias', function () {
             });
         });
 
-        describe('using a "complex" exposed name', function () {
-            describe('when requiring the exact name', function () {
+        describe('with an alias containing a slash', () => {
+            describe('should alias the file path', () => {
                 testRequireImport(
                     'awesome/components',
                     './src/components',
@@ -129,7 +144,7 @@ describe('alias', function () {
                 );
             });
 
-            describe('when requiring a sub file of the exposed name', function () {
+            describe('should alias the sub file path', () => {
                 testRequireImport(
                     'awesome/components/my-comp',
                     './src/components/my-comp',
@@ -138,54 +153,54 @@ describe('alias', function () {
             });
         });
 
-        describe('with a dot in the filename', function () {
+        describe('should alias a path containing a dot in the filename', () => {
             testRequireImport(
                 'utils/custom.modernizr3',
                 './src/mylib/subfolder/utils/custom.modernizr3',
                 transformerOpts
             );
         });
-    });
 
-    describe('should alias the path with its extension', function () {
-        testRequireImport(
-            'awesome/components/my-comp.css',
-            './src/components/my-comp.css',
-            transformerOpts
-        );
-    });
-
-    describe('should not alias a unknown path', function () {
-        describe('when requiring a node module', function () {
+        describe('should alias the path with its extension', () => {
             testRequireImport(
-                'other-lib',
-                'other-lib',
+                'awesome/components/my-comp.css',
+                './src/components/my-comp.css',
                 transformerOpts
             );
         });
 
-        describe('when requiring a specific un-mapped file', function () {
+        describe('should not alias a unknown path', () => {
+            describe('when requiring a node module', () => {
+                testRequireImport(
+                    'other-lib',
+                    'other-lib',
+                    transformerOpts
+                );
+            });
+
+            describe('when requiring a specific un-mapped file', () => {
+                testRequireImport(
+                    './l/otherLib',
+                    './l/otherLib',
+                    transformerOpts
+                );
+            });
+        });
+
+        describe('(legacy) should support aliasing a node module with "npm:"', () => {
             testRequireImport(
-                './l/otherLib',
-                './l/otherLib',
+                'abstract/thing',
+                'concrete/thing',
                 transformerOpts
             );
         });
-    });
 
-    describe('(legacy) should support aliasing a node module with "npm:"', function () {
-        testRequireImport(
-            'abstract/thing',
-            'concrete/thing',
-            transformerOpts
-        );
-    });
-
-    describe('should support aliasing a node modules', function () {
-        testRequireImport(
-            'underscore/map',
-            'lodash/map',
-            transformerOpts
-        );
+        describe('should support aliasing a node modules', () => {
+            testRequireImport(
+                'underscore/map',
+                'lodash/map',
+                transformerOpts
+            );
+        });
     });
 });

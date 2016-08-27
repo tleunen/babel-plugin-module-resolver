@@ -1,12 +1,9 @@
 import path from 'path';
+import { toPosixPath } from './utils';
 
 function resolve(filename) {
     if (path.isAbsolute(filename)) return filename;
     return path.resolve(process.cwd(), filename);
-}
-
-function toPosixPath(modulePath) {
-    return modulePath.replace(/\\/g, '/');
 }
 
 export default function mapToRelative(currentFile, module) {
@@ -16,11 +13,6 @@ export default function mapToRelative(currentFile, module) {
     from = resolve(from);
     to = resolve(to);
 
-    let moduleMapped = path.relative(from, to);
-
-    moduleMapped = toPosixPath(moduleMapped);
-
-    if (moduleMapped[0] !== '.') moduleMapped = `./${moduleMapped}`;
-
-    return moduleMapped;
+    const moduleMapped = path.relative(from, to);
+    return toPosixPath(moduleMapped);
 }
