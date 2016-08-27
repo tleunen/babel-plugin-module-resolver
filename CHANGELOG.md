@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.2.0"></a>
+# [2.2.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.1.1...v2.2.0) (2016-08-27)
+
+
+### Bug Fixes
+
+* Fix plugin on windows ([d6b0a4b](https://github.com/tleunen/babel-plugin-module-resolver/commit/d6b0a4b))
+* Fix the root resolver when both a file and directory have the same name ([a4cff68](https://github.com/tleunen/babel-plugin-module-resolver/commit/a4cff68))
+
+
+### Features
+
+* Add glob support in the root config ([#78](https://github.com/tleunen/babel-plugin-module-resolver/issues/78)) ([1f6245b](https://github.com/tleunen/babel-plugin-module-resolver/commit/1f6245b))
+
+
+
 <a name="2.1.1"></a>
 ## [2.1.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.1.0...v2.1.1) (2016-08-22)
 
