@@ -18,6 +18,8 @@ _Note:_ It also works with `require()`, and you can alias a NPM module.
 
 ## Usage
 
+If you're coming from babel-plugin-module-alias, please read this section: Updating from [babel-plugin-module-alias](#updating-from-babel-plugin-module-alias).
+
 Install the plugin
 
 ```
@@ -40,6 +42,41 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 }
 ```
 _Note:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
+
+_Note 2:_ The "root" option also support a glob configuration, like `./src/**/components`.
+
+
+### Updating from babel-plugin-module-alias
+
+babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
+
+Updating is very easy, so for example if you had this configuration:
+```
+// This configuration is outdated, this is just an example
+{
+  "plugins": [
+    ["module-alias", [
+      { "src": "./src/utils", "expose": "utils" },
+      { "src": "./src/components", "expose": "components" },
+      { "src": "./src/actions", "expose": "actions" },
+      { "src": "npm:lodash", "expose": "underscore" }
+    ]]
+  ]
+}
+```
+You ony have to update the plugin options to be like this:
+```json
+{
+  "plugins": [
+      ["module-resolver", {
+        "root": ["./src"],
+        "alias": {
+          "underscore": "lodash"
+        }
+      }]
+    ]
+}
+```
 
 ## ESLint plugin
 
