@@ -1,8 +1,9 @@
 import path from 'path';
 import { toPosixPath } from './utils';
+import isAbsolutePath from 'path-is-absolute';
 
 function resolve(filename) {
-    if (path.isAbsolute(filename)) return filename;
+    if (isAbsolutePath(filename)) return filename;
     return path.resolve(process.cwd(), filename);
 }
 
