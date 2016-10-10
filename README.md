@@ -41,9 +41,11 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
   ]
 }
 ```
-_Note:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
+_Note:_ All paths must be relative to the `.babelrc` files.
 
-_Note 2:_ The "root" option also support a glob configuration, like `./src/**/components`.
+_Note 2:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
+
+_Note 3:_ The "root" option also support a glob configuration, like `./src/**/components`.
 
 
 ### Updating from babel-plugin-module-alias
