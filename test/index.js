@@ -27,18 +27,18 @@ describe('module-resolver', () => {
                 [plugin, {
                     root: [
                         './test/examples/components',
-                        './test/examples/foo'
-                    ]
-                }]
-            ]
+                        './test/examples/foo',
+                    ],
+                }],
+            ],
         };
 
         const transformerOptsGlob = {
             plugins: [
                 [plugin, {
-                    root: ['./test/**/components']
-                }]
-            ]
+                    root: ['./test/**/components'],
+                }],
+            ],
         };
 
         describe('should resolve the file path', () => {
@@ -89,7 +89,7 @@ describe('module-resolver', () => {
                 '../bar',
                 {
                     ...transformerOpts,
-                    filename: './test/examples/foo/bar/x.js'
+                    filename: './test/examples/foo/bar/x.js',
                 }
             );
         });
@@ -111,10 +111,10 @@ describe('module-resolver', () => {
                         utils: './src/mylib/subfolder/utils',
                         'awesome/components': './src/components',
                         abstract: 'npm:concrete',
-                        underscore: 'lodash'
-                    }
-                }]
-            ]
+                        underscore: 'lodash',
+                    },
+                }],
+            ],
         };
 
         describe('with a simple alias', () => {
