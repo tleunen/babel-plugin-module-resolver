@@ -31,14 +31,14 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 {
   "plugins": [
     "transform-object-rest-spread",
-      ["module-resolver", {
-        "root": ["./src"],
-        "alias": {
-          "test": "./test",
-          "underscore": "lodash"
-        }
-      }]
-    ]
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "test": "./test",
+        "underscore": "lodash"
+      }
+    }]
+  ]
 }
 ```
 _Note:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
