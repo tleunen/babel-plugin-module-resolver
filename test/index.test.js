@@ -1,5 +1,4 @@
-/* eslint-env mocha */
-import assert from 'assert';
+/* eslint-env jest */
 import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
 import plugin from '../src';
 
@@ -9,14 +8,14 @@ describe('module-resolver', () => {
             const code = `var something = require("${source}");`;
             const result = transform(code, transformerOpts);
 
-            assert.strictEqual(result.code, `var something = require("${output}");`);
+            expect(result.code).toBe(`var something = require("${output}");`);
         });
 
         it('with an import statement', () => {
             const code = `import something from "${source}";`;
             const result = transform(code, transformerOpts);
 
-            assert.strictEqual(result.code, `import something from "${output}";`);
+            expect(result.code).toBe(`import something from "${output}";`);
         });
     }
 
