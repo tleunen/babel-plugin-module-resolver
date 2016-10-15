@@ -7,6 +7,11 @@
   },
   "rules": {
     "indent": [2, 4, { "SwitchCase": 1 }],
-    "max-len": 0
+    'max-len': [2, 120, 4, {
+      ignoreUrls: true,
+      ignoreComments: false,
+      ignoreStrings: true,
+      ignoreTemplateLiterals: true
+    }]
   }
 }
