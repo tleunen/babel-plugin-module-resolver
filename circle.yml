@@ -1,6 +1,14 @@
+machine:
+  post:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
 dependencies:
+  cache_directories:
+    - $HOME/.npm
+    - $HOME/.yarn-cache
   pre:
     - case $CIRCLE_NODE_INDEX in 0) NODE_VERSION=4 ;; 1) NODE_VERSION=5 ;; 2) NODE_VERSION=stable ;; esac; nvm install $NODE_VERSION && nvm alias default $NODE_VERSION
+  override:
+    - yarn --no-lockfile
 test:
   override:
     - npm t
