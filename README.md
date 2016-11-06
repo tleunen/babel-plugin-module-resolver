@@ -7,14 +7,18 @@ A [babel](http://babeljs.io) plugin to add a new resolver for your modules when 
 
 The reason of this plugin is to simplify the require/import paths in your project. Therefore, instead of using complex relative paths like `../../../../utils/my-utils`, you would be able to write `utils/my-utils`. It will allow you to work faster since you won't need to calculate how many levels of directory you have to go up before accessing the file.
 
-Here's a full example:
 ```js
-// Instead of using this;
-import MyUtilFn from '../../../../utils/MyUtilFn';
-// Use that:
+// Use this:
 import MyUtilFn from 'utils/MyUtilFn';
+// Instead of that:
+import MyUtilFn from '../../../../utils/MyUtilFn';
+
+// And it also work with require calls
+// Use this:
+const MyUtilFn = require('utils/MyUtilFn');
+// Instead of that:
+const MyUtilFn = require('../../../../utils/MyUtilFn');
 ```
-_Note:_ It also works with `require()`, and you can alias a NPM module.
 
 ## Usage
 
@@ -30,7 +34,6 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 ```json
 {
   "plugins": [
-    "transform-object-rest-spread",
     ["module-resolver", {
       "root": ["./src"],
       "alias": {
@@ -41,19 +44,21 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
   ]
 }
 ```
-_Note:_ All paths must be relative to the `.babelrc` files.
 
-_Note 2:_ If you're using a custom extension (other than .js, .jsx, .es and .es6), you can add the `extensions` array in the config.
+### Options
 
-_Note 3:_ The "root" option also support a glob configuration, like `./src/**/components`.
-
+- `root`: Array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
+- `alias`: Map of alias. You can also alias node_modules dependencies, not just local files.
+- `extensions`: Array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6']`).
+- `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
+    - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
 
 ### Updating from babel-plugin-module-alias
 
 babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
 
 Updating is very easy, so for example if you had this configuration:
-```
+```json
 // This configuration is outdated, this is just an example
 {
   "plugins": [

@@ -111,17 +111,6 @@ export default ({ types: t }) => {
     }
 
     return {
-        pre(file) {
-            const startPath = (file.opts.filename === 'unknown')
-                ? './'
-                : file.opts.filename;
-
-            const { file: babelFile } = findBabelConfig.sync(startPath);
-            this.moduleResolverCWD = babelFile
-                ? path.dirname(babelFile)
-                : process.cwd();
-        },
-
         manipulateOptions(babelOptions) {
             const findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
             if (findPluginOptions.root) {
@@ -132,6 +121,23 @@ export default ({ types: t }) => {
                     return resolvedDirs.concat(dirPath);
                 }, []);
             }
+
+            this.customCWD = findPluginOptions.cwd;
+        },
+
+        pre(file) {
+            if (this.customCWD === 'babelrc') {
+                const startPath = (file.opts.filename === 'unknown')
+                    ? './'
+                    : file.opts.filename;
+
+                const { file: babelFile } = findBabelConfig.sync(startPath);
+                this.customCWD = babelFile
+                    ? path.dirname(babelFile)
+                    : null;
+            }
+
+            this.moduleResolverCWD = this.customCWD || process.cwd();
         },
 
         visitor: {
