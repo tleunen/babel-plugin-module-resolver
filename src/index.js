@@ -73,36 +73,39 @@ export function mapModule(source, file, pluginOpts, cwd) {
 
 export default ({ types: t }) => {
     function transformRequireCall(nodePath, state, cwd) {
+        const calleePath = nodePath.get('callee');
         if (
-            !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
+            !t.isIdentifier(calleePath.node, { name: 'require' }) &&
                 !(
-                    t.isMemberExpression(nodePath.node.callee) &&
-                    t.isIdentifier(nodePath.node.callee.object, { name: 'require' })
+                    t.isMemberExpression(calleePath.node) &&
+                    t.isIdentifier(calleePath.node.object, { name: 'require' })
                 )
         ) {
             return;
         }
 
-        const moduleArg = nodePath.node.arguments[0];
-        if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts, cwd);
+        const args = nodePath.get('arguments');
+        if (!args.length) {
+            return;
+        }
+
+        const moduleArg = args[0];
+        if (moduleArg.node.type === 'StringLiteral') {
+            const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
-                    nodePath.node.callee, [t.stringLiteral(modulePath)]
+                    calleePath.node, [t.stringLiteral(modulePath)]
                 ));
             }
         }
     }
 
     function transformImportCall(nodePath, state, cwd) {
-        const moduleArg = nodePath.node.source;
-        if (moduleArg && moduleArg.type === 'StringLiteral') {
-            const modulePath = mapModule(moduleArg.value, state.file.opts.filename, state.opts, cwd);
+        const source = nodePath.get('source');
+        if (source.type === 'StringLiteral') {
+            const modulePath = mapModule(source.node.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
-                nodePath.replaceWith(t.importDeclaration(
-                    nodePath.node.specifiers,
-                    t.stringLiteral(modulePath)
-                ));
+                source.replaceWith(t.stringLiteral(modulePath));
             }
         }
     }
@@ -134,12 +137,19 @@ export default ({ types: t }) => {
         visitor: {
             CallExpression: {
                 exit(nodePath, state) {
-                    return transformRequireCall(nodePath, state, this.moduleResolverCWD);
+                    if (nodePath.node.seen) {
+                        return;
+                    }
+
+                    transformRequireCall(nodePath, state, this.moduleResolverCWD);
+
+                    // eslint-disable-next-line no-param-reassign
+                    nodePath.node.seen = true;
                 },
             },
             ImportDeclaration: {
                 exit(nodePath, state) {
-                    return transformImportCall(nodePath, state, this.moduleResolverCWD);
+                    transformImportCall(nodePath, state, this.moduleResolverCWD);
                 },
             },
         },
