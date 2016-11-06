@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.1...v2.3.0) (2016-11-06)
+
+
+### Bug Fixes
+
+* Fix wrong location of modified path ([e7083ab](https://github.com/tleunen/babel-plugin-module-resolver/commit/e7083ab)), closes [#94](https://github.com/tleunen/babel-plugin-module-resolver/issues/94)
+
+
+### Features
+
+* Move the babelrc lookup behind a custom cwd value option ([2a8aca5](https://github.com/tleunen/babel-plugin-module-resolver/commit/2a8aca5))
+
+
+
 <a name="2.2.0"></a>
 # [2.2.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.1.1...v2.2.0) (2016-08-27)
 
