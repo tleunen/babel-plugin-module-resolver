@@ -13,6 +13,9 @@ function replaceExt(p, ext) {
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 
 export function mapModule(source, file, pluginOpts, cwd) {
+    // regardless of cwd option, file param is passed relative to the working directory
+    file = path.resolve(file);
+
     // Do not map source starting with a dot
     if (source[0] === '.') {
         return null;
@@ -126,18 +129,19 @@ export default ({ types: t }) => {
         },
 
         pre(file) {
-            if (this.customCWD === 'babelrc') {
+            let { customCWD } = this.plugin;
+            if (customCWD === 'babelrc') {
                 const startPath = (file.opts.filename === 'unknown')
                     ? './'
                     : file.opts.filename;
 
                 const { file: babelFile } = findBabelConfig.sync(startPath);
-                this.customCWD = babelFile
+                customCWD = babelFile
                     ? path.dirname(babelFile)
                     : null;
             }
 
-            this.moduleResolverCWD = this.customCWD || process.cwd();
+            this.moduleResolverCWD = customCWD || process.cwd();
         },
 
         visitor: {
