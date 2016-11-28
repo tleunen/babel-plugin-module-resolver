@@ -13,6 +13,9 @@ function replaceExt(p, ext) {
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 
 export function mapModule(source, file, pluginOpts, cwd) {
+    // file param is a relative path from the environment current working directory (not from cwd param)
+    const absoluteFile = path.resolve(file);
+
     // Do not map source starting with a dot
     if (source[0] === '.') {
         return null;
@@ -37,7 +40,7 @@ export function mapModule(source, file, pluginOpts, cwd) {
         const sourceFileExtension = path.extname(source);
         // map the source and keep its extension if the import/require had one
         const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
-        return toLocalPath(toPosixPath(replaceExt(mapToRelative(cwd, file, resolvedSourceFile), ext)));
+        return toLocalPath(toPosixPath(replaceExt(mapToRelative(cwd, absoluteFile, resolvedSourceFile), ext)));
     }
 
     // The source file wasn't found in any of the root directories. Lets try the alias
@@ -68,7 +71,7 @@ export function mapModule(source, file, pluginOpts, cwd) {
         return newPath;
     }
     // relative alias
-    return toLocalPath(toPosixPath(mapToRelative(cwd, file, newPath)));
+    return toLocalPath(toPosixPath(mapToRelative(cwd, absoluteFile, newPath)));
 }
 
 export default ({ types: t }) => {
@@ -126,18 +129,19 @@ export default ({ types: t }) => {
         },
 
         pre(file) {
-            if (this.customCWD === 'babelrc') {
+            let { customCWD } = this.plugin;
+            if (customCWD === 'babelrc') {
                 const startPath = (file.opts.filename === 'unknown')
                     ? './'
                     : file.opts.filename;
 
                 const { file: babelFile } = findBabelConfig.sync(startPath);
-                this.customCWD = babelFile
+                customCWD = babelFile
                     ? path.dirname(babelFile)
                     : null;
             }
 
-            this.moduleResolverCWD = this.customCWD || process.cwd();
+            this.moduleResolverCWD = customCWD || process.cwd();
         },
 
         visitor: {
