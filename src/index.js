@@ -148,6 +148,33 @@ export default ({ types: t }) => {
         }
     }
 
+    function transformSystemImportCall(nodePath, state, cwd) {
+        const calleePath = nodePath.get('callee');
+
+        if (!(
+            t.isMemberExpression(calleePath.node) &&
+            t.isIdentifier(calleePath.node.object, { name: 'System' }) &&
+            t.isIdentifier(calleePath.node.property, { name: 'import' })
+        )) {
+            return;
+        }
+
+        const args = nodePath.get('arguments');
+        if (!args.length) {
+            return;
+        }
+
+        const moduleArg = args[0];
+        if (moduleArg.node.type === 'StringLiteral') {
+            const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
+            if (modulePath) {
+                nodePath.replaceWith(t.callExpression(
+                    calleePath.node, [t.stringLiteral(modulePath)],
+                ));
+            }
+        }
+    }
+
     return {
         manipulateOptions(babelOptions) {
             const findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
@@ -188,6 +215,7 @@ export default ({ types: t }) => {
 
                     transformRequireCall(nodePath, state, this.moduleResolverCWD);
                     transformJestCalls(nodePath, state, this.moduleResolverCWD);
+                    transformSystemImportCall(nodePath, state, this.moduleResolverCWD);
 
                     // eslint-disable-next-line no-param-reassign
                     nodePath.node.seen = true;
