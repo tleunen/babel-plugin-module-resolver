@@ -97,7 +97,7 @@ export default ({ types: t }) => {
             const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
                 nodePath.replaceWith(t.callExpression(
-                    calleePath.node, [t.stringLiteral(modulePath)]
+                    calleePath.node, [t.stringLiteral(modulePath)],
                 ));
             }
         }
@@ -109,6 +109,41 @@ export default ({ types: t }) => {
             const modulePath = mapModule(source.node.value, state.file.opts.filename, state.opts, cwd);
             if (modulePath) {
                 source.replaceWith(t.stringLiteral(modulePath));
+            }
+        }
+    }
+
+    function transformJestCalls(nodePath, state, cwd) {
+        const calleePath = nodePath.get('callee');
+
+        const jestMethods = [
+            'genMockFromModule',
+            'mock',
+            'unmock',
+        ];
+
+        if (!(
+            t.isMemberExpression(calleePath.node) &&
+            t.isIdentifier(calleePath.node.object, { name: 'jest' }) &&
+            jestMethods.some(methodName => t.isIdentifier(calleePath.node.property, { name: methodName }))
+        )) {
+            return;
+        }
+
+        const args = nodePath.get('arguments');
+        if (!args.length) {
+            return;
+        }
+
+        const moduleArg = args[0];
+        if (moduleArg.node.type === 'StringLiteral') {
+            const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
+            if (modulePath) {
+                const newArgs = [...args].map(a => a.node);
+                newArgs[0] = t.stringLiteral(modulePath);
+                nodePath.replaceWith(t.callExpression(
+                    calleePath.node, newArgs,
+                ));
             }
         }
     }
@@ -152,6 +187,7 @@ export default ({ types: t }) => {
                     }
 
                     transformRequireCall(nodePath, state, this.moduleResolverCWD);
+                    transformJestCalls(nodePath, state, this.moduleResolverCWD);
 
                     // eslint-disable-next-line no-param-reassign
                     nodePath.node.seen = true;

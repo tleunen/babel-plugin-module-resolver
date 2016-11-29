@@ -44,7 +44,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'c1',
                 './test/examples/components/c1',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -52,7 +52,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'sub/sub1',
                 './test/examples/components/sub/sub1',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -60,7 +60,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'sub/sub1.css',
                 './test/examples/components/sub/sub1.css',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -68,7 +68,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'sub/custom.modernizr3',
                 './test/examples/components/sub/custom.modernizr3',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -76,7 +76,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'c1',
                 './test/examples/components/c1',
-                transformerOptsGlob
+                transformerOptsGlob,
             );
         });
 
@@ -89,7 +89,7 @@ describe('module-resolver', () => {
                 {
                     ...transformerOpts,
                     filename: './test/examples/foo/bar/x.js',
-                }
+                },
             );
         });
 
@@ -97,7 +97,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'example-file',
                 'example-file',
-                transformerOpts
+                transformerOpts,
             );
         });
     });
@@ -121,7 +121,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'utils',
                     './src/mylib/subfolder/utils',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
 
@@ -129,7 +129,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'utils/my-util-file',
                     './src/mylib/subfolder/utils/my-util-file',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
         });
@@ -139,7 +139,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'awesome/components',
                     './src/components',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
 
@@ -147,7 +147,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'awesome/components/my-comp',
                     './src/components/my-comp',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
         });
@@ -156,7 +156,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'utils/custom.modernizr3',
                 './src/mylib/subfolder/utils/custom.modernizr3',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -164,7 +164,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'awesome/components/my-comp.css',
                 './src/components/my-comp.css',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -173,7 +173,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'other-lib',
                     'other-lib',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
 
@@ -181,7 +181,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     './l/otherLib',
                     './l/otherLib',
-                    transformerOpts
+                    transformerOpts,
                 );
             });
         });
@@ -190,7 +190,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'abstract/thing',
                 'concrete/thing',
-                transformerOpts
+                transformerOpts,
             );
         });
 
@@ -198,7 +198,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'underscore/map',
                 'lodash/map',
-                transformerOpts
+                transformerOpts,
             );
         });
     });
