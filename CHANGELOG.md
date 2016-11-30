@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.4.0"></a>
+# [2.4.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.3.0...v2.4.0) (2016-11-30)
+
+
+### Features
+
+* Add support for Jest specific functions ([#100](https://github.com/tleunen/babel-plugin-module-resolver/issues/100)) ([ffa2c39](https://github.com/tleunen/babel-plugin-module-resolver/commit/ffa2c39)), closes [#97](https://github.com/tleunen/babel-plugin-module-resolver/issues/97)
+* Add support for System.import ([#101](https://github.com/tleunen/babel-plugin-module-resolver/issues/101)) ([06ba4dd](https://github.com/tleunen/babel-plugin-module-resolver/commit/06ba4dd)), closes [#99](https://github.com/tleunen/babel-plugin-module-resolver/issues/99)
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.1...v2.3.0) (2016-11-06)
 
