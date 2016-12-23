@@ -1,78 +1,22 @@
 import path from 'path';
-import resolve from 'resolve';
 import glob from 'glob';
 import findBabelConfig from 'find-babel-config';
-import mapToRelative from './mapToRelative';
-import { toLocalPath, toPosixPath } from './utils';
-
-function replaceExt(p, ext) {
-    const filename = path.basename(p, path.extname(p)) + ext;
-    return path.join(path.dirname(p), filename);
-}
+import getRealPath from './getRealPath';
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 
-export function mapModule(source, file, pluginOpts, cwd) {
-    // file param is a relative path from the environment current working directory (not from cwd param)
-    const absoluteFile = path.resolve(file);
-
 export const defaultExtensions = defaultBabelExtensions;
+export function mapModule(sourcePath, currentFile, pluginOpts, cwd) {
     // Do not map source starting with a dot
-    if (source[0] === '.') {
+    if (sourcePath[0] === '.') {
         return null;
     }
 
-    // Search the file under the custom root directories
-    const rootDirs = pluginOpts.root || [];
-    const extensions = pluginOpts.extensions || defaultBabelExtensions;
-    let resolvedSourceFile;
-    rootDirs.some((dir) => {
-        try {
-            // check if the file exists (will throw if not)
-            resolvedSourceFile = resolve.sync(`./${source}`, { basedir: path.resolve(cwd, dir), extensions });
-            return true;
-        } catch (e) {
-            return false;
-        }
+    return getRealPath(sourcePath, currentFile, {
+        cwd,
+        pluginOpts,
+        extensions: pluginOpts.extensions || defaultExtensions,
     });
-
-    if (resolvedSourceFile) {
-        const realSourceFileExtension = path.extname(resolvedSourceFile);
-        const sourceFileExtension = path.extname(source);
-        // map the source and keep its extension if the import/require had one
-        const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
-        return toLocalPath(toPosixPath(replaceExt(mapToRelative(cwd, absoluteFile, resolvedSourceFile), ext)));
-    }
-
-    // The source file wasn't found in any of the root directories. Lets try the alias
-    const aliasMapping = pluginOpts.alias || {};
-    const moduleSplit = source.split('/');
-
-    let aliasPath;
-    while (moduleSplit.length) {
-        const m = moduleSplit.join('/');
-        if ({}.hasOwnProperty.call(aliasMapping, m)) {
-            aliasPath = aliasMapping[m];
-            break;
-        }
-        moduleSplit.pop();
-    }
-
-    // no alias mapping found
-    if (!aliasPath) {
-        return null;
-    }
-
-    // remove legacy "npm:" prefix for npm packages
-    aliasPath = aliasPath.replace(/^(npm:)/, '');
-    const newPath = source.replace(moduleSplit.join('/'), aliasPath);
-
-    // alias to npm module don't need relative mapping
-    if (aliasPath[0] !== '.') {
-        return newPath;
-    }
-    // relative alias
-    return toLocalPath(toPosixPath(mapToRelative(cwd, absoluteFile, newPath)));
 }
 
 export default ({ types: t }) => {
