@@ -16,6 +16,7 @@ export function mapModule(source, file, pluginOpts, cwd) {
     // file param is a relative path from the environment current working directory (not from cwd param)
     const absoluteFile = path.resolve(file);
 
+export const defaultExtensions = defaultBabelExtensions;
     // Do not map source starting with a dot
     if (source[0] === '.') {
         return null;
