@@ -18,6 +18,19 @@ export function mapModule(sourcePath, currentFile, pluginOpts, cwd) {
         extensions: pluginOpts.extensions || defaultExtensions,
     });
 }
+export function manipulatePluginOptions(pluginOpts) {
+    if (pluginOpts.root) {
+        // eslint-disable-next-line no-param-reassign
+        pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
+            if (glob.hasMagic(dirPath)) {
+                return resolvedDirs.concat(glob.sync(dirPath));
+            }
+            return resolvedDirs.concat(dirPath);
+        }, []);
+    }
+
+    return pluginOpts;
+}
 
 export default ({ types: t }) => {
     function transformRequireCall(nodePath, state, cwd) {
@@ -122,15 +135,8 @@ export default ({ types: t }) => {
 
     return {
         manipulateOptions(babelOptions) {
-            const findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-            if (findPluginOptions.root) {
-                findPluginOptions.root = findPluginOptions.root.reduce((resolvedDirs, dirPath) => {
-                    if (glob.hasMagic(dirPath)) {
-                        return resolvedDirs.concat(glob.sync(dirPath));
-                    }
-                    return resolvedDirs.concat(dirPath);
-                }, []);
-            }
+            let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
+            findPluginOptions = manipulatePluginOptions(findPluginOptions);
 
             this.customCWD = findPluginOptions.cwd;
         },
