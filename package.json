@@ -40,8 +40,8 @@
     "babel-jest": "^18.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
     "babel-preset-latest": "^6.16.0",
-    "eslint": "^3.12.0",
-    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint": "^3.12.2",
+    "eslint-config-tleunen": "^1.0.0",
     "eslint-plugin-import": "^2.2.0",
     "jest": "^18.0.0",
     "standard-version": "^4.0.0"
