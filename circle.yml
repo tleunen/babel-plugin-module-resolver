@@ -1,16 +1,16 @@
 machine:
-  post:
-    - curl -o- -L https://yarnpkg.com/install.sh | bash
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 dependencies:
   cache_directories:
-    - "~/.yarn-cache"
+    - ~/.cache/yarn
   pre:
     - case $CIRCLE_NODE_INDEX in 0) NODE_VERSION=4 ;; 1) NODE_VERSION=6 ;; 2) NODE_VERSION=7 ;; esac; nvm install $NODE_VERSION && nvm alias default $NODE_VERSION
   override:
     - yarn --no-lockfile
 test:
   override:
-    - npm t
+    - yarn test
 deployment:
   coverage:
     branch: /.*/
