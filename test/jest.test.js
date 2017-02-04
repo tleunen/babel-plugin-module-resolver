@@ -41,6 +41,29 @@ describe('jest functions', () => {
         });
     });
 
+    describe('jest.doMock', () => {
+        it('should resolve the path based on the root config', () => {
+            const code = 'jest.doMock("c1", () => {});';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.doMock("./test/examples/components/c1", () => {});');
+        });
+
+        it('should alias the path', () => {
+            const code = 'jest.doMock("utils", () => {});';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.doMock("./src/mylib/subfolder/utils", () => {});');
+        });
+
+        it('should not change the path', () => {
+            const code = 'jest.doMock("./utils", () => {});';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.doMock("./utils", () => {});');
+        });
+    });
+
     describe('jest.unmock', () => {
         it('should resolve the path based on the root config', () => {
             const code = 'jest.unmock("c1");';
@@ -61,6 +84,29 @@ describe('jest functions', () => {
             const result = transform(code, transformerOpts);
 
             expect(result.code).toBe('jest.unmock("./utils");');
+        });
+    });
+
+    describe('jest.dontMock', () => {
+        it('should resolve the path based on the root config', () => {
+            const code = 'jest.dontMock("c1");';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.dontMock("./test/examples/components/c1");');
+        });
+
+        it('should alias the path', () => {
+            const code = 'jest.dontMock("utils");';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.dontMock("./src/mylib/subfolder/utils");');
+        });
+
+        it('should not change the path', () => {
+            const code = 'jest.dontMock("./utils");';
+            const result = transform(code, transformerOpts);
+
+            expect(result.code).toBe('jest.dontMock("./utils");');
         });
     });
 

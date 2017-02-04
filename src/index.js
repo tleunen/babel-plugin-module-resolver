@@ -78,6 +78,8 @@ export default ({ types: t }) => {
             'genMockFromModule',
             'mock',
             'unmock',
+            'doMock',
+            'dontMock',
         ];
 
         if (!(
