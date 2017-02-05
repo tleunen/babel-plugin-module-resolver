@@ -1,4 +1,5 @@
 /* eslint-env jest */
+import path from 'path';
 import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
 import plugin from '../src';
 
@@ -248,6 +249,75 @@ describe('module-resolver', () => {
                 'underscore/map',
                 'lodash/map',
                 aliasTransformerOpts,
+            );
+        });
+    });
+
+    describe('with custom cwd', () => {
+        describe('custom value', () => {
+            const transformerOpts = {
+                babelrc: false,
+                plugins: [
+                    [plugin, {
+                        root: [
+                            './testproject/src',
+                        ],
+                        alias: {
+                            test: './testproject/test',
+                        },
+                        cwd: path.join(process.cwd(), 'test'),
+                    }],
+                ],
+            };
+
+            describe('should resolve the sub file path', () => {
+                testRequireImport(
+                    'components/Root',
+                    './test/testproject/src/components/Root',
+                    transformerOpts,
+                );
+            });
+
+            describe('should alias the sub file path', () => {
+                testRequireImport(
+                    'test/tools',
+                    './test/testproject/test/tools',
+                    transformerOpts,
+                );
+            });
+        });
+    });
+
+    describe('babelrc', () => {
+        const transformerOpts = {
+            babelrc: false,
+            plugins: [
+                [plugin, {
+                    root: [
+                        './src',
+                    ],
+                    alias: {
+                        test: './test',
+                    },
+                    cwd: 'babelrc',
+                }],
+            ],
+            filename: './test/testproject/src',
+        };
+
+        describe('should resolve the sub file path', () => {
+            testRequireImport(
+                'components/Root',
+                './src/components/Root',
+                transformerOpts,
+            );
+        });
+
+        describe('should alias the sub file path', () => {
+            testRequireImport(
+                'test/tools',
+                './test/tools',
+                transformerOpts,
             );
         });
     });
