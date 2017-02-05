@@ -5,9 +5,9 @@ export function toPosixPath(modulePath) {
 }
 
 export function toLocalPath(p) {
-    return (p[0] !== '.')
-        ? `./${p}`
-        : p;
+    return p
+        .replace(/\/index$/, '') // remove trailing /index
+        .replace(/^(?!\.)/, './'); // insert `./` to make it a local path
 }
 
 export function replaceExtension(p, ext) {
