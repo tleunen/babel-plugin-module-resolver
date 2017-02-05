@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.5.0"></a>
+# [2.5.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.4.0...v2.5.0) (2017-02-05)
+
+
+### Bug Fixes
+
+* Add only directories in a glob root config ([#120](https://github.com/tleunen/babel-plugin-module-resolver/issues/120)) ([ac87924](https://github.com/tleunen/babel-plugin-module-resolver/commit/ac87924))
+* Remove unnecessary trailing /index in the local path resolution ([#117](https://github.com/tleunen/babel-plugin-module-resolver/issues/117)) ([ac0c671](https://github.com/tleunen/babel-plugin-module-resolver/commit/ac0c671))
+
+
+### Features
+
+* Add support for jest doMock and dontMock functions ([#114](https://github.com/tleunen/babel-plugin-module-resolver/issues/114)) ([0bc01ec](https://github.com/tleunen/babel-plugin-module-resolver/commit/0bc01ec))
+* Export manipulateOptions ([85270e1](https://github.com/tleunen/babel-plugin-module-resolver/commit/85270e1))
+* Export the default extensions used by the plugin ([1c4fbcc](https://github.com/tleunen/babel-plugin-module-resolver/commit/1c4fbcc))
+
+
+
 <a name="2.4.0"></a>
 # [2.4.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.3.0...v2.4.0) (2016-11-30)
 
