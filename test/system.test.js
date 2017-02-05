@@ -8,34 +8,33 @@ describe('System.import', () => {
         plugins: [
             [plugin, {
                 root: [
-                    './test/examples/components',
-                    './test/examples/foo',
+                    './test/testproject/src',
                 ],
                 alias: {
-                    utils: './src/mylib/subfolder/utils',
+                    test: './test/testproject/test',
                 },
             }],
         ],
     };
 
     it('should resolve the path based on the root config', () => {
-        const code = 'System.import("c1").then(() => {}).catch(() => {});';
+        const code = 'System.import("app").then(() => {}).catch(() => {});';
         const result = transform(code, transformerOpts);
 
-        expect(result.code).toBe('System.import("./test/examples/components/c1").then(() => {}).catch(() => {});');
+        expect(result.code).toBe('System.import("./test/testproject/src/app").then(() => {}).catch(() => {});');
     });
 
     it('should alias the path', () => {
-        const code = 'System.import("utils").then(() => {}).catch(() => {});';
+        const code = 'System.import("test/tools").then(() => {}).catch(() => {});';
         const result = transform(code, transformerOpts);
 
-        expect(result.code).toBe('System.import("./src/mylib/subfolder/utils").then(() => {}).catch(() => {});');
+        expect(result.code).toBe('System.import("./test/testproject/test/tools").then(() => {}).catch(() => {});');
     });
 
     it('should not change the path', () => {
-        const code = 'System.import("./utils").then(() => {}).catch(() => {});';
+        const code = 'System.import("./something").then(() => {}).catch(() => {});';
         const result = transform(code, transformerOpts);
 
-        expect(result.code).toBe('System.import("./utils").then(() => {}).catch(() => {});');
+        expect(result.code).toBe('System.import("./something").then(() => {}).catch(() => {});');
     });
 });

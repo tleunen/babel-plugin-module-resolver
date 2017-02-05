@@ -20,95 +20,144 @@ describe('module-resolver', () => {
     }
 
     describe('root', () => {
-        const transformerOpts = {
-            babelrc: false,
-            plugins: [
-                [plugin, {
-                    root: [
-                        './test/examples/components',
-                        './test/examples/foo',
-                    ],
-                }],
-            ],
-        };
+        describe('simple root', () => {
+            const rootTransformerOpts = {
+                babelrc: false,
+                plugins: [
+                    [plugin, {
+                        root: [
+                            './test/testproject/src',
+                        ],
+                    }],
+                ],
+            };
 
-        const transformerOptsGlob = {
-            plugins: [
-                [plugin, {
-                    root: ['./test/**/components'],
-                }],
-            ],
-        };
+            describe('should resolve the file path', () => {
+                testRequireImport(
+                    'app',
+                    './test/testproject/src/app',
+                    rootTransformerOpts,
+                );
+            });
 
-        describe('should resolve the file path', () => {
-            testRequireImport(
-                'c1',
-                './test/examples/components/c1',
-                transformerOpts,
-            );
+            describe('should resolve the sub file path', () => {
+                testRequireImport(
+                    'components/Root',
+                    './test/testproject/src/components/Root',
+                    rootTransformerOpts,
+                );
+            });
+
+            describe('should resolve a sub file path without /index', () => {
+                testRequireImport(
+                    'components/Header',
+                    './test/testproject/src/components/Header',
+                    rootTransformerOpts,
+                );
+            });
+
+            describe('should resolve the file path while keeping the extension', () => {
+                testRequireImport(
+                    'components/Header/header.css',
+                    './test/testproject/src/components/Header/header.css',
+                    rootTransformerOpts,
+                );
+            });
+
+            describe('should resolve the file path with a filename containing a dot', () => {
+                testRequireImport(
+                    'libs/custom.modernizr3',
+                    './test/testproject/src/libs/custom.modernizr3',
+                    rootTransformerOpts,
+                );
+            });
+
+            describe('should resolve to a file instead of a directory', () => {
+                // When a file and a directory on the same level share the same name,
+                // the file has priority according to the Node require mechanism
+                testRequireImport(
+                    'constants',
+                    '../constants',
+                    {
+                        ...rootTransformerOpts,
+                        filename: './test/testproject/src/constants/actions.js',
+                    },
+                );
+            });
+
+            describe('should not resolve a path outisde of the root directory', () => {
+                testRequireImport(
+                    'lodash/omit',
+                    'lodash/omit',
+                    rootTransformerOpts,
+                );
+            });
+
+            describe('should not try to resolve a local path', () => {
+                testRequireImport(
+                    './something',
+                    './something',
+                    rootTransformerOpts,
+                );
+            });
         });
 
-        describe('should resolve the sub file path', () => {
-            testRequireImport(
-                'sub/sub1',
-                './test/examples/components/sub/sub1',
-                transformerOpts,
-            );
-        });
+        describe('glob root', () => {
+            const globRootTransformerOpts = {
+                babelrc: false,
+                plugins: [
+                    [plugin, {
+                        root: [
+                            './test/testproject/src/**',
+                        ],
+                    }],
+                ],
+            };
 
-        describe('should resolve the file path while keeping the extension', () => {
-            testRequireImport(
-                'sub/sub1.css',
-                './test/examples/components/sub/sub1.css',
-                transformerOpts,
-            );
-        });
+            describe('should resolve the file path right inside the glob', () => {
+                testRequireImport(
+                    'app',
+                    './test/testproject/src/app',
+                    globRootTransformerOpts,
+                );
+            });
 
-        describe('should resolve the file path with a filename containing a dot', () => {
-            testRequireImport(
-                'sub/custom.modernizr3',
-                './test/examples/components/sub/custom.modernizr3',
-                transformerOpts,
-            );
-        });
+            describe('should resolve the sub file path', () => {
+                testRequireImport(
+                    'actions/something',
+                    './test/testproject/src/actions/something',
+                    globRootTransformerOpts,
+                );
+            });
 
-        describe('should resolve the file path according to a glob', () => {
-            testRequireImport(
-                'c1',
-                './test/examples/components/c1',
-                transformerOptsGlob,
-            );
-        });
+            describe('should resolve the sub file path without specifying the directory', () => {
+                testRequireImport(
+                    'something',
+                    './test/testproject/src/actions/something',
+                    globRootTransformerOpts,
+                );
+            });
 
-        describe('should resolve to a file instead of a directory', () => {
-            // When a file and a directory on the same level share the same name,
-            // the file has priority according to the Node require mechanism
-            testRequireImport(
-                'bar',
-                '../bar',
-                {
-                    ...transformerOpts,
-                    filename: './test/examples/foo/bar/x.js',
-                },
-            );
-        });
-
-        describe('should not resolve a path outisde of the root directory', () => {
-            testRequireImport(
-                'example-file',
-                'example-file',
-                transformerOpts,
-            );
+            describe('should resolve the deep file', () => {
+                testRequireImport(
+                    'SidebarFooterButton',
+                    './test/testproject/src/components/Sidebar/Footer/SidebarFooterButton',
+                    globRootTransformerOpts,
+                );
+            });
         });
     });
 
     describe('alias', () => {
-        const transformerOpts = {
+        const aliasTransformerOpts = {
             plugins: [
                 [plugin, {
                     alias: {
-                        utils: './src/mylib/subfolder/utils',
-                        'awesome/components': './src/components',
+                        test: './test/testproject/test',
+                        libs: './test/testproject/src/libs',
+                        components: './test/testproject/src/components',
+                        '~': './test/testproject/src',
+                        'awesome/components': './test/testproject/src/components',
                         abstract: 'npm:concrete',
                         underscore: 'lodash',
                     },
@@ -119,17 +168,17 @@ describe('module-resolver', () => {
         describe('with a simple alias', () => {
             describe('should alias the file path', () => {
                 testRequireImport(
-                    'utils',
-                    './src/mylib/subfolder/utils',
-                    transformerOpts,
+                    'components',
+                    './test/testproject/src/components',
+                    aliasTransformerOpts,
                 );
             });
 
             describe('should alias the sub file path', () => {
                 testRequireImport(
-                    'utils/my-util-file',
-                    './src/mylib/subfolder/utils/my-util-file',
-                    transformerOpts,
+                    'test/tools',
+                    './test/testproject/test/tools',
+                    aliasTransformerOpts,
                 );
             });
         });
@@ -138,33 +187,33 @@ describe('module-resolver', () => {
             describe('should alias the file path', () => {
                 testRequireImport(
                     'awesome/components',
-                    './src/components',
-                    transformerOpts,
+                    './test/testproject/src/components',
+                    aliasTransformerOpts,
                 );
             });
 
             describe('should alias the sub file path', () => {
                 testRequireImport(
-                    'awesome/components/my-comp',
-                    './src/components/my-comp',
-                    transformerOpts,
+                    'awesome/components/Header',
+                    './test/testproject/src/components/Header',
+                    aliasTransformerOpts,
                 );
             });
         });
 
         describe('should alias a path containing a dot in the filename', () => {
             testRequireImport(
-                'utils/custom.modernizr3',
-                './src/mylib/subfolder/utils/custom.modernizr3',
-                transformerOpts,
+                'libs/custom.modernizr3',
+                './test/testproject/src/libs/custom.modernizr3',
+                aliasTransformerOpts,
             );
         });
 
         describe('should alias the path with its extension', () => {
             testRequireImport(
-                'awesome/components/my-comp.css',
-                './src/components/my-comp.css',
-                transformerOpts,
+                'components/Header/header.css',
+                './test/testproject/src/components/Header/header.css',
+                aliasTransformerOpts,
             );
         });
 
@@ -173,7 +222,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     'other-lib',
                     'other-lib',
-                    transformerOpts,
+                    aliasTransformerOpts,
                 );
             });
 
@@ -181,7 +230,7 @@ describe('module-resolver', () => {
                 testRequireImport(
                     './l/otherLib',
                     './l/otherLib',
-                    transformerOpts,
+                    aliasTransformerOpts,
                 );
             });
         });
@@ -190,7 +239,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'abstract/thing',
                 'concrete/thing',
-                transformerOpts,
+                aliasTransformerOpts,
             );
         });
 
@@ -198,7 +247,7 @@ describe('module-resolver', () => {
             testRequireImport(
                 'underscore/map',
                 'lodash/map',
-                transformerOpts,
+                aliasTransformerOpts,
             );
         });
     });
