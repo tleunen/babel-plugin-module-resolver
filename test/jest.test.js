@@ -8,128 +8,62 @@ describe('jest functions', () => {
         plugins: [
             [plugin, {
                 root: [
-                    './test/examples/components',
-                    './test/examples/foo',
+                    './test/testproject/src',
                 ],
                 alias: {
-                    utils: './src/mylib/subfolder/utils',
+                    test: './test/testproject/test',
                 },
             }],
         ],
     };
 
-    describe('jest.mock', () => {
-        it('should resolve the path based on the root config', () => {
-            const code = 'jest.mock("c1", () => {});';
-            const result = transform(code, transformerOpts);
+    ['mock', 'doMock'].forEach((name) => {
+        describe(`jest.${name}`, () => {
+            it('should resolve the path based on the root config', () => {
+                const code = `jest.${name}("components/Header/SubHeader", () => {});`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.mock("./test/examples/components/c1", () => {});');
-        });
+                expect(result.code).toBe(`jest.${name}("./test/testproject/src/components/Header/SubHeader", () => {});`);
+            });
 
-        it('should alias the path', () => {
-            const code = 'jest.mock("utils", () => {});';
-            const result = transform(code, transformerOpts);
+            it('should alias the path', () => {
+                const code = `jest.${name}("test", () => {});`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.mock("./src/mylib/subfolder/utils", () => {});');
-        });
+                expect(result.code).toBe(`jest.${name}("./test/testproject/test", () => {});`);
+            });
 
-        it('should not change the path', () => {
-            const code = 'jest.mock("./utils", () => {});';
-            const result = transform(code, transformerOpts);
+            it('should not change the path', () => {
+                const code = `jest.${name}("./utils", () => {});`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.mock("./utils", () => {});');
-        });
-    });
-
-    describe('jest.doMock', () => {
-        it('should resolve the path based on the root config', () => {
-            const code = 'jest.doMock("c1", () => {});';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.doMock("./test/examples/components/c1", () => {});');
-        });
-
-        it('should alias the path', () => {
-            const code = 'jest.doMock("utils", () => {});';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.doMock("./src/mylib/subfolder/utils", () => {});');
-        });
-
-        it('should not change the path', () => {
-            const code = 'jest.doMock("./utils", () => {});';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.doMock("./utils", () => {});');
+                expect(result.code).toBe(`jest.${name}("./utils", () => {});`);
+            });
         });
     });
 
-    describe('jest.unmock', () => {
-        it('should resolve the path based on the root config', () => {
-            const code = 'jest.unmock("c1");';
-            const result = transform(code, transformerOpts);
+    ['unmock', 'dontMock', 'genMockFromModule'].forEach((name) => {
+        describe(`jest.${name}`, () => {
+            it('should resolve the path based on the root config', () => {
+                const code = `jest.${name}("components/Sidebar/Footer");`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.unmock("./test/examples/components/c1");');
-        });
+                expect(result.code).toBe(`jest.${name}("./test/testproject/src/components/Sidebar/Footer");`);
+            });
 
-        it('should alias the path', () => {
-            const code = 'jest.unmock("utils");';
-            const result = transform(code, transformerOpts);
+            it('should alias the path', () => {
+                const code = `jest.${name}("test");`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.unmock("./src/mylib/subfolder/utils");');
-        });
+                expect(result.code).toBe(`jest.${name}("./test/testproject/test");`);
+            });
 
-        it('should not change the path', () => {
-            const code = 'jest.unmock("./utils");';
-            const result = transform(code, transformerOpts);
+            it('should not change the path', () => {
+                const code = `jest.${name}("./utils");`;
+                const result = transform(code, transformerOpts);
 
-            expect(result.code).toBe('jest.unmock("./utils");');
-        });
-    });
-
-    describe('jest.dontMock', () => {
-        it('should resolve the path based on the root config', () => {
-            const code = 'jest.dontMock("c1");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.dontMock("./test/examples/components/c1");');
-        });
-
-        it('should alias the path', () => {
-            const code = 'jest.dontMock("utils");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.dontMock("./src/mylib/subfolder/utils");');
-        });
-
-        it('should not change the path', () => {
-            const code = 'jest.dontMock("./utils");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.dontMock("./utils");');
-        });
-    });
-
-    describe('jest.genMockFromModule', () => {
-        it('should resolve the path based on the root config', () => {
-            const code = 'jest.genMockFromModule("c1");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.genMockFromModule("./test/examples/components/c1");');
-        });
-
-        it('should alias the path', () => {
-            const code = 'jest.genMockFromModule("utils");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.genMockFromModule("./src/mylib/subfolder/utils");');
-        });
-
-        it('should not change the path', () => {
-            const code = 'jest.genMockFromModule("./utils");';
-            const result = transform(code, transformerOpts);
-
-            expect(result.code).toBe('jest.genMockFromModule("./utils");');
+                expect(result.code).toBe(`jest.${name}("./utils");`);
+            });
         });
     });
 });
