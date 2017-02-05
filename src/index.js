@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import glob from 'glob';
 import findBabelConfig from 'find-babel-config';
 import getRealPath from './getRealPath';
@@ -28,7 +29,9 @@ export function manipulatePluginOptions(pluginOpts) {
         // eslint-disable-next-line no-param-reassign
         pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
             if (glob.hasMagic(dirPath)) {
-                return resolvedDirs.concat(glob.sync(dirPath));
+                return resolvedDirs.concat(
+                    glob.sync(dirPath).filter(p => fs.lstatSync(p).isDirectory()),
+                );
             }
             return resolvedDirs.concat(dirPath);
         }, []);
