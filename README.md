@@ -71,7 +71,7 @@ Updating is very easy, so for example if you had this configuration:
   ]
 }
 ```
-You ony have to update the plugin options to be like this:
+You only have to update the plugin options to be like this:
 ```json
 {
   "plugins": [
