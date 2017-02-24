@@ -39,6 +39,27 @@ describe('jest functions', () => {
 
         expect(result.code).toBe(`jest.${name}("./utils", () => {});`);
       });
+
+      it('should handle no arguments', () => {
+        const code = `jest.${name}();`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`jest.${name}();`);
+      });
+
+      it('should handle the first argument not being a string literal', () => {
+        const code = `jest.${name}(path);`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`jest.${name}(path);`);
+      });
+
+      it('should handle an empty path', () => {
+        const code = `jest.${name}('');`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`jest.${name}('');`);
+      });
     });
   });
 

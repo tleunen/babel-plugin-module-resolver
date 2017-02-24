@@ -70,7 +70,7 @@ function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
   return toLocalPath(toPosixPath(mapToRelative(cwd, absCurrentFile, newPath)));
 }
 
-export default function getRealPath(sourcePath, currentFile, opts = {}) {
+export default function getRealPath(sourcePath, currentFile, opts) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }

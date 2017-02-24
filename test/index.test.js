@@ -33,6 +33,28 @@ describe('module-resolver', () => {
         ],
       };
 
+      it('should handle no arguments', () => {
+        const code = 'var something = require();';
+        const result = transform(code, rootTransformerOpts);
+
+        expect(result.code).toBe('var something = require();');
+      });
+
+      it('should handle the first argument not being a string literal', () => {
+        const code = 'var something = require(path);';
+        const result = transform(code, rootTransformerOpts);
+
+        expect(result.code).toBe('var something = require(path);');
+      });
+
+      describe('should handle an empty path', () => {
+        testRequireImport(
+                    '',
+                    '',
+                    rootTransformerOpts,
+                );
+      });
+
       describe('should resolve the file path', () => {
         testRequireImport(
                     'app',
@@ -317,6 +339,38 @@ describe('module-resolver', () => {
       testRequireImport(
                 'test/tools',
                 './test/tools',
+                transformerOpts,
+            );
+    });
+  });
+
+  describe('no babelrc in path', () => {
+    const transformerOpts = {
+      babelrc: false,
+      plugins: [
+        [plugin, {
+          cwd: 'babelrc',
+        }],
+      ],
+    };
+    const { cwd } = process;
+
+    function mockCwd() {
+      return '/.fake';
+    }
+
+    beforeEach(() => {
+      process.cwd = mockCwd;
+    });
+
+    afterEach(() => {
+      process.cwd = cwd;
+    });
+
+    describe('should leave the path as is', () => {
+      testRequireImport(
+                './test/path',
+                './test/path',
                 transformerOpts,
             );
     });
