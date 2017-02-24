@@ -71,7 +71,7 @@ Updating is very easy, so for example if you had this configuration:
   ]
 }
 ```
-You ony have to update the plugin options to be like this:
+You only have to update the plugin options to be like this:
 ```json
 {
   "plugins": [
@@ -88,6 +88,44 @@ You ony have to update the plugin options to be like this:
 ## ESLint plugin
 
 If you're using ESLint, you should use the [eslint-plugin-import][eslint-plugin-import], and this [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] in order to remove falsy unresolved modules.
+
+## Usage with Flow
+
+To allow Flow to find your modules it is necessary to add configuration options
+to `.flowconfig`.
+
+For example, a React component is located at `src/components/Component.js`
+
+```js
+// Before
+import '../../src/components/Component';
+
+// After - Flow cannot find this now
+import 'components/Component';
+```
+
+You need to instruct Flow where to resolve modules from:
+
+```
+# .flowconfig
+
+[options]
+module.system.node.resolve_dirname=node_modules
+module.system.node.resolve_dirname=src
+```
+
+Be sure to add any sub-directories if you refer to files further down the
+directory tree:
+
+```js
+// Located at src/store/actions
+import 'actions/User'
+```
+```
+module.system.node.resolve_dirname=src/store
+```
+
+More configuration options are located in [the Flow documentation](https://flowtype.org/docs/advanced-configuration.html)
 
 ## Editors autocompletion
 
