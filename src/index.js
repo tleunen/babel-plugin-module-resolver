@@ -84,5 +84,10 @@ export default ({ types: t }) => ({
         transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
       },
     },
+    ExportDeclaration: {
+      exit(nodePath, state) {
+        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      },
+    },
   },
 });
