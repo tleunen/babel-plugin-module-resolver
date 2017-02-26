@@ -356,37 +356,68 @@ describe('module-resolver', () => {
                 transformerOpts,
             );
     });
-  });
 
-  describe('no babelrc in path', () => {
-    const transformerOpts = {
-      babelrc: false,
-      plugins: [
-        [plugin, {
-          cwd: 'babelrc',
-        }],
-      ],
-    };
-    const { cwd } = process;
+    describe('unknown filename', () => {
+      const unknownFileTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './src',
+            ],
+            cwd: 'babelrc',
+          }],
+        ],
+      };
+      const cachedCwd = process.cwd();
+      const babelRcDir = 'test/testproject';
 
-    function mockCwd() {
-      return '/.fake';
-    }
+      beforeEach(() => {
+        process.chdir(babelRcDir);
+      });
 
-    beforeEach(() => {
-      process.cwd = mockCwd;
+      afterEach(() => {
+        process.chdir(cachedCwd);
+      });
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+                  'components/Root',
+                  './src/components/Root',
+                  unknownFileTransformerOpts,
+              );
+      });
     });
 
-    afterEach(() => {
-      process.cwd = cwd;
-    });
+    describe('missing babelrc in path (uses cwd)', () => {
+      jest.mock('find-babel-config', () => ({
+        sync: function findBabelConfigSync() {
+          return { file: null, config: null };
+        },
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
 
-    describe('should leave the path as is', () => {
-      testRequireImport(
-                './test/path',
-                './test/path',
-                transformerOpts,
-            );
+      const missingBabelConfigTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            root: [
+              '.',
+            ],
+            cwd: 'babelrc',
+          }],
+        ],
+        filename: './test/testproject/src',
+      };
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+                  'test/testproject/src/components/Root',
+                  './src/components/Root',
+                  missingBabelConfigTransformerOpts,
+              );
+      });
     });
   });
 });
