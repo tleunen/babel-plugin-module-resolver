@@ -18,6 +18,20 @@ describe('module-resolver', () => {
 
       expect(result.code).toBe(`import something from "${output}";`);
     });
+
+    it('with an "export from" statement', () => {
+      const code = `export { something } from "${source}";`;
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe(`export { something } from "${output}";`);
+    });
+
+    it('with an export statement', () => {
+      const code = 'export { something };';
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe('export { something };');
+    });
   }
 
   describe('root', () => {
