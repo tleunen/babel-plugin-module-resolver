@@ -338,13 +338,13 @@ describe('module-resolver', () => {
           cwd: 'babelrc',
         }],
       ],
-      filename: './test/testproject/src',
+      filename: './test/testproject/src/app.js',
     };
 
     describe('should resolve the sub file path', () => {
       testRequireImport(
                 'components/Root',
-                './src/components/Root',
+                './components/Root',
                 transformerOpts,
             );
     });
@@ -352,7 +352,7 @@ describe('module-resolver', () => {
     describe('should alias the sub file path', () => {
       testRequireImport(
                 'test/tools',
-                './test/tools',
+                '../test/tools',
                 transformerOpts,
             );
     });
@@ -408,13 +408,13 @@ describe('module-resolver', () => {
             cwd: 'babelrc',
           }],
         ],
-        filename: './test/testproject/src',
+        filename: './test/testproject/src/app.js',
       };
 
       describe('should resolve the sub file path', () => {
         testRequireImport(
                   'test/testproject/src/components/Root',
-                  './src/components/Root',
+                  './components/Root',
                   missingBabelConfigTransformerOpts,
               );
       });
