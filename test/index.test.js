@@ -197,6 +197,13 @@ describe('module-resolver', () => {
             'awesome/components': './test/testproject/src/components',
             abstract: 'npm:concrete',
             underscore: 'lodash',
+            '^@namespace/foo-(.+)': 'packages/\\1',
+            'styles/.+\\.(css|less|scss)$': 'style-proxy.\\1',
+            '^single-backslash': 'pas\\\\sed',
+            '^non-existing-match': 'pas\\42sed',
+            'regexp-priority': 'miss',
+            '^regexp-priority': 'hit',
+            'regexp-priority$': 'miss',
           },
         }],
       ],
@@ -286,6 +293,67 @@ describe('module-resolver', () => {
                 'lodash/map',
                 aliasTransformerOpts,
             );
+    });
+
+    describe('with a regular expression', () => {
+      describe('should support replacing parts of a path', () => {
+        testRequireImport(
+                  '@namespace/foo-bar',
+                  'packages/bar',
+                  aliasTransformerOpts,
+              );
+      });
+
+      describe('should support replacing parts of a complex path', () => {
+        testRequireImport(
+                  '@namespace/foo-bar/component.js',
+                  'packages/bar/component.js',
+                  aliasTransformerOpts,
+              );
+      });
+
+      describe('should support complex regular expressions', () => {
+        ['css', 'less', 'scss'].forEach((extension) => {
+          testRequireImport(
+                    `styles/style.${extension}`,
+                    `style-proxy.${extension}`,
+                    aliasTransformerOpts,
+                );
+        });
+      });
+
+      describe('should ignore unmatched paths', () => {
+        testRequireImport(
+                    'styles/style.js',
+                    'styles/style.js',
+                    aliasTransformerOpts,
+                );
+      });
+
+      describe('should transform double backslash into a single one', () => {
+        testRequireImport(
+                    'single-backslash',
+                    // This is a string literal, so in the code it will actually be "pas\\sed"
+                    'pas\\\\sed',
+                    aliasTransformerOpts,
+                );
+      });
+
+      describe('should replece missing matches with an empty string', () => {
+        testRequireImport(
+                    'non-existing-match',
+                    'passed',
+                    aliasTransformerOpts,
+                );
+      });
+
+      describe('should have higher priority than a simple alias', () => {
+        testRequireImport(
+                    'regexp-priority',
+                    'hit',
+                    aliasTransformerOpts,
+                );
+      });
     });
   });
 
