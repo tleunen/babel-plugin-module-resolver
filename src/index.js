@@ -12,11 +12,6 @@ const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 export const defaultExtensions = defaultBabelExtensions;
 
 export function mapModule(sourcePath, currentFile, pluginOpts, cwd) {
-  // Do not map source starting with a dot
-  if (sourcePath[0] === '.') {
-    return null;
-  }
-
   return getRealPath(sourcePath, currentFile, {
     cwd,
     pluginOpts,

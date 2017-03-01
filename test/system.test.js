@@ -37,4 +37,25 @@ describe('System.import', () => {
 
     expect(result.code).toBe('System.import("./something").then(() => {}).catch(() => {});');
   });
+
+  it('should handle no arguments', () => {
+    const code = 'System.import().then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('System.import().then(() => {}).catch(() => {});');
+  });
+
+  it('should handle the first argument not being a string literal', () => {
+    const code = 'System.import(path).then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('System.import(path).then(() => {}).catch(() => {});');
+  });
+
+  it('should handle an empty path', () => {
+    const code = 'System.import(\'\').then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('System.import(\'\').then(() => {}).catch(() => {});');
+  });
 });

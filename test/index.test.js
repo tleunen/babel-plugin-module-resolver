@@ -47,6 +47,28 @@ describe('module-resolver', () => {
         ],
       };
 
+      it('should handle no arguments', () => {
+        const code = 'var something = require();';
+        const result = transform(code, rootTransformerOpts);
+
+        expect(result.code).toBe('var something = require();');
+      });
+
+      it('should handle the first argument not being a string literal', () => {
+        const code = 'var something = require(path);';
+        const result = transform(code, rootTransformerOpts);
+
+        expect(result.code).toBe('var something = require(path);');
+      });
+
+      describe('should handle an empty path', () => {
+        testRequireImport(
+                    '',
+                    '',
+                    rootTransformerOpts,
+                );
+      });
+
       describe('should resolve the file path', () => {
         testRequireImport(
                     'app',
@@ -316,13 +338,13 @@ describe('module-resolver', () => {
           cwd: 'babelrc',
         }],
       ],
-      filename: './test/testproject/src',
+      filename: './test/testproject/src/app.js',
     };
 
     describe('should resolve the sub file path', () => {
       testRequireImport(
                 'components/Root',
-                './src/components/Root',
+                './components/Root',
                 transformerOpts,
             );
     });
@@ -330,9 +352,72 @@ describe('module-resolver', () => {
     describe('should alias the sub file path', () => {
       testRequireImport(
                 'test/tools',
-                './test/tools',
+                '../test/tools',
                 transformerOpts,
             );
+    });
+
+    describe('unknown filename', () => {
+      const unknownFileTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './src',
+            ],
+            cwd: 'babelrc',
+          }],
+        ],
+      };
+      const cachedCwd = process.cwd();
+      const babelRcDir = 'test/testproject';
+
+      beforeEach(() => {
+        process.chdir(babelRcDir);
+      });
+
+      afterEach(() => {
+        process.chdir(cachedCwd);
+      });
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+                  'components/Root',
+                  './src/components/Root',
+                  unknownFileTransformerOpts,
+              );
+      });
+    });
+
+    describe('missing babelrc in path (uses cwd)', () => {
+      jest.mock('find-babel-config', () => ({
+        sync: function findBabelConfigSync() {
+          return { file: null, config: null };
+        },
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+
+      const missingBabelConfigTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            root: [
+              '.',
+            ],
+            cwd: 'babelrc',
+          }],
+        ],
+        filename: './test/testproject/src/app.js',
+      };
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+                  'test/testproject/src/components/Root',
+                  './components/Root',
+                  missingBabelConfigTransformerOpts,
+              );
+      });
     });
   });
 });
