@@ -53,6 +53,28 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 - `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
 
+### Regular expression alias
+
+It is possible to specify an alias using a regular expression. To do that, either start an alias with `'^'` or end it with `'$'`:
+
+```json
+{
+  "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "^@namespace/foo-(.+)": "packages/\\1"
+      }
+    }]
+  ]
+}
+```
+
+In this example `'@namespace/foo-bar'` will become `'packages/foo/bar'`.
+
+You can reference each the n-th matched group with `'\\n'` (`'\\0'` refers to the whole matched expression - in the example it would be `'@namespace/foo-bar'`).
+
+To escape the backslash just use `'\\\\'`.
+
 ### Updating from babel-plugin-module-alias
 
 babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
