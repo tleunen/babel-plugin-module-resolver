@@ -108,18 +108,18 @@ export default function getRealPath(sourcePath, currentFile, opts) {
     return sourceFileFromRoot;
   }
 
-  const sourceFileFromRegExp = getRealPathFromRegExpConfig(
-    sourcePath, regExps,
-  );
-  if (sourceFileFromRegExp) {
-    return sourceFileFromRegExp;
-  }
-
   const sourceFileFromAlias = getRealPathFromAliasConfig(
     sourcePath, absCurrentFile, alias, cwd,
   );
   if (sourceFileFromAlias) {
     return sourceFileFromAlias;
+  }
+
+  const sourceFileFromRegExp = getRealPathFromRegExpConfig(
+    sourcePath, regExps,
+  );
+  if (sourceFileFromRegExp) {
+    return sourceFileFromRegExp;
   }
 
   return sourcePath;
