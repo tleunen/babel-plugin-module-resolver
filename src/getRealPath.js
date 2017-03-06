@@ -40,23 +40,6 @@ function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, ex
   return null;
 }
 
-function getRealPathFromRegExpConfig(sourcePath, regExps) {
-  let aliasedSourceFile;
-
-  regExps.find(([regExp, substitute]) => {
-    const execResult = regExp.exec(sourcePath);
-
-    if (execResult === null) {
-      return false;
-    }
-
-    aliasedSourceFile = substitute(execResult);
-    return true;
-  });
-
-  return aliasedSourceFile;
-}
-
 function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
   const moduleSplit = sourcePath.split('/');
 
@@ -85,6 +68,23 @@ function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
   }
 
   return toLocalPath(toPosixPath(mapToRelative(cwd, absCurrentFile, newPath)));
+}
+
+function getRealPathFromRegExpConfig(sourcePath, regExps) {
+  let aliasedSourceFile;
+
+  regExps.find(([regExp, substitute]) => {
+    const execResult = regExp.exec(sourcePath);
+
+    if (execResult === null) {
+      return false;
+    }
+
+    aliasedSourceFile = substitute(execResult);
+    return true;
+  });
+
+  return aliasedSourceFile;
 }
 
 export default function getRealPath(sourcePath, currentFile, opts) {
