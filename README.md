@@ -69,11 +69,11 @@ It is possible to specify an alias using a regular expression. To do that, eithe
 }
 ```
 
-In this example `'@namespace/foo-bar'` will become `'packages/foo/bar'`.
+Using the config from this example `'@namespace/foo-bar'` will become `'packages/bar'`.
 
-You can reference each the n-th matched group with `'\\n'` (`'\\0'` refers to the whole matched expression - in the example it would be `'@namespace/foo-bar'`).
+You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the whole matched path).
 
-To escape the backslash just use `'\\\\'`.
+To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
 
 ### Updating from babel-plugin-module-alias
 
