@@ -1,11 +1,11 @@
 # babel-plugin-module-resolver
 [![Maintenance Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![Build Status Linux][circleci-image]][circleci-url] [![Build Status Windows][appveyor-image]][appveyor-url] [![Coverage Status][coverage-image]][coverage-url]
 
-A [babel](http://babeljs.io) plugin to add a new resolver for your modules when compiling your code using Babel. The plugin allows you to add new "root" directories that contains your modules. It also allows you to setup custom alias which can also be directories or specific files, or even other npm modules.
+A [Babel](http://babeljs.io) plugin to add a new resolver for your modules when compiling your code using Babel. This plugin allows you to add new "root" directories that contain your modules. It also allows you to setup a custom alias for directories, specific files, or even other npm modules.
 
 ## Description
 
-The reason of this plugin is to simplify the require/import paths in your project. Therefore, instead of using complex relative paths like `../../../../utils/my-utils`, you would be able to write `utils/my-utils`. It will allow you to work faster since you won't need to calculate how many levels of directory you have to go up before accessing the file.
+This plugin can simplify the require/import paths in your project. For example, instead of using complex relative paths like `../../../../utils/my-utils`, you can write `utils/my-utils`. It will allow you to work faster since you won't need to calculate how many levels of directory you have to go up before accessing the file.
 
 ```js
 // Use this:
@@ -79,7 +79,7 @@ To use the backslash character (`\`) just escape it like so: `'\\\\'` (double es
 
 babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
 
-Updating is very easy, so for example if you had this configuration:
+Updating is very easy. For example, if you had this configuration:
 ```json
 // This configuration is outdated, this is just an example
 {
@@ -109,11 +109,11 @@ You only have to update the plugin options to be like this:
 
 ## ESLint plugin
 
-If you're using ESLint, you should use the [eslint-plugin-import][eslint-plugin-import], and this [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] in order to remove falsy unresolved modules.
+If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-import], and [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] to remove falsy unresolved modules.
 
 ## Usage with Flow
 
-To allow Flow to find your modules it is necessary to add configuration options
+To allow Flow to find your modules, add configuration options
 to `.flowconfig`.
 
 For example, a React component is located at `src/components/Component.js`
@@ -126,7 +126,7 @@ import '../../src/components/Component';
 import 'components/Component';
 ```
 
-You need to instruct Flow where to resolve modules from:
+Instruct Flow where to resolve modules from:
 
 ```
 # .flowconfig
