@@ -19,6 +19,10 @@ export function mapModule(sourcePath, currentFile, pluginOpts, cwd) {
   });
 }
 
+function isRegExp(string) {
+  return string.startsWith('^') || string.endsWith('$');
+}
+
 export function manipulatePluginOptions(pluginOpts) {
   if (pluginOpts.root) {
     // eslint-disable-next-line no-param-reassign
@@ -30,6 +34,30 @@ export function manipulatePluginOptions(pluginOpts) {
       }
       return resolvedDirs.concat(dirPath);
     }, []);
+  }
+
+  // eslint-disable-next-line no-param-reassign
+  pluginOpts.regExps = [];
+
+  if (pluginOpts.alias) {
+    Object.keys(pluginOpts.alias)
+      .filter(isRegExp)
+      .forEach((key) => {
+        const parts = pluginOpts.alias[key].split('\\\\');
+
+        function substitute(execResult) {
+          return parts
+            .map(part =>
+              part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
+            )
+            .join('\\');
+        }
+
+        pluginOpts.regExps.push([new RegExp(key), substitute]);
+
+        // eslint-disable-next-line no-param-reassign
+        delete pluginOpts.alias[key];
+      });
   }
 
   return pluginOpts;
