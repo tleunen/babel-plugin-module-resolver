@@ -32,9 +32,9 @@ function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, ex
     // map the source and keep its extension if the import/require had one
     const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
     return toLocalPath(toPosixPath(replaceExtension(
-            mapToRelative(cwd, absCurrentFile, absFileInRoot),
-            ext,
-        )));
+      mapToRelative(cwd, absCurrentFile, absFileInRoot),
+      ext,
+    )));
   }
 
   return null;
@@ -53,16 +53,16 @@ function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
     moduleSplit.pop();
   }
 
-    // no alias mapping found
+  // no alias mapping found
   if (!aliasPath) {
     return null;
   }
 
-    // remove legacy "npm:" prefix for npm packages
+  // remove legacy "npm:" prefix for npm packages
   aliasPath = aliasPath.replace(/^(npm:)/, '');
   const newPath = sourcePath.replace(moduleSplit.join('/'), aliasPath);
 
-    // alias to npm module don't need relative mapping
+  // alias to npm module don't need relative mapping
   if (aliasPath[0] !== '.') {
     return newPath;
   }
