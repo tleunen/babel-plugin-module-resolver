@@ -65,22 +65,16 @@ export function manipulatePluginOptions(pluginOpts) {
 
 export default ({ types: t }) => {
   const importVisitors = {
-    CallExpression: {
-      exit(nodePath, state) {
-        transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
+    CallExpression(nodePath, state) {
+      transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
-    ImportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
+    ImportDeclaration(nodePath, state) {
+      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
-    ExportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
+    ExportDeclaration(nodePath, state) {
+      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
   };
 
