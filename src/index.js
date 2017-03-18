@@ -63,31 +63,8 @@ export function manipulatePluginOptions(pluginOpts) {
   return pluginOpts;
 }
 
-export default ({ types: t }) => ({
-  manipulateOptions(babelOptions) {
-    let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-    findPluginOptions = manipulatePluginOptions(findPluginOptions);
-
-    this.customCWD = findPluginOptions.cwd;
-  },
-
-  pre(file) {
-    let { customCWD } = this.plugin;
-    if (customCWD === 'babelrc') {
-      const startPath = (file.opts.filename === 'unknown')
-        ? './'
-        : file.opts.filename;
-
-      const { file: babelFile } = findBabelConfig.sync(startPath);
-      customCWD = babelFile
-        ? path.dirname(babelFile)
-        : null;
-    }
-
-    this.moduleResolverCWD = customCWD || process.cwd();
-  },
-
-  visitor: {
+export default ({ types: t }) => {
+  const importVisitors = {
     CallExpression: {
       exit(nodePath, state) {
         transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
@@ -105,5 +82,38 @@ export default ({ types: t }) => ({
         transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
       },
     },
-  },
-});
+  };
+
+  return {
+    manipulateOptions(babelOptions) {
+      let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
+      findPluginOptions = manipulatePluginOptions(findPluginOptions);
+
+      this.customCWD = findPluginOptions.cwd;
+    },
+
+    pre(file) {
+      let { customCWD } = this.plugin;
+      if (customCWD === 'babelrc') {
+        const startPath = (file.opts.filename === 'unknown')
+          ? './'
+          : file.opts.filename;
+
+        const { file: babelFile } = findBabelConfig.sync(startPath);
+        customCWD = babelFile
+          ? path.dirname(babelFile)
+          : null;
+      }
+
+      this.moduleResolverCWD = customCWD || process.cwd();
+    },
+
+    visitor: {
+      Program: {
+        exit(programPath, state) {
+          programPath.traverse(importVisitors, state);
+        },
+      },
+    },
+  };
+};
