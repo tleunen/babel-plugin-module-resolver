@@ -18,9 +18,7 @@ export default function transformSystemImportCall(t, nodePath, mapper, state, cw
   if (moduleArg.node.type === 'StringLiteral') {
     const modulePath = mapper(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
     if (modulePath) {
-      nodePath.replaceWith(t.callExpression(
-        calleePath.node, [t.stringLiteral(modulePath)],
-      ));
+      nodePath.get('arguments.0').replaceWith(t.stringLiteral(modulePath));
     }
   }
 }

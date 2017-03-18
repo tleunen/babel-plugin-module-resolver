@@ -90,16 +90,9 @@ export default ({ types: t }) => ({
   visitor: {
     CallExpression: {
       exit(nodePath, state) {
-        if (nodePath.node.seen) {
-          return;
-        }
-
         transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
         transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
         transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-
-        // eslint-disable-next-line no-param-reassign
-        nodePath.node.seen = true;
       },
     },
     ImportDeclaration: {
