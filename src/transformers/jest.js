@@ -26,7 +26,7 @@ export default function transformJestCalls(t, nodePath, mapper, state, cwd) {
   if (moduleArg.node.type === 'StringLiteral') {
     const modulePath = mapper(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
     if (modulePath) {
-      nodePath.get('arguments.0').replaceWith(t.stringLiteral(modulePath));
+      moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
   }
 }
