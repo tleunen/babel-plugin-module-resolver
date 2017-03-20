@@ -23,13 +23,16 @@ function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
 }
 
-export function manipulatePluginOptions(pluginOpts) {
+// The working directory of Atom is the project,
+// while Sublime sets the working project to the directory in which the current opened file is
+// So we need to offer a way to customize the cwd for the eslint plugin
+export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
   if (pluginOpts.root) {
     // eslint-disable-next-line no-param-reassign
     pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
         return resolvedDirs.concat(
-          glob.sync(dirPath).filter(p => fs.lstatSync(p).isDirectory()),
+          glob.sync(dirPath, { cwd }).filter(p => fs.lstatSync(p).isDirectory()),
         );
       }
       return resolvedDirs.concat(dirPath);
