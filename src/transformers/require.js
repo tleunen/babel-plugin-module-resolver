@@ -19,9 +19,7 @@ export default function transformRequireCall(t, nodePath, mapper, state, cwd) {
   if (moduleArg.node.type === 'StringLiteral') {
     const modulePath = mapper(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
     if (modulePath) {
-      nodePath.replaceWith(t.callExpression(
-        calleePath.node, [t.stringLiteral(modulePath)],
-      ));
+      moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
   }
 }

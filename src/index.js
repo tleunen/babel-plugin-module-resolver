@@ -66,54 +66,51 @@ export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
   return pluginOpts;
 }
 
-export default ({ types: t }) => ({
-  manipulateOptions(babelOptions) {
-    let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-    findPluginOptions = manipulatePluginOptions(findPluginOptions);
+export default ({ types: t }) => {
+  const importVisitors = {
+    CallExpression(nodePath, state) {
+      transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+    },
+    ImportDeclaration(nodePath, state) {
+      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+    },
+    ExportDeclaration(nodePath, state) {
+      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+    },
+  };
 
-    this.customCWD = findPluginOptions.cwd;
-  },
+  return {
+    manipulateOptions(babelOptions) {
+      let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
+      findPluginOptions = manipulatePluginOptions(findPluginOptions);
 
-  pre(file) {
-    let { customCWD } = this.plugin;
-    if (customCWD === 'babelrc') {
-      const startPath = (file.opts.filename === 'unknown')
-        ? './'
-        : file.opts.filename;
+      this.customCWD = findPluginOptions.cwd;
+    },
 
-      const { file: babelFile } = findBabelConfig.sync(startPath);
-      customCWD = babelFile
-        ? path.dirname(babelFile)
-        : null;
-    }
+    pre(file) {
+      let { customCWD } = this.plugin;
+      if (customCWD === 'babelrc') {
+        const startPath = (file.opts.filename === 'unknown')
+          ? './'
+          : file.opts.filename;
 
-    this.moduleResolverCWD = customCWD || process.cwd();
-  },
+        const { file: babelFile } = findBabelConfig.sync(startPath);
+        customCWD = babelFile
+          ? path.dirname(babelFile)
+          : null;
+      }
 
-  visitor: {
-    CallExpression: {
-      exit(nodePath, state) {
-        if (nodePath.node.seen) {
-          return;
-        }
+      this.moduleResolverCWD = customCWD || process.cwd();
+    },
 
-        transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-
-        // eslint-disable-next-line no-param-reassign
-        nodePath.node.seen = true;
+    visitor: {
+      Program: {
+        exit(programPath, state) {
+          programPath.traverse(importVisitors, state);
+        },
       },
     },
-    ImportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
-    },
-    ExportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
-    },
-  },
-});
+  };
+};
