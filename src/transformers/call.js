@@ -1,4 +1,8 @@
-import { matchesPattern, mapPathString } from '../utils';
+import {
+  matchesPattern,
+  mapPathString,
+  isImportCall,
+} from '../utils';
 
 
 const patterns = [
@@ -14,8 +18,13 @@ const patterns = [
 
 export default function transformCall(nodePath, state) {
   const calleePath = nodePath.get('callee');
+  const isNormalCall = patterns.some(pattern => matchesPattern(state.types, calleePath, pattern));
 
-  if (patterns.some(pattern => matchesPattern(state.types, calleePath, pattern))) {
+  if (isNormalCall) {
+    mapPathString(nodePath.get('arguments.0'), state);
+  }
+
+  if (isImportCall(state.types, nodePath)) {
     mapPathString(nodePath.get('arguments.0'), state);
   }
 }

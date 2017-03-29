@@ -44,3 +44,7 @@ export function mapPathString(nodePath, state) {
     nodePath.replaceWith(state.types.stringLiteral(modulePath));
   }
 }
+
+export function isImportCall(types, calleePath) {
+  return types.isImport(calleePath.node.callee);
+}

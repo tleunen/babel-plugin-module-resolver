@@ -42,6 +42,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.2.2",
+    "babel-preset-stage-2": "^6.22.0",
     "common-tags": "^1.4.0",
     "eslint": "^3.18.0",
     "eslint-config-airbnb-base": "^11.1.2",
@@ -55,7 +56,7 @@
     "pretest": "npm run lint",
     "test": "jest --coverage",
     "test:suite": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch test/dynamicImport.test.js",
     "prepublish": "npm run compile",
     "release": "standard-version"
   },
