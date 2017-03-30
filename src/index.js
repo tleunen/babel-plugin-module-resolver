@@ -82,15 +82,11 @@ export default ({ types: t }) => {
   };
 
   return {
-    manipulateOptions(babelOptions) {
-      let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-      findPluginOptions = manipulatePluginOptions(findPluginOptions);
-
-      this.customCWD = findPluginOptions.cwd;
-    },
-
     pre(file) {
-      let { customCWD } = this.plugin;
+      manipulatePluginOptions(this.opts);
+
+      let customCWD = this.opts.cwd;
+
       if (customCWD === 'babelrc') {
         const startPath = (file.opts.filename === 'unknown')
           ? './'
