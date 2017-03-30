@@ -31,6 +31,7 @@
   ],
   "dependencies": {
     "find-babel-config": "^1.0.1",
+    "find-root": "^1.0.0",
     "glob": "^7.1.1",
     "resolve": "^1.3.2"
   },

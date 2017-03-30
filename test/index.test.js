@@ -597,4 +597,99 @@ describe('module-resolver', () => {
       });
     });
   });
+
+  describe('packagejson', () => {
+    const transformerOpts = {
+      babelrc: false,
+      plugins: [
+        [plugin, {
+          root: [
+            './src',
+          ],
+          alias: {
+            test: './test',
+          },
+          cwd: 'packagejson',
+        }],
+      ],
+      filename: './test/testproject/src/app.js',
+    };
+
+    describe('should resolve the sub file path', () => {
+      testRequireImport(
+        'components/Root',
+        './components/Root',
+        transformerOpts,
+      );
+    });
+
+    describe('should alias the sub file path', () => {
+      testRequireImport(
+        'test/tools',
+        '../test/tools',
+        transformerOpts,
+      );
+    });
+
+    describe('unknown filename', () => {
+      const unknownFileTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './src',
+            ],
+            cwd: 'packagejson',
+          }],
+        ],
+      };
+      const cachedCwd = process.cwd();
+      const babelRcDir = 'test/testproject';
+
+      beforeEach(() => {
+        process.chdir(babelRcDir);
+      });
+
+      afterEach(() => {
+        process.chdir(cachedCwd);
+      });
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+          'components/Root',
+          './src/components/Root',
+          unknownFileTransformerOpts,
+        );
+      });
+    });
+
+    describe('missing packagejson in path (uses cwd)', () => {
+      jest.mock('find-root', () => function findRoot() {
+        return null;
+      });
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+
+      const missingBabelConfigTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            root: [
+              '.',
+            ],
+            cwd: 'packagejson',
+          }],
+        ],
+        filename: './test/testproject/src/app.js',
+      };
+
+      describe('should resolve the sub file path', () => {
+        testRequireImport(
+          'test/testproject/src/components/Root',
+          './components/Root',
+          missingBabelConfigTransformerOpts,
+        );
+      });
+    });
+  });
 });
