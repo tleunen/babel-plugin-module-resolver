@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.0"></a>
+# [2.7.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.5.0...v2.7.0) (2017-03-30)
+
+
+### Reverts
+
+* Force a 2.7.0 by reverting all changes since 2.5.0 ([577afad](https://github.com/tleunen/babel-plugin-module-resolver/commit/577afad))
+
+
+
 <a name="2.5.0"></a>
 # [2.5.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.4.0...v2.5.0) (2017-02-05)
 
