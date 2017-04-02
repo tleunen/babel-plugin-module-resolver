@@ -116,6 +116,21 @@ describe('module-resolver', () => {
         ],
       };
 
+      it('should convert root to array if root is a string', () => {
+        const rootStringTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              root: './test/testproject/src',
+            }],
+          ],
+        };
+        const code = 'var something = require();';
+        const result = transform(code, rootStringTransformerOpts);
+
+        expect(result.code).toBe('var something = require();');
+      });
+
       it('should handle no arguments', () => {
         const code = 'var something = require();';
         const result = transform(code, rootTransformerOpts);
