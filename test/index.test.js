@@ -110,6 +110,9 @@ describe('module-resolver', () => {
         plugins: [
           [plugin, {
             root: './test/testproject/src',
+            alias: {
+              'constants/actions': './test/testproject/test/mockApp',
+            },
           }],
         ],
       };
@@ -208,6 +211,14 @@ describe('module-resolver', () => {
         testRequireImport(
           './something',
           './something',
+          rootTransformerOpts,
+        );
+      });
+
+      describe('should alias before resolving to an existing path', () => {
+        testRequireImport(
+          'constants/actions',
+          './test/testproject/test/mockApp',
           rootTransformerOpts,
         );
       });
