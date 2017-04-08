@@ -39,7 +39,7 @@ function normalizeOptions(file) {
   normalizeCwd.call(this, file);
 
   if (opts.root) {
-    if (typeof opts.root === 'string') {
+    if (!Array.isArray(opts.root)) {
       opts.root = [opts.root];
     }
     opts.root = opts.root
