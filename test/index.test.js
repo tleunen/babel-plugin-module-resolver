@@ -415,6 +415,9 @@ describe('module-resolver', () => {
           [plugin, {
             root: './testproject/src',
             cwd: path.resolve('test'),
+            alias: {
+              test: './testproject/test',
+            },
           }],
         ],
       };
@@ -423,6 +426,14 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
+          transformerOpts,
+        );
+      });
+
+      it('should alias the sub file path', () => {
+        testWithImport(
+          'test/tools',
+          './test/testproject/test/tools',
           transformerOpts,
         );
       });
@@ -435,6 +446,26 @@ describe('module-resolver', () => {
           [plugin, {
             root: './src',
             cwd: path.resolve('test/testproject'),
+          }],
+        ],
+      };
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'components/Root',
+          './test/testproject/src/components/Root',
+          transformerOpts,
+        );
+      });
+    });
+
+    describe('with glob root', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: ['./testproject/*'],
+            cwd: path.resolve('test'),
           }],
         ],
       };
