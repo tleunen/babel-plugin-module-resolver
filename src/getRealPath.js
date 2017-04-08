@@ -1,7 +1,9 @@
 import path from 'path';
+
 import resolve from 'resolve';
-import { toLocalPath, toPosixPath, replaceExtension } from './utils';
 import mapToRelative from './mapToRelative';
+import { toLocalPath, toPosixPath, replaceExtension } from './utils';
+
 
 function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
   // Search the source path inside every custom root directory
@@ -87,22 +89,20 @@ function getRealPathFromRegExpConfig(sourcePath, regExps) {
   return aliasedSourceFile;
 }
 
-export default function getRealPath(sourcePath, currentFile, opts) {
+export default function getRealPath(sourcePath, { cwd, file, opts }) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }
 
   // file param is a relative path from the environment current working directory
   // (not from cwd param)
+  const currentFile = file.opts.filename;
   const absCurrentFile = path.resolve(currentFile);
 
-  const { cwd, extensions, pluginOpts } = opts;
-  const rootDirs = pluginOpts.root || [];
-  const regExps = pluginOpts.regExps;
-  const alias = pluginOpts.alias || {};
+  const { root, extensions, alias, regExps } = opts;
 
   const sourceFileFromRoot = getRealPathFromRootConfig(
-    sourcePath, absCurrentFile, rootDirs, cwd, extensions,
+    sourcePath, absCurrentFile, root, cwd, extensions,
   );
   if (sourceFileFromRoot) {
     return sourceFileFromRoot;
