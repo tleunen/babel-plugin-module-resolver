@@ -464,7 +464,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: ['./testproject/*'],
+            root: './testproject/*',
             cwd: path.resolve('test'),
           }],
         ],
