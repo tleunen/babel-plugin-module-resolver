@@ -28,6 +28,9 @@ function isRegExp(string) {
 // So we need to offer a way to customize the cwd for the eslint plugin
 export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
   if (pluginOpts.root) {
+    if (typeof pluginOpts.root === 'string') {
+      pluginOpts.root = [pluginOpts.root]; // eslint-disable-line no-param-reassign
+    }
     // eslint-disable-next-line no-param-reassign
     pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {

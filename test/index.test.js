@@ -109,12 +109,17 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './test/testproject/src',
-            ],
+            root: './test/testproject/src',
           }],
         ],
       };
+
+      it('should convert root to array if root is a string', () => {
+        const code = 'var something = require();';
+        const result = transform(code, rootTransformerOpts);
+
+        expect(result.code).toBe('var something = require();');
+      });
 
       it('should handle no arguments', () => {
         const code = 'var something = require();';
@@ -213,9 +218,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './test/testproject/src/**',
-            ],
+            root: './test/testproject/src/**',
           }],
         ],
       };
@@ -464,9 +467,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './testproject/src',
-            ],
+            root: './testproject/src',
             alias: {
               test: './testproject/test',
             },
@@ -498,9 +499,7 @@ describe('module-resolver', () => {
       babelrc: false,
       plugins: [
         [plugin, {
-          root: [
-            './src',
-          ],
+          root: './src',
           alias: {
             test: './test',
           },
@@ -531,9 +530,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './src',
-            ],
+            root: './src',
             cwd: 'babelrc',
           }],
         ],
@@ -571,9 +568,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [pluginWithMock, {
-            root: [
-              '.',
-            ],
+            root: '.',
             cwd: 'babelrc',
           }],
         ],

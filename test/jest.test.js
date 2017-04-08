@@ -7,9 +7,7 @@ describe('jest functions', () => {
     babelrc: false,
     plugins: [
       [plugin, {
-        root: [
-          './test/testproject/src',
-        ],
+        root: './test/testproject/src',
         alias: {
           test: './test/testproject/test',
         },
