@@ -1,106 +1,15 @@
-/* eslint-env jest */
 import path from 'path';
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
-import transformToCommonJsPlugin from 'babel-plugin-transform-es2015-modules-commonjs';
-import { stripIndent } from 'common-tags';
+
+import { transform } from 'babel-core';
 import plugin from '../src';
 
+
 describe('module-resolver', () => {
-  function testRequireImport(source, output, transformerOpts) {
-    it('with a require statement', () => {
-      const code = `var something = require("${source}");`;
-      const result = transform(code, transformerOpts);
+  function testWithImport(source, output, transformerOpts) {
+    const code = `import something from "${source}";`;
+    const result = transform(code, transformerOpts);
 
-      expect(result.code).toBe(`var something = require("${output}");`);
-    });
-
-    it('with an import statement', () => {
-      const code = `import something from "${source}";`;
-      const result = transform(code, transformerOpts);
-
-      expect(result.code).toBe(`import something from "${output}";`);
-    });
-
-    it('with an "export from" statement', () => {
-      const code = `export { something } from "${source}";`;
-      const result = transform(code, transformerOpts);
-
-      expect(result.code).toBe(`export { something } from "${output}";`);
-    });
-
-    it('with an export statement', () => {
-      const code = 'export { something };';
-      const result = transform(code, transformerOpts);
-
-      expect(result.code).toBe('export { something };');
-    });
-  }
-
-  function testImportWithCommonJSTransform(source, output, transformerOpts) {
-    const transformerOptsWithCommonJs = {
-      plugins: [
-        ...transformerOpts.plugins,
-        [transformToCommonJsPlugin, { noInterop: true }],
-      ],
-    };
-
-    it('with a require statement', () => {
-      const code = `var something = require("${source}");`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        var something = require("${output}");
-      `);
-    });
-
-    it('with an import statement', () => {
-      const code = `import something from "${source}";`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        var _storage = require("${output}");
-      `);
-    });
-
-    it('with an "export from" statement', () => {
-      const code = `export { something } from "${source}";`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", {
-          value: true
-        });
-
-        var _storage = require("${output}");
-
-        Object.defineProperty(exports, "something", {
-          enumerable: true,
-          get: function () {
-            return _storage.something;
-          }
-        });
-      `);
-    });
-
-    it('with an export statement', () => {
-      const code = 'export { something };';
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", {
-          value: true
-        });
-        exports.something = something;
-      `);
-    });
+    expect(result.code).toBe(`import something from "${output}";`);
   }
 
   describe('root', () => {
@@ -114,79 +23,66 @@ describe('module-resolver', () => {
         ],
       };
 
-      it('should convert root to array if root is a string', () => {
-        const code = 'var something = require();';
-        const result = transform(code, rootTransformerOpts);
-
-        expect(result.code).toBe('var something = require();');
-      });
-
-      it('should handle no arguments', () => {
-        const code = 'var something = require();';
-        const result = transform(code, rootTransformerOpts);
-
-        expect(result.code).toBe('var something = require();');
-      });
-
-      it('should handle the first argument not being a string literal', () => {
-        const code = 'var something = require(path);';
-        const result = transform(code, rootTransformerOpts);
-
-        expect(result.code).toBe('var something = require(path);');
-      });
-
-      describe('should handle an empty path', () => {
-        testRequireImport(
-          '',
-          '',
-          rootTransformerOpts,
-        );
-      });
-
-      describe('should resolve the file path', () => {
-        testRequireImport(
+      it('should resolve the file path', () => {
+        testWithImport(
           'app',
           './test/testproject/src/app',
           rootTransformerOpts,
         );
       });
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
           rootTransformerOpts,
         );
       });
 
-      describe('should resolve a sub file path without /index', () => {
-        testRequireImport(
+      it('should resolve a sub file path without /index', () => {
+        testWithImport(
           'components/Header',
           './test/testproject/src/components/Header',
           rootTransformerOpts,
         );
       });
 
-      describe('should resolve the file path while keeping the extension', () => {
-        testRequireImport(
+      it('should resolve the file path while keeping the extension', () => {
+        testWithImport(
           'components/Header/header.css',
           './test/testproject/src/components/Header/header.css',
           rootTransformerOpts,
         );
       });
 
-      describe('should resolve the file path with a filename containing a dot', () => {
-        testRequireImport(
+      it('should resolve the file path with an extension that is non-standard in node', () => {
+        testWithImport(
+          'es6module',
+          './test/testproject/src/es6module',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          'text',
+          'text',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file path with a filename containing a dot', () => {
+        testWithImport(
           'libs/custom.modernizr3',
           './test/testproject/src/libs/custom.modernizr3',
           rootTransformerOpts,
         );
       });
 
-      describe('should resolve to a file instead of a directory', () => {
+      it('should resolve to a file instead of a directory', () => {
         // When a file and a directory on the same level share the same name,
         // the file has priority according to the Node require mechanism
-        testRequireImport(
+        testWithImport(
           'constants',
           '../constants',
           {
@@ -196,18 +92,48 @@ describe('module-resolver', () => {
         );
       });
 
-      describe('should not resolve a path outisde of the root directory', () => {
-        testRequireImport(
+      it('should not resolve a path outside of the root directory', () => {
+        testWithImport(
           'lodash/omit',
           'lodash/omit',
           rootTransformerOpts,
         );
       });
 
-      describe('should not try to resolve a local path', () => {
-        testRequireImport(
+      it('should not try to resolve a local path', () => {
+        testWithImport(
           './something',
           './something',
+          rootTransformerOpts,
+        );
+      });
+    });
+
+    describe('multiple roots', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './test/testproject/src/actions',
+              './test/testproject/src/components',
+            ],
+          }],
+        ],
+      };
+
+      it('should resolve the file sub path in root 1', () => {
+        testWithImport(
+          'something',
+          './test/testproject/src/actions/something',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file sub path in root 2', () => {
+        testWithImport(
+          'Root',
+          './test/testproject/src/components/Root',
           rootTransformerOpts,
         );
       });
@@ -223,35 +149,63 @@ describe('module-resolver', () => {
         ],
       };
 
-      describe('should resolve the file path right inside the glob', () => {
-        testRequireImport(
+      it('should resolve the file path right inside the glob', () => {
+        testWithImport(
           'app',
           './test/testproject/src/app',
           globRootTransformerOpts,
         );
       });
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'actions/something',
           './test/testproject/src/actions/something',
           globRootTransformerOpts,
         );
       });
 
-      describe('should resolve the sub file path without specifying the directory', () => {
-        testRequireImport(
+      it('should resolve the sub file path without specifying the directory', () => {
+        testWithImport(
           'something',
           './test/testproject/src/actions/something',
           globRootTransformerOpts,
         );
       });
 
-      describe('should resolve the deep file', () => {
-        testRequireImport(
+      it('should resolve the deep file', () => {
+        testWithImport(
           'SidebarFooterButton',
           './test/testproject/src/components/Sidebar/Footer/SidebarFooterButton',
           globRootTransformerOpts,
+        );
+      });
+    });
+
+    describe('non-standard extensions', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            extensions: ['.txt'],
+          }],
+        ],
+      };
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          'app',
+          'app',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file path with a known defined extension', () => {
+        testWithImport(
+          'text',
+          './test/testproject/src/text',
+          rootTransformerOpts,
         );
       });
     });
@@ -283,16 +237,16 @@ describe('module-resolver', () => {
     };
 
     describe('with a simple alias', () => {
-      describe('should alias the file path', () => {
-        testRequireImport(
+      it('should alias the file path', () => {
+        testWithImport(
           'components',
           './test/testproject/src/components',
           aliasTransformerOpts,
         );
       });
 
-      describe('should alias the sub file path', () => {
-        testRequireImport(
+      it('should alias the sub file path', () => {
+        testWithImport(
           'test/tools',
           './test/testproject/test/tools',
           aliasTransformerOpts,
@@ -301,16 +255,16 @@ describe('module-resolver', () => {
     });
 
     describe('with an alias containing a slash', () => {
-      describe('should alias the file path', () => {
-        testRequireImport(
+      it('should alias the file path', () => {
+        testWithImport(
           'awesome/components',
           './test/testproject/src/components',
           aliasTransformerOpts,
         );
       });
 
-      describe('should alias the sub file path', () => {
-        testRequireImport(
+      it('should alias the sub file path', () => {
+        testWithImport(
           'awesome/components/Header',
           './test/testproject/src/components/Header',
           aliasTransformerOpts,
@@ -318,16 +272,16 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('should alias a path containing a dot in the filename', () => {
-      testRequireImport(
+    it('should alias a path containing a dot in the filename', () => {
+      testWithImport(
         'libs/custom.modernizr3',
         './test/testproject/src/libs/custom.modernizr3',
         aliasTransformerOpts,
       );
     });
 
-    describe('should alias the path with its extension', () => {
-      testRequireImport(
+    it('should alias the path with its extension', () => {
+      testWithImport(
         'components/Header/header.css',
         './test/testproject/src/components/Header/header.css',
         aliasTransformerOpts,
@@ -335,16 +289,16 @@ describe('module-resolver', () => {
     });
 
     describe('should not alias a unknown path', () => {
-      describe('when requiring a node module', () => {
-        testRequireImport(
+      it('when requiring a node module', () => {
+        testWithImport(
           'other-lib',
           'other-lib',
           aliasTransformerOpts,
         );
       });
 
-      describe('when requiring a specific un-mapped file', () => {
-        testRequireImport(
+      it('when requiring a specific un-mapped file', () => {
+        testWithImport(
           './l/otherLib',
           './l/otherLib',
           aliasTransformerOpts,
@@ -352,16 +306,16 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('(legacy) should support aliasing a node module with "npm:"', () => {
-      testRequireImport(
+    it('(legacy) should support aliasing a node module with "npm:"', () => {
+      testWithImport(
         'abstract/thing',
         'concrete/thing',
         aliasTransformerOpts,
       );
     });
 
-    describe('should support aliasing a node modules', () => {
-      testRequireImport(
+    it('should support aliasing a node modules', () => {
+      testWithImport(
         'underscore/map',
         'lodash/map',
         aliasTransformerOpts,
@@ -369,16 +323,16 @@ describe('module-resolver', () => {
     });
 
     describe('with a regular expression', () => {
-      describe('should support replacing parts of a path', () => {
-        testRequireImport(
+      it('should support replacing parts of a path', () => {
+        testWithImport(
           '@namespace/foo-bar',
           'packages/bar',
           aliasTransformerOpts,
         );
       });
 
-      describe('should support replacing parts of a complex path', () => {
-        testRequireImport(
+      it('should support replacing parts of a complex path', () => {
+        testWithImport(
           '@namespace/foo-bar/component.js',
           'packages/bar/component.js',
           aliasTransformerOpts,
@@ -387,24 +341,26 @@ describe('module-resolver', () => {
 
       describe('should support complex regular expressions', () => {
         ['css', 'less', 'scss'].forEach((extension) => {
-          testRequireImport(
-            `styles/style.${extension}`,
-            `style-proxy.${extension}`,
-            aliasTransformerOpts,
-          );
+          it(`should handle the alias with the ${extension} extension`, () => {
+            testWithImport(
+              `styles/style.${extension}`,
+              `style-proxy.${extension}`,
+              aliasTransformerOpts,
+            );
+          });
         });
       });
 
-      describe('should ignore unmatched paths', () => {
-        testRequireImport(
+      it('should ignore unmatched paths', () => {
+        testWithImport(
           'styles/style.js',
           'styles/style.js',
           aliasTransformerOpts,
         );
       });
 
-      describe('should transform double backslash into a single one', () => {
-        testRequireImport(
+      it('should transform double backslash into a single one', () => {
+        testWithImport(
           'single-backslash',
           // This is a string literal, so in the code it will actually be "pas\\sed"
           'pas\\\\sed',
@@ -412,28 +368,18 @@ describe('module-resolver', () => {
         );
       });
 
-      describe('should replece missing matches with an empty string', () => {
-        testRequireImport(
+      it('should replece missing matches with an empty string', () => {
+        testWithImport(
           'non-existing-match',
           'passed',
           aliasTransformerOpts,
         );
       });
 
-      describe('should have higher priority than a simple alias', () => {
-        testRequireImport(
+      it('should have higher priority than a simple alias', () => {
+        testWithImport(
           'regexp-priority',
           'hit',
-          aliasTransformerOpts,
-        );
-      });
-    });
-
-    describe('with the commonjs transformer', () => {
-      describe('should only apply the alias once', () => {
-        testImportWithCommonJSTransform(
-          'prefix/storage',
-          'prefix/lib/storage',
           aliasTransformerOpts,
         );
       });
@@ -442,7 +388,7 @@ describe('module-resolver', () => {
     describe('with the plugin applied twice', () => {
       const doubleAliasTransformerOpts = {
         plugins: [
-          plugin,
+          [plugin, { root: '.' }],
           [plugin, {
             alias: {
               '^@namespace/foo-(.+)': 'packages/\\1',
@@ -451,8 +397,8 @@ describe('module-resolver', () => {
         ],
       };
 
-      describe('should support replacing parts of a path', () => {
-        testRequireImport(
+      it('should support replacing parts of a path', () => {
+        testWithImport(
           '@namespace/foo-bar',
           'packages/bar',
           doubleAliasTransformerOpts,
@@ -468,26 +414,35 @@ describe('module-resolver', () => {
         plugins: [
           [plugin, {
             root: './testproject/src',
-            alias: {
-              test: './testproject/test',
-            },
-            cwd: path.join(process.cwd(), 'test'),
+            cwd: path.resolve('test'),
           }],
         ],
       };
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the file path', () => {
+        testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
           transformerOpts,
         );
       });
+    });
 
-      describe('should alias the sub file path', () => {
-        testRequireImport(
-          'test/tools',
-          './test/testproject/test/tools',
+    describe('with root', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './src',
+            cwd: path.resolve('test/testproject'),
+          }],
+        ],
+      };
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'components/Root',
+          './test/testproject/src/components/Root',
           transformerOpts,
         );
       });
@@ -509,16 +464,16 @@ describe('module-resolver', () => {
       filename: './test/testproject/src/app.js',
     };
 
-    describe('should resolve the sub file path', () => {
-      testRequireImport(
+    it('should resolve the sub file path', () => {
+      testWithImport(
         'components/Root',
         './components/Root',
         transformerOpts,
       );
     });
 
-    describe('should alias the sub file path', () => {
-      testRequireImport(
+    it('should alias the sub file path', () => {
+      testWithImport(
         'test/tools',
         '../test/tools',
         transformerOpts,
@@ -546,8 +501,8 @@ describe('module-resolver', () => {
         process.chdir(cachedCwd);
       });
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'components/Root',
           './src/components/Root',
           unknownFileTransformerOpts,
@@ -575,8 +530,8 @@ describe('module-resolver', () => {
         filename: './test/testproject/src/app.js',
       };
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'test/testproject/src/components/Root',
           './components/Root',
           missingBabelConfigTransformerOpts,
