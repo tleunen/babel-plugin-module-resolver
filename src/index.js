@@ -20,9 +20,8 @@ function isRegExp(string) {
 export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
   if (pluginOpts.root) {
     if (typeof pluginOpts.root === 'string') {
-      pluginOpts.root = [pluginOpts.root]; // eslint-disable-line no-param-reassign
+      pluginOpts.root = [pluginOpts.root];
     }
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
         return resolvedDirs.concat(
@@ -32,11 +31,9 @@ export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
       return resolvedDirs.concat(dirPath);
     }, []);
   } else {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.root = [];
   }
 
-  // eslint-disable-next-line no-param-reassign
   pluginOpts.regExps = [];
 
   if (pluginOpts.alias) {
@@ -55,16 +52,13 @@ export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
 
         pluginOpts.regExps.push([new RegExp(key), substitute]);
 
-        // eslint-disable-next-line no-param-reassign
         delete pluginOpts.alias[key];
       });
   } else {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.alias = {};
   }
 
   if (!pluginOpts.extensions) {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.extensions = defaultExtensions;
   }
 
