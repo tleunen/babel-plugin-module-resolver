@@ -109,6 +109,36 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('multiple roots', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './test/testproject/src/actions',
+              './test/testproject/src/components',
+            ],
+          }],
+        ],
+      };
+
+      it('should resolve the file sub path in root 1', () => {
+        testWithImport(
+          'something',
+          './test/testproject/src/actions/something',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file sub path in root 2', () => {
+        testWithImport(
+          'Root',
+          './test/testproject/src/components/Root',
+          rootTransformerOpts,
+        );
+      });
+    });
+
     describe('glob root', () => {
       const globRootTransformerOpts = {
         babelrc: false,
@@ -354,6 +384,27 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('with the plugin applied twice', () => {
+      const doubleAliasTransformerOpts = {
+        plugins: [
+          [plugin, { root: '.' }],
+          [plugin, {
+            alias: {
+              '^@namespace/foo-(.+)': 'packages/\\1',
+            },
+          }],
+        ],
+      };
+
+      it('should support replacing parts of a path', () => {
+        testWithImport(
+          '@namespace/foo-bar',
+          'packages/bar',
+          doubleAliasTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('with custom cwd', () => {
@@ -363,10 +414,27 @@ describe('module-resolver', () => {
         plugins: [
           [plugin, {
             root: './testproject/src',
-            alias: {
-              test: './testproject/test',
-            },
-            cwd: path.join(process.cwd(), 'test'),
+            cwd: path.resolve('test'),
+          }],
+        ],
+      };
+
+      it('should resolve the file path', () => {
+        testWithImport(
+          'components/Root',
+          './test/testproject/src/components/Root',
+          transformerOpts,
+        );
+      });
+    });
+
+    describe('with root', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './src',
+            cwd: path.resolve('test/testproject'),
           }],
         ],
       };
@@ -375,14 +443,6 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
-          transformerOpts,
-        );
-      });
-
-      it('should alias the sub file path', () => {
-        testWithImport(
-          'test/tools',
-          './test/testproject/test/tools',
           transformerOpts,
         );
       });

@@ -19,9 +19,7 @@ describe('function and method calls', () => {
     babelrc: false,
     plugins: [
       [plugin, {
-        root: [
-          './test/testproject/src',
-        ],
+        root: './test/testproject/src',
         alias: {
           test: './test/testproject/test',
         },

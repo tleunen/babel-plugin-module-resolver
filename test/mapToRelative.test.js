@@ -13,8 +13,8 @@ describe('mapToRelative', () => {
     });
 
     it('with an absolute filename', () => {
-      const currentFile = path.join(process.cwd(), './utils/test/file.js');
-      const result = mapToRelative(process.cwd(), currentFile, 'utils/dep');
+      const currentFile = path.resolve('./utils/test/file.js');
+      const result = mapToRelative(path.resolve('.'), currentFile, 'utils/dep');
 
       expect(result).toBe('../dep');
     });
