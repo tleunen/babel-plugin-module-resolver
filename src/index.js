@@ -7,43 +7,61 @@ import transformCall from './transformers/call';
 import transformImport from './transformers/import';
 
 
-const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
-export const defaultExtensions = defaultBabelExtensions;
+const defaultExtensions = ['.js', '.jsx', '.es', '.es6'];
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
 }
 
-// The working directory of Atom is the project,
-// while Sublime sets the working project to the directory in which the current opened file is
-// So we need to offer a way to customize the cwd for the eslint plugin
-export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
-  if (pluginOpts.root) {
-    if (typeof pluginOpts.root === 'string') {
-      pluginOpts.root = [pluginOpts.root]; // eslint-disable-line no-param-reassign
+function normalizeCwd(file) {
+  const { opts } = this;
+
+  if (opts.cwd === 'babelrc') {
+    const startPath = (file.opts.filename === 'unknown')
+      ? './'
+      : file.opts.filename;
+
+    const { file: babelPath } = findBabelConfig.sync(startPath);
+
+    opts.cwd = babelPath
+      ? path.dirname(babelPath)
+      : null;
+  }
+
+  if (!opts.cwd) {
+    opts.cwd = process.cwd();
+  }
+}
+
+function normalizeOptions(file) {
+  const { opts } = this;
+
+  normalizeCwd.call(this, file);
+
+  if (opts.root) {
+    if (typeof opts.root === 'string') {
+      opts.root = [opts.root];
     }
-    // eslint-disable-next-line no-param-reassign
-    pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
+    opts.root = opts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
         return resolvedDirs.concat(
-          glob.sync(dirPath, { cwd }).filter(p => fs.lstatSync(p).isDirectory()),
+          glob.sync(dirPath)
+            .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory()),
         );
       }
       return resolvedDirs.concat(dirPath);
     }, []);
   } else {
-    // eslint-disable-next-line no-param-reassign
-    pluginOpts.root = [];
+    opts.root = [];
   }
 
-  // eslint-disable-next-line no-param-reassign
-  pluginOpts.regExps = [];
+  opts.regExps = [];
 
-  if (pluginOpts.alias) {
-    Object.keys(pluginOpts.alias)
+  if (opts.alias) {
+    Object.keys(opts.alias)
       .filter(isRegExp)
       .forEach((key) => {
-        const parts = pluginOpts.alias[key].split('\\\\');
+        const parts = opts.alias[key].split('\\\\');
 
         function substitute(execResult) {
           return parts
@@ -53,22 +71,19 @@ export function manipulatePluginOptions(pluginOpts, cwd = process.cwd()) {
             .join('\\');
         }
 
-        pluginOpts.regExps.push([new RegExp(key), substitute]);
+        opts.regExps.push([new RegExp(key), substitute]);
 
-        // eslint-disable-next-line no-param-reassign
-        delete pluginOpts.alias[key];
+        delete opts.alias[key];
       });
   } else {
-    // eslint-disable-next-line no-param-reassign
-    pluginOpts.alias = {};
+    opts.alias = {};
   }
 
-  if (!pluginOpts.extensions) {
-    // eslint-disable-next-line no-param-reassign
-    pluginOpts.extensions = defaultExtensions;
+  if (!opts.extensions) {
+    opts.extensions = defaultExtensions;
   }
 
-  return pluginOpts;
+  return opts;
 }
 
 export default ({ types }) => {
@@ -85,24 +100,7 @@ export default ({ types }) => {
   };
 
   return {
-    pre(file) {
-      manipulatePluginOptions(this.opts);
-
-      let customCWD = this.opts.cwd;
-
-      if (customCWD === 'babelrc') {
-        const startPath = (file.opts.filename === 'unknown')
-          ? './'
-          : file.opts.filename;
-
-        const { file: babelFile } = findBabelConfig.sync(startPath);
-        customCWD = babelFile
-          ? path.dirname(babelFile)
-          : null;
-      }
-
-      this.cwd = customCWD || process.cwd();
-    },
+    pre: normalizeOptions,
 
     visitor: {
       Program: {
