@@ -15,9 +15,7 @@ const patterns = [
 export default function transformCall(types, nodePath, state) {
   const calleePath = nodePath.get('callee');
 
-  if (!patterns.some(pattern => matchesPattern(types, calleePath, pattern))) {
-    return;
+  if (patterns.some(pattern => matchesPattern(types, calleePath, pattern))) {
+    mapPathString(types, nodePath.get('arguments.0'), state);
   }
-
-  mapPathString(types, nodePath.get('arguments.0'), state);
 }
