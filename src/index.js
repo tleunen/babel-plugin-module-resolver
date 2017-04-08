@@ -33,7 +33,7 @@ function normalizeCwd(file) {
   }
 }
 
-function normalizePluginOptions(file) {
+function normalizeOptions(file) {
   const { opts } = this;
 
   normalizeCwd.call(this, file);
@@ -100,7 +100,7 @@ export default ({ types }) => {
   };
 
   return {
-    pre: normalizePluginOptions,
+    pre: normalizeOptions,
 
     visitor: {
       Program: {
