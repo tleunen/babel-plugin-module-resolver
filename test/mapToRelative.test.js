@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import path from 'path';
 import mapToRelative from '../src/mapToRelative';
 

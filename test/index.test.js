@@ -1,6 +1,5 @@
-/* eslint-env jest */
 import path from 'path';
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
+import { transform } from 'babel-core';
 import transformToCommonJsPlugin from 'babel-plugin-transform-es2015-modules-commonjs';
 import { stripIndent } from 'common-tags';
 import plugin from '../src';

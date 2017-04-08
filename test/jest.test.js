@@ -1,5 +1,4 @@
-/* eslint-env jest */
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
+import { transform } from 'babel-core';
 import plugin from '../src';
 
 describe('jest functions', () => {
