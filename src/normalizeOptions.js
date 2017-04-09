@@ -51,7 +51,7 @@ function normalizeRoot(opts) {
   }
 }
 
-function getAliasPair(key, value, localize = false) {
+function getAliasPair(key, value) {
   const parts = value.split('\\\\');
 
   function substitute(execResult) {
@@ -62,7 +62,7 @@ function getAliasPair(key, value, localize = false) {
       .join('\\');
   }
 
-  return [new RegExp(key), substitute, localize];
+  return [new RegExp(key), substitute];
 }
 
 function normalizeAlias(opts) {
@@ -72,7 +72,7 @@ function normalizeAlias(opts) {
 
     const nonRegExpAliases = aliasKeys
       .filter(key => !isRegExp(key))
-      .map(key => getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`, true));
+      .map(key => getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`));
 
     const regExpAliases = aliasKeys
       .filter(isRegExp)

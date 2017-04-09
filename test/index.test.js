@@ -433,7 +433,7 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the relative path while ignoring cwd and root', () => {
+      it('should alias the relative path while honoring cwd and ignoring root', () => {
         testWithImport(
           'constantsRelative/actions',
           './test/constants/actions',
@@ -449,10 +449,10 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the relative path while ignoring cwd and root', () => {
+      it('should alias the relative path while honoring cwd and ignoring root', () => {
         testWithImport(
           'constantsRegExpRelative/actions',
-          './constants/actions',
+          './test/constants/actions',
           transformerOpts,
         );
       });

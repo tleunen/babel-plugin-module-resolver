@@ -46,7 +46,7 @@ function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
 function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
-  opts.alias.find(([regExp, substitute, localize]) => {
+  opts.alias.find(([regExp, substitute]) => {
     const execResult = regExp.exec(sourcePath);
 
     if (execResult === null) {
@@ -56,7 +56,7 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
     aliasedSourceFile = substitute(execResult);
     aliasedSourceFile = aliasedSourceFile.replace(/^npm:/, '');
 
-    if (localize && aliasedSourceFile[0] === '.') {
+    if (aliasedSourceFile[0] === '.') {
       aliasedSourceFile = toLocalPath(toPosixPath(
         mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
       );
