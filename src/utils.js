@@ -34,13 +34,13 @@ export function matchesPattern(types, calleePath, pattern) {
   return node.name === name;
 }
 
-export function mapPathString(types, nodePath, state) {
-  if (!types.isStringLiteral(nodePath)) {
+export function mapPathString(nodePath, state) {
+  if (!state.types.isStringLiteral(nodePath)) {
     return;
   }
 
   const modulePath = getRealPath(nodePath.node.value, state);
   if (modulePath) {
-    nodePath.replaceWith(types.stringLiteral(modulePath));
+    nodePath.replaceWith(state.types.stringLiteral(modulePath));
   }
 }

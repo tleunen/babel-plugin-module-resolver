@@ -12,10 +12,10 @@ const patterns = [
   'jest.dontMock',
 ];
 
-export default function transformCall(types, nodePath, state) {
+export default function transformCall(nodePath, state) {
   const calleePath = nodePath.get('callee');
 
-  if (patterns.some(pattern => matchesPattern(types, calleePath, pattern))) {
-    mapPathString(types, nodePath.get('arguments.0'), state);
+  if (patterns.some(pattern => matchesPattern(state.types, calleePath, pattern))) {
+    mapPathString(nodePath.get('arguments.0'), state);
   }
 }
