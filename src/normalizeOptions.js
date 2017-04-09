@@ -69,14 +69,20 @@ function normalizeAlias(opts) {
   if (opts.alias) {
     const { alias } = opts;
     const aliasKeys = Object.keys(alias);
+    const nonRegExpAliases = [];
+    const regExpAliases = [];
 
-    const nonRegExpAliases = aliasKeys
-      .filter(key => !isRegExp(key))
-      .map(key => getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`));
-
-    const regExpAliases = aliasKeys
-      .filter(isRegExp)
-      .map(key => getAliasPair(key, alias[key]));
+    aliasKeys.forEach((key) => {
+      if (isRegExp(key)) {
+        regExpAliases.push(
+          getAliasPair(key, alias[key]),
+        );
+      } else {
+        nonRegExpAliases.push(
+          getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`),
+        );
+      }
+    });
 
     opts.alias = [...nonRegExpAliases, ...regExpAliases];
   } else {
