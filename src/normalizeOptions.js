@@ -51,29 +51,36 @@ function normalizeRoot(opts) {
   }
 }
 
+function getAliasPair(key, value, localize = false) {
+  const parts = value.split('\\\\');
+
+  function substitute(execResult) {
+    return parts
+      .map(part =>
+        part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
+      )
+      .join('\\');
+  }
+
+  return [new RegExp(key), substitute, localize];
+}
+
 function normalizeAlias(opts) {
-  opts.regExps = [];
-
   if (opts.alias) {
-    Object.keys(opts.alias)
+    const { alias } = opts;
+    const aliasKeys = Object.keys(alias);
+
+    const nonRegExpAliases = aliasKeys
+      .filter(key => !isRegExp(key))
+      .map(key => getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`, true));
+
+    const regExpAliases = aliasKeys
       .filter(isRegExp)
-      .forEach((key) => {
-        const parts = opts.alias[key].split('\\\\');
+      .map(key => getAliasPair(key, alias[key]));
 
-        function substitute(execResult) {
-          return parts
-            .map(part =>
-              part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
-            )
-            .join('\\');
-        }
-
-        opts.regExps.push([new RegExp(key), substitute]);
-
-        delete opts.alias[key];
-      });
+    opts.alias = [...nonRegExpAliases, ...regExpAliases];
   } else {
-    opts.alias = {};
+    opts.alias = [];
   }
 }
 

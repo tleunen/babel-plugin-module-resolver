@@ -43,40 +43,10 @@ function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
   )));
 }
 
-function getRealPathFromAliasConfig(sourcePath, currentFile, { alias, cwd }) {
-  const moduleSplit = sourcePath.split('/');
-  let aliasPath;
-
-  while (moduleSplit.length) {
-    const m = moduleSplit.join('/');
-    if ({}.hasOwnProperty.call(alias, m)) {
-      aliasPath = alias[m];
-      break;
-    }
-    moduleSplit.pop();
-  }
-
-  // no alias mapping found
-  if (!aliasPath) {
-    return null;
-  }
-
-  // remove legacy "npm:" prefix for npm packages
-  aliasPath = aliasPath.replace(/^(npm:)/, '');
-  const newPath = sourcePath.replace(moduleSplit.join('/'), aliasPath);
-
-  // alias to npm module don't need relative mapping
-  if (aliasPath[0] !== '.') {
-    return newPath;
-  }
-
-  return toLocalPath(toPosixPath(mapToRelative(cwd, currentFile, newPath)));
-}
-
-function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
+function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
-  regExps.find(([regExp, substitute]) => {
+  opts.alias.find(([regExp, substitute, localize]) => {
     const execResult = regExp.exec(sourcePath);
 
     if (execResult === null) {
@@ -84,6 +54,13 @@ function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
     }
 
     aliasedSourceFile = substitute(execResult);
+    aliasedSourceFile = aliasedSourceFile.replace(/^npm:/, '');
+
+    if (localize && aliasedSourceFile[0] === '.') {
+      aliasedSourceFile = toLocalPath(toPosixPath(
+        mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
+      );
+    }
     return true;
   });
 
@@ -93,7 +70,6 @@ function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
 const resolvers = [
   getRealPathFromRootConfig,
   getRealPathFromAliasConfig,
-  getRealPathFromRegExpConfig,
 ];
 
 export default function getRealPath(sourcePath, { file, opts }) {
