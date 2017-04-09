@@ -209,6 +209,28 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('root and alias', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            alias: {
+              constants: 'constants/actions',
+            },
+          }],
+        ],
+      };
+
+      it('should resolve the path using root first and alias otherwise', () => {
+        testWithImport(
+          'constants',
+          './test/testproject/src/constants',
+          rootTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('alias', () => {
