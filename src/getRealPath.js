@@ -5,12 +5,13 @@ import mapToRelative from './mapToRelative';
 import { toLocalPath, toPosixPath, replaceExtension } from './utils';
 
 
-function findPathInRoots(sourcePath, rootDirs, extensions) {
+function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
-  rootDirs.some((basedir) => {
+
+  root.some((basedir) => {
     try {
-      // check if the file exists (will throw if not)
+      // Check if the file exists (will throw if not)
       resolvedSourceFile = resolve.sync(`./${sourcePath}`, {
         basedir,
         extensions,
@@ -24,8 +25,8 @@ function findPathInRoots(sourcePath, rootDirs, extensions) {
   return resolvedSourceFile;
 }
 
-function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, extensions) {
-  const absFileInRoot = findPathInRoots(sourcePath, rootDirs, extensions);
+function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
+  const absFileInRoot = findPathInRoots(sourcePath, opts);
 
   if (!absFileInRoot) {
     return null;
@@ -34,18 +35,18 @@ function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, ex
   const realSourceFileExtension = path.extname(absFileInRoot);
   const sourceFileExtension = path.extname(sourcePath);
 
-  // map the source and keep its extension if the import/require had one
+  // Map the source and keep its extension if the import/require had one
   const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
   return toLocalPath(toPosixPath(replaceExtension(
-    mapToRelative(cwd, absCurrentFile, absFileInRoot),
+    mapToRelative(opts.cwd, currentFile, absFileInRoot),
     ext,
   )));
 }
 
-function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
+function getRealPathFromAliasConfig(sourcePath, currentFile, { alias, cwd }) {
   const moduleSplit = sourcePath.split('/');
-
   let aliasPath;
+
   while (moduleSplit.length) {
     const m = moduleSplit.join('/');
     if ({}.hasOwnProperty.call(alias, m)) {
@@ -69,10 +70,10 @@ function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
     return newPath;
   }
 
-  return toLocalPath(toPosixPath(mapToRelative(cwd, absCurrentFile, newPath)));
+  return toLocalPath(toPosixPath(mapToRelative(cwd, currentFile, newPath)));
 }
 
-function getRealPathFromRegExpConfig(sourcePath, regExps) {
+function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
   let aliasedSourceFile;
 
   regExps.find(([regExp, substitute]) => {
@@ -89,38 +90,26 @@ function getRealPathFromRegExpConfig(sourcePath, regExps) {
   return aliasedSourceFile;
 }
 
+const resolvers = [
+  getRealPathFromRootConfig,
+  getRealPathFromAliasConfig,
+  getRealPathFromRegExpConfig,
+];
+
 export default function getRealPath(sourcePath, { file, opts }) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }
 
-  // file param is a relative path from the environment current working directory
+  // File param is a relative path from the environment current working directory
   // (not from cwd param)
-  const currentFile = file.opts.filename;
-  const absCurrentFile = path.resolve(currentFile);
+  const currentFile = path.resolve(file.opts.filename);
+  let resolvedPath = null;
 
-  const { cwd, root, extensions, alias, regExps } = opts;
+  resolvers.some((resolver) => {
+    resolvedPath = resolver(sourcePath, currentFile, opts);
+    return resolvedPath !== null;
+  });
 
-  const sourceFileFromRoot = getRealPathFromRootConfig(
-    sourcePath, absCurrentFile, root, cwd, extensions,
-  );
-  if (sourceFileFromRoot) {
-    return sourceFileFromRoot;
-  }
-
-  const sourceFileFromAlias = getRealPathFromAliasConfig(
-    sourcePath, absCurrentFile, alias, cwd,
-  );
-  if (sourceFileFromAlias) {
-    return sourceFileFromAlias;
-  }
-
-  const sourceFileFromRegExp = getRealPathFromRegExpConfig(
-    sourcePath, regExps,
-  );
-  if (sourceFileFromRegExp) {
-    return sourceFileFromRegExp;
-  }
-
-  return sourcePath;
+  return resolvedPath;
 }
