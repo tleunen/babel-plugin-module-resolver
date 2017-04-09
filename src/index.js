@@ -39,18 +39,21 @@ function normalizeOptions(file) {
   normalizeCwd.call(this, file);
 
   if (opts.root) {
-    if (typeof opts.root === 'string') {
+    if (!Array.isArray(opts.root)) {
       opts.root = [opts.root];
     }
-    opts.root = opts.root.reduce((resolvedDirs, dirPath) => {
-      if (glob.hasMagic(dirPath)) {
-        return resolvedDirs.concat(
-          glob.sync(dirPath)
-            .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory()),
-        );
-      }
-      return resolvedDirs.concat(dirPath);
-    }, []);
+    opts.root = opts.root
+      .map(dirPath => path.resolve(opts.cwd, dirPath))
+      .reduce((resolvedDirs, absDirPath) => {
+        if (glob.hasMagic(absDirPath)) {
+          const roots = glob.sync(absDirPath)
+            .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
+
+          return [...resolvedDirs, ...roots];
+        }
+
+        return [...resolvedDirs, absDirPath];
+      }, []);
   } else {
     opts.root = [];
   }
