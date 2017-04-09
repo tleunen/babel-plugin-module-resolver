@@ -3,7 +3,6 @@ import path from 'path';
 
 import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
-import { warn } from './log';
 
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6'];
@@ -70,20 +69,10 @@ function normalizeAlias(opts) {
   if (opts.alias) {
     const { alias } = opts;
     const aliasKeys = Object.keys(alias);
-    let warnedAboutNpmPrefix = false;
 
     const nonRegExpAliases = aliasKeys
       .filter(key => !isRegExp(key))
-      .map((key) => {
-        let value = alias[key];
-
-        if (value.startsWith('npm:') && !warnedAboutNpmPrefix) {
-          warnedAboutNpmPrefix = true;
-          warn('The "npm:" prefix in an alias is deprecated and will be removed in the next major version release.');
-          value = value.slice('npm:'.length);
-        }
-        return getAliasPair(`^${key}((?:/|).*)`, `${value}\\1`);
-      });
+      .map(key => getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`));
 
     const regExpAliases = aliasKeys
       .filter(isRegExp)

@@ -327,50 +327,6 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('should handle the deprecated "npm:" prefix', () => {
-      const mockWarn = jest.fn();
-      jest.mock('../src/log', () => ({
-        warn: mockWarn,
-      }));
-      jest.resetModules();
-      const pluginWithMock = require.requireActual('../src').default;
-
-      const depreactedAliasTransformerOpts = {
-        plugins: [
-          [pluginWithMock, {
-            alias: {
-              abstract: 'npm:concrete',
-              second: 'npm:another',
-              nonNpmPrefix: 'normal',
-            },
-          }],
-        ],
-      };
-
-      beforeEach(() => {
-        mockWarn.mockClear();
-      });
-
-      it('should print a warning once if "npm:" is encountered in the config', () => {
-        testWithImport(
-          'nonNpmPrefix/thing',
-          'normal/thing',
-          depreactedAliasTransformerOpts,
-        );
-
-        expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith('The "npm:" prefix in an alias is deprecated and will be removed in the next major version release.');
-      });
-
-      it('should strip the "npm:" prefix from the resolved path', () => {
-        testWithImport(
-          'abstract/thing',
-          'concrete/thing',
-          depreactedAliasTransformerOpts,
-        );
-      });
-    });
-
     it('should support aliasing a node modules', () => {
       testWithImport(
         'underscore/map',
