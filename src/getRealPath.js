@@ -61,8 +61,6 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
     return null;
   }
 
-  aliasedSourceFile = aliasedSourceFile.replace(/^npm:/, '');
-
   if (aliasedSourceFile[0] === '.') {
     aliasedSourceFile = toLocalPath(toPosixPath(
       mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),

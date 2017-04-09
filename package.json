@@ -61,7 +61,8 @@
   "jest": {
     "testRegex": "/test/.*\\.test\\.js$",
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "src/**/*.js",
+      "!src/log.js"
     ]
   },
   "greenkeeper": {
