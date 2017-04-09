@@ -476,10 +476,10 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the non-relative path while ignoring cwd and root', () => {
+      it('should alias the non-relative path while honoring cwd and root', () => {
         testWithImport(
           'constantsNonRelative/actions',
-          'constants/actions',
+          './test/testproject/src/constants/actions',
           transformerOpts,
         );
       });
@@ -492,10 +492,10 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the non-relative path while ignoring cwd and root', () => {
+      it('should alias the non-relative path while honoring cwd and root', () => {
         testWithImport(
           'constantsNonRelative/actions',
-          'constants/actions',
+          './test/testproject/src/constants/actions',
           transformerOpts,
         );
       });
@@ -568,7 +568,7 @@ describe('module-resolver', () => {
     it('should alias the sub file path', () => {
       testWithImport(
         'actions',
-        'constants/actions',
+        './constants/actions',
         transformerOpts,
       );
     });

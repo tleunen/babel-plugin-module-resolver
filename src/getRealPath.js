@@ -62,9 +62,14 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   }
 
   if (aliasedSourceFile[0] === '.') {
-    aliasedSourceFile = toLocalPath(toPosixPath(
+    return toLocalPath(toPosixPath(
       mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
     );
+  }
+
+  const realPathFromRoot = getRealPathFromRootConfig(aliasedSourceFile, currentFile, opts);
+  if (realPathFromRoot) {
+    return realPathFromRoot;
   }
 
   return aliasedSourceFile;
