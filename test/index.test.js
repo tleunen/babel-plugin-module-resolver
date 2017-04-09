@@ -359,7 +359,7 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should transform double backslash into a single one', () => {
+      it('should transform a double backslash into a single one', () => {
         testWithImport(
           'single-backslash',
           // This is a string literal, so in the code it will actually be "pas\\sed"
@@ -416,7 +416,10 @@ describe('module-resolver', () => {
             root: './testproject/src',
             cwd: path.resolve('test'),
             alias: {
-              test: './testproject/test',
+              constantsRelative: './constants',
+              constantsNonRelative: 'constants',
+              '^constantsRegExpRelative(.*)': './constants\\1',
+              '^constantsNonRelative(.*)': 'constants\\1',
             },
           }],
         ],
@@ -430,10 +433,34 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the sub file path', () => {
+      it('should alias the relative path while ignoring cwd and root', () => {
         testWithImport(
-          'test/tools',
-          './test/testproject/test/tools',
+          'constantsRelative/actions',
+          './test/constants/actions',
+          transformerOpts,
+        );
+      });
+
+      it('should alias the non-relative path while ignoring cwd and root', () => {
+        testWithImport(
+          'constantsNonRelative/actions',
+          'constants/actions',
+          transformerOpts,
+        );
+      });
+
+      it('should alias the relative path while ignoring cwd and root', () => {
+        testWithImport(
+          'constantsRegExpRelative/actions',
+          './constants/actions',
+          transformerOpts,
+        );
+      });
+
+      it('should alias the non-relative path while ignoring cwd and root', () => {
+        testWithImport(
+          'constantsNonRelative/actions',
+          'constants/actions',
           transformerOpts,
         );
       });
@@ -487,7 +514,7 @@ describe('module-resolver', () => {
         [plugin, {
           root: './src',
           alias: {
-            test: './test',
+            actions: 'constants/actions',
           },
           cwd: 'babelrc',
         }],
@@ -505,8 +532,8 @@ describe('module-resolver', () => {
 
     it('should alias the sub file path', () => {
       testWithImport(
-        'test/tools',
-        '../test/tools',
+        'actions',
+        'constants/actions',
         transformerOpts,
       );
     });
