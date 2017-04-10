@@ -1,9 +1,12 @@
 import path from 'path';
 
 import resolve from 'resolve';
+import { warn } from './log';
 import mapToRelative from './mapToRelative';
 import { toLocalPath, toPosixPath, replaceExtension } from './utils';
 
+
+const nodeExtensions = ['.js', '.json'];
 
 function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
@@ -43,6 +46,17 @@ function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
   )));
 }
 
+function checkIfPackageExists(modulePath, currentFile) {
+  try {
+    resolve.sync(modulePath, {
+      basedir: currentFile,
+      extensions: nodeExtensions,
+    });
+  } catch (e) {
+    warn(`Could not resolve "${modulePath}" in file ${currentFile}.`);
+  }
+}
+
 function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
@@ -65,6 +79,10 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
     return toLocalPath(toPosixPath(
       mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
     );
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    checkIfPackageExists(aliasedSourceFile, currentFile);
   }
 
   return aliasedSourceFile;

@@ -326,7 +326,7 @@ describe('module-resolver', () => {
       });
     });
 
-    it('should support aliasing a node modules', () => {
+    it('should support aliasing a node module', () => {
       // If this test breaks, consider selecting another package used by the plugin
       testWithImport(
         'babel-kernel/register',
@@ -416,6 +416,52 @@ describe('module-resolver', () => {
           './packages/bar',
           doubleAliasTransformerOpts,
         );
+      });
+    });
+
+    describe('should warn about the missing packages', () => {
+      const mockWarn = jest.fn();
+      jest.mock('../src/log', () => ({
+        warn: mockWarn,
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+
+      const missingAliasTransformerOpts = {
+        plugins: [
+          [pluginWithMock, {
+            alias: {
+              legacy: 'npm:legacy',
+              'non-existing': 'this-package-does-not-exist',
+            },
+          }],
+        ],
+      };
+
+      beforeEach(() => {
+        mockWarn.mockClear();
+      });
+
+      it('should print a warning for a legacy alias', () => {
+        testWithImport(
+          'legacy/lib',
+          'npm:legacy/lib',
+          missingAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(1);
+        expect(mockWarn).toBeCalledWith('Could not resolve "npm:legacy/lib" in file D:\\Projects\\babel-plugin-module-resolver\\unknown.');
+      });
+
+      it('should print a warning for an unresolved package', () => {
+        testWithImport(
+          'non-existing/lib',
+          'this-package-does-not-exist/lib',
+          missingAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(1);
+        expect(mockWarn).toBeCalledWith('Could not resolve "this-package-does-not-exist/lib" in file D:\\Projects\\babel-plugin-module-resolver\\unknown.');
       });
     });
   });
