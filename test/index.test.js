@@ -243,14 +243,14 @@ describe('module-resolver', () => {
             components: './test/testproject/src/components',
             '~': './test/testproject/src',
             'awesome/components': './test/testproject/src/components',
-            underscore: 'lodash',
-            '^@namespace/foo-(.+)': 'packages/\\1',
-            'styles/.+\\.(css|less|scss)$': 'style-proxy.\\1',
-            '^single-backslash': 'pas\\\\sed',
-            '^non-existing-match': 'pas\\42sed',
-            '^regexp-priority': 'miss',
-            'regexp-priority$': 'miss',
-            'regexp-priority': 'hit',
+            'babel-kernel': 'babel-core',
+            '^@namespace/foo-(.+)': './packages/\\1',
+            'styles/.+\\.(css|less|scss)$': './style-proxy.\\1',
+            '^single-backslash': './pas\\\\sed',
+            '^non-existing-match': './pas\\42sed',
+            '^regexp-priority': './miss',
+            'regexp-priority$': './miss',
+            'regexp-priority': './hit',
           },
         }],
       ],
@@ -327,9 +327,10 @@ describe('module-resolver', () => {
     });
 
     it('should support aliasing a node modules', () => {
+      // If this test breaks, consider selecting another package used by the plugin
       testWithImport(
-        'underscore/map',
-        'lodash/map',
+        'babel-kernel/register',
+        'babel-core/register',
         aliasTransformerOpts,
       );
     });
@@ -338,7 +339,7 @@ describe('module-resolver', () => {
       it('should support replacing parts of a path', () => {
         testWithImport(
           '@namespace/foo-bar',
-          'packages/bar',
+          './packages/bar',
           aliasTransformerOpts,
         );
       });
@@ -346,7 +347,7 @@ describe('module-resolver', () => {
       it('should support replacing parts of a complex path', () => {
         testWithImport(
           '@namespace/foo-bar/component.js',
-          'packages/bar/component.js',
+          './packages/bar/component.js',
           aliasTransformerOpts,
         );
       });
@@ -356,7 +357,7 @@ describe('module-resolver', () => {
           it(`should handle the alias with the ${extension} extension`, () => {
             testWithImport(
               `styles/style.${extension}`,
-              `style-proxy.${extension}`,
+              `./style-proxy.${extension}`,
               aliasTransformerOpts,
             );
           });
@@ -371,11 +372,11 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should transform a double backslash into a single one', () => {
+      it('should unescape a double backslash into a single one', () => {
         testWithImport(
           'single-backslash',
           // This is a string literal, so in the code it will actually be "pas\\sed"
-          'pas\\\\sed',
+          './pas/sed',
           aliasTransformerOpts,
         );
       });
@@ -383,7 +384,7 @@ describe('module-resolver', () => {
       it('should replace missing matches with an empty string', () => {
         testWithImport(
           'non-existing-match',
-          'passed',
+          './passed',
           aliasTransformerOpts,
         );
       });
@@ -391,7 +392,7 @@ describe('module-resolver', () => {
       it('should have higher priority than a simple alias', () => {
         testWithImport(
           'regexp-priority',
-          'hit',
+          './hit',
           aliasTransformerOpts,
         );
       });
@@ -403,7 +404,7 @@ describe('module-resolver', () => {
           [plugin, { root: '.' }],
           [plugin, {
             alias: {
-              '^@namespace/foo-(.+)': 'packages/\\1',
+              '^@namespace/foo-(.+)': './packages/\\1',
             },
           }],
         ],
@@ -412,7 +413,7 @@ describe('module-resolver', () => {
       it('should support replacing parts of a path', () => {
         testWithImport(
           '@namespace/foo-bar',
-          'packages/bar',
+          './packages/bar',
           doubleAliasTransformerOpts,
         );
       });
