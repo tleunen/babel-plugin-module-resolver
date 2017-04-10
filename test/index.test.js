@@ -381,7 +381,7 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should replece missing matches with an empty string', () => {
+      it('should replace missing matches with an empty string', () => {
         testWithImport(
           'non-existing-match',
           'passed',
