@@ -429,10 +429,8 @@ describe('module-resolver', () => {
             root: './testproject/src',
             cwd: path.resolve('test'),
             alias: {
-              constantsRelative: './constants',
-              constantsNonRelative: 'constants',
-              '^constantsRegExpRelative(.*)': './constants\\1',
-              '^constantsNonRelative(.*)': 'constants\\1',
+              constantsAlias: './constants',
+              '^constantsRegExp(.*)': './constants\\1',
             },
           }],
         ],
@@ -448,32 +446,16 @@ describe('module-resolver', () => {
 
       it('should alias the relative path while honoring cwd', () => {
         testWithImport(
-          'constantsRelative/actions',
+          'constantsAlias/actions',
           './test/constants/actions',
-          transformerOpts,
-        );
-      });
-
-      it('should alias the non-relative path', () => {
-        testWithImport(
-          'constantsNonRelative/actions',
-          'constants/actions',
           transformerOpts,
         );
       });
 
       it('should alias the relative path while honoring cwd', () => {
         testWithImport(
-          'constantsRegExpRelative/actions',
+          'constantsRegExp/actions',
           './test/constants/actions',
-          transformerOpts,
-        );
-      });
-
-      it('should alias the non-relative path', () => {
-        testWithImport(
-          'constantsNonRelative/actions',
-          'constants/actions',
           transformerOpts,
         );
       });
