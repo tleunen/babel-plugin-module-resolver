@@ -67,11 +67,6 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
     );
   }
 
-  const realPathFromRoot = getRealPathFromRootConfig(aliasedSourceFile, currentFile, opts);
-  if (realPathFromRoot) {
-    return realPathFromRoot;
-  }
-
   return aliasedSourceFile;
 }
 
