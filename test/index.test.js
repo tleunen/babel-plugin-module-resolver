@@ -426,6 +426,7 @@ describe('module-resolver', () => {
       }));
       jest.resetModules();
       const pluginWithMock = require.requireActual('../src').default;
+      const fileName = path.resolve('unknown');
 
       const missingAliasTransformerOpts = {
         plugins: [
@@ -450,7 +451,7 @@ describe('module-resolver', () => {
         );
 
         expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith('Could not resolve "npm:legacy/lib" in file D:\\Projects\\babel-plugin-module-resolver\\unknown.');
+        expect(mockWarn).toBeCalledWith(`Could not resolve "npm:legacy/lib" in file ${fileName}.`);
       });
 
       it('should print a warning for an unresolved package', () => {
@@ -461,7 +462,7 @@ describe('module-resolver', () => {
         );
 
         expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith('Could not resolve "this-package-does-not-exist/lib" in file D:\\Projects\\babel-plugin-module-resolver\\unknown.');
+        expect(mockWarn).toBeCalledWith(`Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`);
       });
     });
   });
