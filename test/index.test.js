@@ -244,7 +244,6 @@ describe('module-resolver', () => {
             '~': './test/testproject/src',
             'awesome/components': './test/testproject/src/components',
             underscore: 'lodash',
-            prefix: 'prefix/lib',
             '^@namespace/foo-(.+)': 'packages/\\1',
             'styles/.+\\.(css|less|scss)$': 'style-proxy.\\1',
             '^single-backslash': 'pas\\\\sed',
