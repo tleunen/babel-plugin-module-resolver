@@ -603,9 +603,7 @@ describe('module-resolver', () => {
       babelrc: false,
       plugins: [
         [plugin, {
-          root: [
-            './src',
-          ],
+          root: './src',
           alias: {
             test: './test',
           },
@@ -616,7 +614,7 @@ describe('module-resolver', () => {
     };
 
     describe('should resolve the sub file path', () => {
-      testRequireImport(
+      testWithImport(
         'components/Root',
         './components/Root',
         transformerOpts,
@@ -624,7 +622,7 @@ describe('module-resolver', () => {
     });
 
     describe('should alias the sub file path', () => {
-      testRequireImport(
+      testWithImport(
         'test/tools',
         '../test/tools',
         transformerOpts,
@@ -636,26 +634,24 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './src',
-            ],
+            root: './src',
             cwd: 'packagejson',
           }],
         ],
       };
       const cachedCwd = process.cwd();
-      const babelRcDir = 'test/testproject';
+      const pkgJsonDir = 'test/testproject';
 
       beforeEach(() => {
-        process.chdir(babelRcDir);
+        process.chdir(pkgJsonDir);
       });
 
       afterEach(() => {
         process.chdir(cachedCwd);
       });
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'components/Root',
           './src/components/Root',
           unknownFileTransformerOpts,
@@ -664,30 +660,30 @@ describe('module-resolver', () => {
     });
 
     describe('missing packagejson in path (uses cwd)', () => {
-      jest.mock('find-root', () => function findRoot() {
-        return null;
-      });
+      jest.mock('pkg-up', () => ({
+        sync: function pkgUpSync() {
+          return null;
+        },
+      }));
       jest.resetModules();
       const pluginWithMock = require.requireActual('../src').default;
 
-      const missingBabelConfigTransformerOpts = {
+      const missingPkgJsonConfigTransformerOpts = {
         babelrc: false,
         plugins: [
           [pluginWithMock, {
-            root: [
-              '.',
-            ],
+            root: '.',
             cwd: 'packagejson',
           }],
         ],
         filename: './test/testproject/src/app.js',
       };
 
-      describe('should resolve the sub file path', () => {
-        testRequireImport(
+      it('should resolve the sub file path', () => {
+        testWithImport(
           'test/testproject/src/components/Root',
           './components/Root',
-          missingBabelConfigTransformerOpts,
+          missingPkgJsonConfigTransformerOpts,
         );
       });
     });
