@@ -613,7 +613,7 @@ describe('module-resolver', () => {
       filename: './test/testproject/src/app.js',
     };
 
-    describe('should resolve the sub file path', () => {
+    it('should resolve the sub file path', () => {
       testWithImport(
         'components/Root',
         './components/Root',
@@ -621,7 +621,7 @@ describe('module-resolver', () => {
       );
     });
 
-    describe('should alias the sub file path', () => {
+    it('should alias the sub file path', () => {
       testWithImport(
         'test/tools',
         '../test/tools',
