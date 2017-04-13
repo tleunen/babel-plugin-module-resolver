@@ -572,6 +572,9 @@ describe('module-resolver', () => {
       plugins: [
         [plugin, {
           root: './src',
+          alias: {
+            test: './test',
+          },
           cwd: 'babelrc',
         }],
       ],
@@ -582,6 +585,14 @@ describe('module-resolver', () => {
       testWithImport(
         'components/Root',
         './components/Root',
+        transformerOpts,
+      );
+    });
+
+    it('should alias the sub file path', () => {
+      testWithImport(
+        'test/tools',
+        '../test/tools',
         transformerOpts,
       );
     });
