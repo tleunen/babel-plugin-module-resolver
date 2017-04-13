@@ -597,4 +597,95 @@ describe('module-resolver', () => {
       });
     });
   });
+
+  describe('packagejson', () => {
+    const transformerOpts = {
+      babelrc: false,
+      plugins: [
+        [plugin, {
+          root: './src',
+          alias: {
+            test: './test',
+          },
+          cwd: 'packagejson',
+        }],
+      ],
+      filename: './test/testproject/src/app.js',
+    };
+
+    it('should resolve the sub file path', () => {
+      testWithImport(
+        'components/Root',
+        './components/Root',
+        transformerOpts,
+      );
+    });
+
+    it('should alias the sub file path', () => {
+      testWithImport(
+        'test/tools',
+        '../test/tools',
+        transformerOpts,
+      );
+    });
+
+    describe('unknown filename', () => {
+      const unknownFileTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './src',
+            cwd: 'packagejson',
+          }],
+        ],
+      };
+      const cachedCwd = process.cwd();
+      const pkgJsonDir = 'test/testproject';
+
+      beforeEach(() => {
+        process.chdir(pkgJsonDir);
+      });
+
+      afterEach(() => {
+        process.chdir(cachedCwd);
+      });
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'components/Root',
+          './src/components/Root',
+          unknownFileTransformerOpts,
+        );
+      });
+    });
+
+    describe('missing packagejson in path (uses cwd)', () => {
+      jest.mock('pkg-up', () => ({
+        sync: function pkgUpSync() {
+          return null;
+        },
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+
+      const missingPkgJsonConfigTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            root: '.',
+            cwd: 'packagejson',
+          }],
+        ],
+        filename: './test/testproject/src/app.js',
+      };
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'test/testproject/src/components/Root',
+          './components/Root',
+          missingPkgJsonConfigTransformerOpts,
+        );
+      });
+    });
+  });
 });
