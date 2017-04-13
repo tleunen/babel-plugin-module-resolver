@@ -1,7 +1,16 @@
 import path from 'path';
 
+import resolve from 'resolve';
 import getRealPath from './getRealPath';
 
+
+export function nodeResolvePath(modulePath, basedir, extensions) {
+  try {
+    return resolve.sync(modulePath, { basedir, extensions });
+  } catch (e) {
+    return null;
+  }
+}
 
 export function toPosixPath(modulePath) {
   return modulePath.replace(/\\/g, '/');

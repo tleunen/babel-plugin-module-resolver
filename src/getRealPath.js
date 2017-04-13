@@ -1,28 +1,17 @@
 import path from 'path';
 
-import resolve from 'resolve';
 import { warn } from './log';
 import mapToRelative from './mapToRelative';
-import { toLocalPath, toPosixPath, replaceExtension } from './utils';
+import { nodeResolvePath, replaceExtension, toLocalPath, toPosixPath } from './utils';
 
-
-const nodeExtensions = ['.js', '.json'];
 
 function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
 
   root.some((basedir) => {
-    try {
-      // Check if the file exists (will throw if not)
-      resolvedSourceFile = resolve.sync(`./${sourcePath}`, {
-        basedir,
-        extensions,
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
+    resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+    return resolvedSourceFile !== null;
   });
 
   return resolvedSourceFile;
@@ -46,13 +35,9 @@ function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
   )));
 }
 
-function checkIfPackageExists(modulePath, currentFile) {
-  try {
-    resolve.sync(modulePath, {
-      basedir: currentFile,
-      extensions: nodeExtensions,
-    });
-  } catch (e) {
+function checkIfPackageExists(modulePath, currentFile, extensions) {
+  const resolvedPath = nodeResolvePath(modulePath, currentFile, extensions);
+  if (resolvedPath === null) {
     warn(`Could not resolve "${modulePath}" in file ${currentFile}.`);
   }
 }
@@ -82,7 +67,7 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    checkIfPackageExists(aliasedSourceFile, currentFile);
+    checkIfPackageExists(aliasedSourceFile, currentFile, opts.extensions);
   }
 
   return aliasedSourceFile;
