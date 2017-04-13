@@ -101,13 +101,6 @@ export default function getRealPath(sourcePath, currentFile, opts) {
   const regExps = pluginOpts.regExps;
   const alias = pluginOpts.alias || {};
 
-  const sourceFileFromRoot = getRealPathFromRootConfig(
-    sourcePath, absCurrentFile, rootDirs, cwd, extensions,
-  );
-  if (sourceFileFromRoot) {
-    return sourceFileFromRoot;
-  }
-
   const sourceFileFromAlias = getRealPathFromAliasConfig(
     sourcePath, absCurrentFile, alias, cwd,
   );
@@ -120,6 +113,13 @@ export default function getRealPath(sourcePath, currentFile, opts) {
   );
   if (sourceFileFromRegExp) {
     return sourceFileFromRegExp;
+  }
+
+  const sourceFileFromRoot = getRealPathFromRootConfig(
+    sourcePath, absCurrentFile, rootDirs, cwd, extensions,
+  );
+  if (sourceFileFromRoot) {
+    return sourceFileFromRoot;
   }
 
   return sourcePath;
