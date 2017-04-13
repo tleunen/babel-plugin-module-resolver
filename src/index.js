@@ -2,7 +2,6 @@ import normalizeOptions from './normalizeOptions';
 import transformCall from './transformers/call';
 import transformImport from './transformers/import';
 
-
 const importVisitors = {
   CallExpression: transformCall,
   'ImportDeclaration|ExportDeclaration': transformImport,

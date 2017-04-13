@@ -3,7 +3,7 @@ import path from 'path';
 
 import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
-
+import pkgUp from 'pkg-up';
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6'];
 
@@ -22,8 +22,17 @@ function normalizeCwd(opts, file) {
     opts.cwd = babelPath
       ? path.dirname(babelPath)
       : null;
-  }
+  } else if (opts.cwd === 'packagejson') {
+    const startPath = (file.opts.filename === 'unknown')
+      ? './'
+      : file.opts.filename;
 
+    const pkgPath = pkgUp.sync(startPath);
+
+    opts.cwd = pkgPath
+      ? path.dirname(pkgPath)
+      : null;
+  }
   if (!opts.cwd) {
     opts.cwd = process.cwd();
   }
