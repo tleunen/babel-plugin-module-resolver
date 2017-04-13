@@ -419,7 +419,7 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('should warn about the missing packages', () => {
+    describe('missing packages warning', () => {
       const mockWarn = jest.fn();
       jest.mock('../src/log', () => ({
         warn: mockWarn,
@@ -441,6 +441,7 @@ describe('module-resolver', () => {
 
       beforeEach(() => {
         mockWarn.mockClear();
+        process.env.NODE_ENV = 'development';
       });
 
       it('should print a warning for a legacy alias', () => {
@@ -463,6 +464,22 @@ describe('module-resolver', () => {
 
         expect(mockWarn.mock.calls.length).toBe(1);
         expect(mockWarn).toBeCalledWith(`Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`);
+      });
+
+      describe('production environment', () => {
+        beforeEach(() => {
+          process.env.NODE_ENV = 'production';
+        });
+
+        it('should print a warning for an unresolved package', () => {
+          testWithImport(
+            'non-existing/lib',
+            'this-package-does-not-exist/lib',
+            missingAliasTransformerOpts,
+          );
+
+          expect(mockWarn.mock.calls.length).toBe(0);
+        });
       });
     });
   });
