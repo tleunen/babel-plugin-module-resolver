@@ -209,6 +209,28 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('root and alias', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            alias: {
+              constants: 'constants/actions',
+            },
+          }],
+        ],
+      };
+
+      it('should resolve the path using root first and alias otherwise', () => {
+        testWithImport(
+          'constants',
+          './test/testproject/src/constants',
+          rootTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('alias', () => {
@@ -221,16 +243,14 @@ describe('module-resolver', () => {
             components: './test/testproject/src/components',
             '~': './test/testproject/src',
             'awesome/components': './test/testproject/src/components',
-            abstract: 'npm:concrete',
-            underscore: 'lodash',
-            prefix: 'prefix/lib',
-            '^@namespace/foo-(.+)': 'packages/\\1',
-            'styles/.+\\.(css|less|scss)$': 'style-proxy.\\1',
-            '^single-backslash': 'pas\\\\sed',
-            '^non-existing-match': 'pas\\42sed',
-            '^regexp-priority': 'miss',
-            'regexp-priority$': 'miss',
-            'regexp-priority': 'hit',
+            'babel-kernel': 'babel-core',
+            '^@namespace/foo-(.+)': './packages/\\1',
+            'styles/.+\\.(css|less|scss)$': './style-proxy.\\1',
+            '^single-backslash': './pas\\\\sed',
+            '^non-existing-match': './pas\\42sed',
+            '^regexp-priority': './hit',
+            'regexp-priority$': './miss',
+            'regexp-priority': './miss',
           },
         }],
       ],
@@ -306,18 +326,11 @@ describe('module-resolver', () => {
       });
     });
 
-    it('(legacy) should support aliasing a node module with "npm:"', () => {
+    it('should support aliasing a node module', () => {
+      // If this test breaks, consider selecting another package used by the plugin
       testWithImport(
-        'abstract/thing',
-        'concrete/thing',
-        aliasTransformerOpts,
-      );
-    });
-
-    it('should support aliasing a node modules', () => {
-      testWithImport(
-        'underscore/map',
-        'lodash/map',
+        'babel-kernel/register',
+        'babel-core/register',
         aliasTransformerOpts,
       );
     });
@@ -326,7 +339,7 @@ describe('module-resolver', () => {
       it('should support replacing parts of a path', () => {
         testWithImport(
           '@namespace/foo-bar',
-          'packages/bar',
+          './packages/bar',
           aliasTransformerOpts,
         );
       });
@@ -334,7 +347,7 @@ describe('module-resolver', () => {
       it('should support replacing parts of a complex path', () => {
         testWithImport(
           '@namespace/foo-bar/component.js',
-          'packages/bar/component.js',
+          './packages/bar/component.js',
           aliasTransformerOpts,
         );
       });
@@ -344,7 +357,7 @@ describe('module-resolver', () => {
           it(`should handle the alias with the ${extension} extension`, () => {
             testWithImport(
               `styles/style.${extension}`,
-              `style-proxy.${extension}`,
+              `./style-proxy.${extension}`,
               aliasTransformerOpts,
             );
           });
@@ -359,19 +372,19 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should transform a double backslash into a single one', () => {
+      it('should unescape a double backslash into a single one', () => {
         testWithImport(
           'single-backslash',
           // This is a string literal, so in the code it will actually be "pas\\sed"
-          'pas\\\\sed',
+          './pas/sed',
           aliasTransformerOpts,
         );
       });
 
-      it('should replece missing matches with an empty string', () => {
+      it('should replace missing matches with an empty string', () => {
         testWithImport(
           'non-existing-match',
-          'passed',
+          './passed',
           aliasTransformerOpts,
         );
       });
@@ -379,7 +392,7 @@ describe('module-resolver', () => {
       it('should have higher priority than a simple alias', () => {
         testWithImport(
           'regexp-priority',
-          'hit',
+          './hit',
           aliasTransformerOpts,
         );
       });
@@ -391,7 +404,7 @@ describe('module-resolver', () => {
           [plugin, { root: '.' }],
           [plugin, {
             alias: {
-              '^@namespace/foo-(.+)': 'packages/\\1',
+              '^@namespace/foo-(.+)': './packages/\\1',
             },
           }],
         ],
@@ -400,9 +413,73 @@ describe('module-resolver', () => {
       it('should support replacing parts of a path', () => {
         testWithImport(
           '@namespace/foo-bar',
-          'packages/bar',
+          './packages/bar',
           doubleAliasTransformerOpts,
         );
+      });
+    });
+
+    describe('missing packages warning', () => {
+      const mockWarn = jest.fn();
+      jest.mock('../src/log', () => ({
+        warn: mockWarn,
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+      const fileName = path.resolve('unknown');
+
+      const missingAliasTransformerOpts = {
+        plugins: [
+          [pluginWithMock, {
+            alias: {
+              legacy: 'npm:legacy',
+              'non-existing': 'this-package-does-not-exist',
+            },
+          }],
+        ],
+      };
+
+      beforeEach(() => {
+        mockWarn.mockClear();
+        process.env.NODE_ENV = 'development';
+      });
+
+      it('should print a warning for a legacy alias', () => {
+        testWithImport(
+          'legacy/lib',
+          'npm:legacy/lib',
+          missingAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(1);
+        expect(mockWarn).toBeCalledWith(`Could not resolve "npm:legacy/lib" in file ${fileName}.`);
+      });
+
+      it('should print a warning for an unresolved package', () => {
+        testWithImport(
+          'non-existing/lib',
+          'this-package-does-not-exist/lib',
+          missingAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(1);
+        expect(mockWarn).toBeCalledWith(`Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`);
+      });
+
+      describe('production environment', () => {
+        beforeEach(() => {
+          process.env.NODE_ENV = 'production';
+        });
+
+        it('should print a warning for an unresolved package', () => {
+          testWithImport(
+            'non-existing/lib',
+            'this-package-does-not-exist/lib',
+            missingAliasTransformerOpts,
+          );
+
+          expect(mockWarn.mock.calls.length).toBe(0);
+        });
       });
     });
   });
@@ -416,10 +493,8 @@ describe('module-resolver', () => {
             root: './testproject/src',
             cwd: path.resolve('test'),
             alias: {
-              constantsRelative: './constants',
-              constantsNonRelative: 'constants',
-              '^constantsRegExpRelative(.*)': './constants\\1',
-              '^constantsNonRelative(.*)': 'constants\\1',
+              constantsAlias: './constants',
+              '^constantsRegExp(.*)': './constants\\1',
             },
           }],
         ],
@@ -433,34 +508,18 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the relative path while ignoring cwd and root', () => {
+      it('should alias the relative path while honoring cwd', () => {
         testWithImport(
-          'constantsRelative/actions',
+          'constantsAlias/actions',
           './test/constants/actions',
           transformerOpts,
         );
       });
 
-      it('should alias the non-relative path while ignoring cwd and root', () => {
+      it('should alias the relative path while honoring cwd', () => {
         testWithImport(
-          'constantsNonRelative/actions',
-          'constants/actions',
-          transformerOpts,
-        );
-      });
-
-      it('should alias the relative path while ignoring cwd and root', () => {
-        testWithImport(
-          'constantsRegExpRelative/actions',
-          './constants/actions',
-          transformerOpts,
-        );
-      });
-
-      it('should alias the non-relative path while ignoring cwd and root', () => {
-        testWithImport(
-          'constantsNonRelative/actions',
-          'constants/actions',
+          'constantsRegExp/actions',
+          './test/constants/actions',
           transformerOpts,
         );
       });
@@ -514,7 +573,7 @@ describe('module-resolver', () => {
         [plugin, {
           root: './src',
           alias: {
-            actions: 'constants/actions',
+            test: './test',
           },
           cwd: 'babelrc',
         }],
@@ -532,8 +591,8 @@ describe('module-resolver', () => {
 
     it('should alias the sub file path', () => {
       testWithImport(
-        'actions',
-        'constants/actions',
+        'test/tools',
+        '../test/tools',
         transformerOpts,
       );
     });

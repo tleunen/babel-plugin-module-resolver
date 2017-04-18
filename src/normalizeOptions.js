@@ -60,29 +60,32 @@ function normalizeRoot(opts) {
   }
 }
 
+function getAliasPair(key, value) {
+  const parts = value.split('\\\\');
+
+  function substitute(execResult) {
+    return parts
+      .map(part =>
+        part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
+      )
+      .join('\\');
+  }
+
+  return [new RegExp(key), substitute];
+}
+
 function normalizeAlias(opts) {
-  opts.regExps = [];
-
   if (opts.alias) {
-    Object.keys(opts.alias)
-      .filter(isRegExp)
-      .forEach((key) => {
-        const parts = opts.alias[key].split('\\\\');
+    const { alias } = opts;
+    const aliasKeys = Object.keys(alias);
 
-        function substitute(execResult) {
-          return parts
-            .map(part =>
-              part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
-            )
-            .join('\\');
-        }
-
-        opts.regExps.push([new RegExp(key), substitute]);
-
-        delete opts.alias[key];
-      });
+    opts.alias = aliasKeys.map(key => (
+      isRegExp(key) ?
+        getAliasPair(key, alias[key]) :
+        getAliasPair(`^${key}((?:/|).*)`, `${alias[key]}\\1`)
+    ));
   } else {
-    opts.alias = {};
+    opts.alias = [];
   }
 }
 

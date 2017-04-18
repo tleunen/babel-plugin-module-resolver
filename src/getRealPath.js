@@ -1,8 +1,8 @@
 import path from 'path';
 
-import resolve from 'resolve';
+import { warn } from './log';
 import mapToRelative from './mapToRelative';
-import { toLocalPath, toPosixPath, replaceExtension } from './utils';
+import { nodeResolvePath, replaceExtension, toLocalPath, toPosixPath } from './utils';
 
 
 function findPathInRoots(sourcePath, { extensions, root }) {
@@ -10,16 +10,8 @@ function findPathInRoots(sourcePath, { extensions, root }) {
   let resolvedSourceFile;
 
   root.some((basedir) => {
-    try {
-      // Check if the file exists (will throw if not)
-      resolvedSourceFile = resolve.sync(`./${sourcePath}`, {
-        basedir,
-        extensions,
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
+    resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+    return resolvedSourceFile !== null;
   });
 
   return resolvedSourceFile;
@@ -43,40 +35,17 @@ function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
   )));
 }
 
-function getRealPathFromAliasConfig(sourcePath, currentFile, { alias, cwd }) {
-  const moduleSplit = sourcePath.split('/');
-  let aliasPath;
-
-  while (moduleSplit.length) {
-    const m = moduleSplit.join('/');
-    if ({}.hasOwnProperty.call(alias, m)) {
-      aliasPath = alias[m];
-      break;
-    }
-    moduleSplit.pop();
+function checkIfPackageExists(modulePath, currentFile, extensions) {
+  const resolvedPath = nodeResolvePath(modulePath, currentFile, extensions);
+  if (resolvedPath === null) {
+    warn(`Could not resolve "${modulePath}" in file ${currentFile}.`);
   }
-
-  // no alias mapping found
-  if (!aliasPath) {
-    return null;
-  }
-
-  // remove legacy "npm:" prefix for npm packages
-  aliasPath = aliasPath.replace(/^(npm:)/, '');
-  const newPath = sourcePath.replace(moduleSplit.join('/'), aliasPath);
-
-  // alias to npm module don't need relative mapping
-  if (aliasPath[0] !== '.') {
-    return newPath;
-  }
-
-  return toLocalPath(toPosixPath(mapToRelative(cwd, currentFile, newPath)));
 }
 
-function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
+function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
-  regExps.find(([regExp, substitute]) => {
+  opts.alias.find(([regExp, substitute]) => {
     const execResult = regExp.exec(sourcePath);
 
     if (execResult === null) {
@@ -87,13 +56,26 @@ function getRealPathFromRegExpConfig(sourcePath, currentFile, { regExps }) {
     return true;
   });
 
+  if (!aliasedSourceFile) {
+    return null;
+  }
+
+  if (aliasedSourceFile[0] === '.') {
+    return toLocalPath(toPosixPath(
+      mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
+    );
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    checkIfPackageExists(aliasedSourceFile, currentFile, opts.extensions);
+  }
+
   return aliasedSourceFile;
 }
 
 const resolvers = [
   getRealPathFromRootConfig,
   getRealPathFromAliasConfig,
-  getRealPathFromRegExpConfig,
 ];
 
 export default function getRealPath(sourcePath, { file, opts }) {

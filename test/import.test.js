@@ -84,6 +84,7 @@ describe('import and export statement', () => {
         root: './test/testproject/src',
         alias: {
           test: './test/testproject/test',
+          'babel-core': 'babel-core/lib',
         },
       }],
     ],
@@ -117,6 +118,15 @@ describe('import and export statement', () => {
     testImports(
       '',
       '',
+      transformerOpts,
+    );
+  });
+
+  describe('should only apply the alias once', () => {
+    // If this test breaks, consider selecting another package used by the plugin
+    testImports(
+      'babel-core/store',
+      'babel-core/lib/store',
       transformerOpts,
     );
   });
