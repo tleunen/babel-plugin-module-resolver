@@ -7,9 +7,10 @@ import plugin from '../src';
 describe('import()', () => {
   const transformerOpts = {
     babelrc: false,
-    // We need to add the stage-2 preset in order to parse the `import()`-calls
-    presets: ['stage-2'],
     plugins: [
+      // We need to add the corresponding syntax plugin
+      // in order to parse the `import()`-calls
+      'syntax-dynamic-import',
       [plugin, {
         root: [
           './test/testproject/src',
