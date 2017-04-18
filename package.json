@@ -56,7 +56,6 @@
     "pretest": "npm run lint",
     "test": "jest --coverage",
     "test:suite": "jest",
-    "test:watch": "jest --watch test/dynamicImport.test.js",
     "prepublish": "npm run compile",
     "release": "standard-version"
   },
