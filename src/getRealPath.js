@@ -87,6 +87,10 @@ function getRealPathFromRegExpConfig(sourcePath, regExps) {
   return aliasedSourceFile;
 }
 
+function getRealPathFromTransformFunction(sourcePath, transformer) {
+  return transformer && transformer(sourcePath);
+}
+
 export default function getRealPath(sourcePath, currentFile, opts) {
   if (sourcePath[0] === '.') {
     return sourcePath;
@@ -100,6 +104,7 @@ export default function getRealPath(sourcePath, currentFile, opts) {
   const rootDirs = pluginOpts.root || [];
   const regExps = pluginOpts.regExps;
   const alias = pluginOpts.alias || {};
+  const transformer = pluginOpts.transform;
 
   const sourceFileFromRoot = getRealPathFromRootConfig(
     sourcePath, absCurrentFile, rootDirs, cwd, extensions,
@@ -120,6 +125,13 @@ export default function getRealPath(sourcePath, currentFile, opts) {
   );
   if (sourceFileFromRegExp) {
     return sourceFileFromRegExp;
+  }
+
+  const sourceFileFromTransformFunction = getRealPathFromTransformFunction(
+    sourcePath, transformer,
+  );
+  if (sourceFileFromTransformFunction) {
+    return sourceFileFromTransformFunction;
   }
 
   return sourcePath;

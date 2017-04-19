@@ -461,6 +461,27 @@ describe('module-resolver', () => {
     });
   });
 
+  describe('transform', () => {
+    describe('should transform path using supplied function', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            transform: sourcePath => `${sourcePath}.jsx`,
+          }],
+        ],
+      };
+
+      describe('basic resolve', () => {
+        testRequireImport(
+          'a/file/name',
+          'a/file/name.jsx',
+          transformerOpts,
+        );
+      });
+    });
+  });
+
   describe('with custom cwd', () => {
     describe('custom value', () => {
       const transformerOpts = {
