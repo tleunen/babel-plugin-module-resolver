@@ -52,7 +52,7 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 - `extensions`: Array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6']`).
 - `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
-
+- `transform`: A function to transform the path. E.g. `transform: oldPath => 'new/' + oldPath`
 ### Regular expression alias
 
 It is possible to specify an alias using a regular expression. To do that, either start an alias with `'^'` or end it with `'$'`:
