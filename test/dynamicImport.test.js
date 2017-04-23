@@ -22,7 +22,7 @@ describe('import()', () => {
     ],
   };
 
-  it('CFG should resolve the path based on the root config', () => {
+  it('should resolve the path based on the root config', () => {
     const code = 'import("app").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
@@ -51,9 +51,9 @@ describe('import()', () => {
   });
 
   it('should handle an empty path', () => {
-    const code = 'import(\'\').then(() => {}).catch(() => {});';
+    const code = 'import("").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe('import(\'\').then(() => {}).catch(() => {});');
+    expect(result.code).toBe('import("").then(() => {}).catch(() => {});');
   });
 });
