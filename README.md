@@ -148,6 +148,22 @@ import 'actions/User'
 module.system.node.resolve_dirname=src/store
 ```
 
+Or you may use `name_mapper` option for manual listing (tested with Flow 0.45):
+
+```diff
+# .flowconfig
+
+[options]
+; Be careful with escaping characters in regexp
+- module.name_mapper='^app\/(.*)$' -> '<PROJECT_ROOT>/app/\1' # does not work
++ module.name_mapper='^app\/\(.*\)$' -> '<PROJECT_ROOT>/app/\1' # work as expected
+
+; Other modules
+module.name_mapper='^i18n\/\(.*\)$' -> '<PROJECT_ROOT>/i18n/\1'
+module.name_mapper='^schema\/\(.*\)$' -> '<PROJECT_ROOT>/schema/\1'
+module.name_mapper='^mongoose-elasticsearch-xp\(.*\)$' -> '<PROJECT_ROOT>/lib/mongoose-elasticsearch-xp\1'
+```
+
 More configuration options are located in [the Flow documentation](https://flowtype.org/docs/advanced-configuration.html)
 
 ## Editors autocompletion
