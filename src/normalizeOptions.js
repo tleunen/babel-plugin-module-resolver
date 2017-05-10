@@ -5,7 +5,7 @@ import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
 import pkgUp from 'pkg-up';
 
-const defaultExtensions = ['.js', '.jsx', '.es', '.es6'];
+const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
