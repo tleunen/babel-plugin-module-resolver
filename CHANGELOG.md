@@ -24,42 +24,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="2.6.2"></a>
-## [2.6.2](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.6.1...v2.6.2) (2017-03-30)
-
-
-### Bug Fixes
-
-* Fix the double plugin bug ([#146](https://github.com/tleunen/babel-plugin-module-resolver/issues/146)) ([4e19188](https://github.com/tleunen/babel-plugin-module-resolver/commit/4e19188))
-
-
-
-<a name="2.6.1"></a>
-## [2.6.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.6.0...v2.6.1) (2017-03-29)
-
-
-### Bug Fixes
-
-* Fix `regExps.find` undefined error ([2171200](https://github.com/tleunen/babel-plugin-module-resolver/commit/2171200))
-
-
-
-<a name="2.6.0"></a>
-# [2.6.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.5.0...v2.6.0) (2017-03-29)
-
-
-### Bug Fixes
-
-* Fix plugin running twice in some cases ([#136](https://github.com/tleunen/babel-plugin-module-resolver/issues/136)) ([097bcc8](https://github.com/tleunen/babel-plugin-module-resolver/commit/097bcc8)), closes [#96](https://github.com/tleunen/babel-plugin-module-resolver/issues/96)
-
-
-### Features
-
-* Add regular expression support ([#132](https://github.com/tleunen/babel-plugin-module-resolver/issues/132)) ([6d87b25](https://github.com/tleunen/babel-plugin-module-resolver/commit/6d87b25)), closes [#88](https://github.com/tleunen/babel-plugin-module-resolver/issues/88) [#127](https://github.com/tleunen/babel-plugin-module-resolver/issues/127)
-* Handle the "export from" statement ([#129](https://github.com/tleunen/babel-plugin-module-resolver/issues/129)) ([627b897](https://github.com/tleunen/babel-plugin-module-resolver/commit/627b897)), closes [#128](https://github.com/tleunen/babel-plugin-module-resolver/issues/128)
-
-
-
 <a name="2.7.0"></a>
 # [2.7.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.5.0...v2.7.0) (2017-03-30)
 
