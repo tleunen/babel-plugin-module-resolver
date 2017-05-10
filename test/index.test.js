@@ -63,6 +63,14 @@ describe('module-resolver', () => {
         );
       });
 
+      it('should resolve the file path with the node module extension', () => {
+        testWithImport(
+          'nodemodule',
+          './test/testproject/src/nodemodule',
+          rootTransformerOpts,
+        );
+      });
+
       it('should not resolve the file path with an unknown extension', () => {
         testWithImport(
           'text',
