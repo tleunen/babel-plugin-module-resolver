@@ -30,6 +30,7 @@ describe('import and export statement', () => {
 
   function testImportWithCommonJSTransform(source, output, transformerOpts) {
     const transformerOptsWithCommonJs = {
+      babelrc: false,
       plugins: [
         ...transformerOpts.plugins,
         [transformToCommonJsPlugin, { noInterop: true }],

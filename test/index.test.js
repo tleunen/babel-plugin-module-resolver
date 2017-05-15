@@ -243,6 +243,7 @@ describe('module-resolver', () => {
 
   describe('alias', () => {
     const aliasTransformerOpts = {
+      babelrc: false,
       plugins: [
         [plugin, {
           alias: {
@@ -408,6 +409,7 @@ describe('module-resolver', () => {
 
     describe('with the plugin applied twice', () => {
       const doubleAliasTransformerOpts = {
+        babelrc: false,
         plugins: [
           [plugin, { root: '.' }],
           [plugin, {
@@ -437,6 +439,7 @@ describe('module-resolver', () => {
       const fileName = path.resolve('unknown');
 
       const missingAliasTransformerOpts = {
+        babelrc: false,
         plugins: [
           [pluginWithMock, {
             alias: {
