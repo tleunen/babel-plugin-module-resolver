@@ -509,6 +509,61 @@ describe('module-resolver', () => {
         });
       });
     });
+
+    describe('multiple alias application warning', () => {
+      const mockWarn = jest.fn();
+      jest.mock('../src/log', () => ({
+        warn: mockWarn,
+      }));
+      jest.resetModules();
+      const pluginWithMock = require.requireActual('../src').default;
+      const fileName = path.resolve('test/testproject/src/app.js');
+
+      const cycleAliasTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            alias: {
+              first: 'second',
+              second: 'first',
+            },
+          }],
+        ],
+        filename: fileName,
+      };
+
+      beforeEach(() => {
+        mockWarn.mockClear();
+        process.env.NODE_ENV = 'development';
+      });
+
+      it('should print a warning for a package that may be resolved multiple times', () => {
+        testWithImport(
+          'first',
+          'second',
+          cycleAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(1);
+        expect(mockWarn).toBeCalledWith('Resolving "first" may give different results if done multiple times. Remove cycles from the configuration or alias to absolute paths.');
+      });
+
+      describe('production environment', () => {
+        beforeEach(() => {
+          process.env.NODE_ENV = 'production';
+        });
+
+        it('should not print a warning for a package that may be resolved multiple times', () => {
+          testWithImport(
+            'first',
+            'second',
+            cycleAliasTransformerOpts,
+          );
+
+          expect(mockWarn.mock.calls.length).toBe(0);
+        });
+      });
+    });
   });
 
   describe('with custom cwd', () => {
