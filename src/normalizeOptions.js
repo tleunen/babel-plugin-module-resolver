@@ -83,7 +83,7 @@ function normalizeAlias(opts) {
     opts.alias = aliasKeys.map(key => (
       isRegExp(key) ?
         getAliasPair(key, alias[key]) :
-        getAliasPair(`^${key}((?:/|$).*)`, `${alias[key]}\\1`)
+        getAliasPair(`^${key}(/.*|)$`, `${alias[key]}\\1`)
     ));
   } else {
     opts.alias = [];
