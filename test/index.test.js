@@ -710,10 +710,10 @@ describe('module-resolver', () => {
         ],
       };
       const cachedCwd = process.cwd();
-      const pkgJsonDir = 'test/testproject';
+      const packageJsonDir = 'test/testproject';
 
       beforeEach(() => {
-        process.chdir(pkgJsonDir);
+        process.chdir(packageJsonDir);
       });
 
       afterEach(() => {
@@ -729,7 +729,7 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('missing packagejson in path (uses cwd)', () => {
+    describe('missing package.json in path (uses cwd)', () => {
       jest.mock('pkg-up', () => ({
         sync: function pkgUpSync() {
           return null;

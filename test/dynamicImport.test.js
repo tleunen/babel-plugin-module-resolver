@@ -23,24 +23,24 @@ describe('import()', () => {
   };
 
   it('should resolve the path based on the root config', () => {
-    const code = 'import("app").then(() => {}).catch(() => {});';
+    const code = 'import("components/Header/SubHeader").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe('import("./test/testproject/src/app").then(() => {}).catch(() => {});');
+    expect(result.code).toBe('import("./test/testproject/src/components/Header/SubHeader").then(() => {}).catch(() => {});');
   });
 
   it('should alias the path', () => {
-    const code = 'import("test/tools").then(() => {}).catch(() => {});';
+    const code = 'import("test").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe('import("./test/testproject/test/tools").then(() => {}).catch(() => {});');
+    expect(result.code).toBe('import("./test/testproject/test").then(() => {}).catch(() => {});');
   });
 
-  it('should not change the path', () => {
-    const code = 'import("./something").then(() => {}).catch(() => {});';
+  it('should not change a relative path', () => {
+    const code = 'import("./utils").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe('import("./something").then(() => {}).catch(() => {});');
+    expect(result.code).toBe('import("./utils").then(() => {}).catch(() => {});');
   });
 
   it('should handle the first argument not being a string literal', () => {
