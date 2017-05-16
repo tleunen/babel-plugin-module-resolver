@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0-beta.2"></a>
+# [3.0.0-beta.2](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.0...v3.0.0-beta.2) (2017-05-16)
+
+
+### Bug Fixes
+
+* **package:** update pkg-up to version 2.0.0 ([#168](https://github.com/tleunen/babel-plugin-module-resolver/issues/168)) ([ccba432](https://github.com/tleunen/babel-plugin-module-resolver/commit/ccba432))
+* Fix path resolution when the alias is not a proper sub path ([#177](https://github.com/tleunen/babel-plugin-module-resolver/issues/177)) ([dcd5dca](https://github.com/tleunen/babel-plugin-module-resolver/commit/dcd5dca))
+
+
+### Features
+
+* Add the .mjs extension to the default extensions ([#172](https://github.com/tleunen/babel-plugin-module-resolver/issues/172)) ([ea9e457](https://github.com/tleunen/babel-plugin-module-resolver/commit/ea9e457))
+* Run the plugin in the "enter" phase of the Program ([#179](https://github.com/tleunen/babel-plugin-module-resolver/issues/179)) ([c4794f9](https://github.com/tleunen/babel-plugin-module-resolver/commit/c4794f9))
+
+
+
 <a name="3.0.0-beta.0"></a>
 # [3.0.0-beta.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v2.7.0...v3.0.0-beta.0) (2017-04-23)
 
