@@ -274,6 +274,14 @@ describe('module-resolver', () => {
         );
       });
 
+      it('should not alias if there is no proper sub path', () => {
+        testWithImport(
+          'components_dummy',
+          'components_dummy',
+          aliasTransformerOpts,
+        );
+      });
+
       it('should alias the sub file path', () => {
         testWithImport(
           'test/tools',
@@ -288,6 +296,14 @@ describe('module-resolver', () => {
         testWithImport(
           'awesome/components',
           './test/testproject/src/components',
+          aliasTransformerOpts,
+        );
+      });
+
+      it('should not alias if there is no proper sub path', () => {
+        testWithImport(
+          'awesome/componentss',
+          'awesome/componentss',
           aliasTransformerOpts,
         );
       });
