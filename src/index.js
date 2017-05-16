@@ -10,7 +10,7 @@ const importVisitors = {
 
 const visitor = {
   Program: {
-    exit(programPath, state) {
+    enter(programPath, state) {
       programPath.traverse(importVisitors, state);
     },
   },
