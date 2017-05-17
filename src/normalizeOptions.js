@@ -101,7 +101,11 @@ function normalizeAlias(opts) {
 }
 
 function normalizeTransformedMethods(opts) {
-  opts.transformedMethods = defaultTransformedMethods;
+  if (opts.transformedMethods) {
+    opts.transformedMethods = [...defaultTransformedMethods, ...opts.transformedMethods];
+  } else {
+    opts.transformedMethods = defaultTransformedMethods;
+  }
 }
 
 export default function normalizeOptions(opts, file) {
