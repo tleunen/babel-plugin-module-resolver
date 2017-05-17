@@ -47,9 +47,9 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 
 ### Options
 
-- `root`: Array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
-- `alias`: Map of alias. You can also alias node_modules dependencies, not just local files.
-- `extensions`: Array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6']`).
+- `root`: A string or an array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
+- `alias`: A map of alias. You can also alias node_modules dependencies, not just local files.
+- `extensions`: An array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6', '.mjs']`).
 - `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
     - The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
