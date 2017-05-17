@@ -53,6 +53,7 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 - `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
     - The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
+- `transformedMethods`: Array of functions and methods that will have their first argument transformed. By default those methods are: `require`, `require.resolve`, `System.import`, `jest.genMockFromModule`, `jest.mock`, `jest.unmock`, `jest.doMock`, `jest.dontMock`.
 
 ### Regular expression alias
 
