@@ -22,8 +22,6 @@ const MyUtilFn = require('../../../../utils/MyUtilFn');
 
 ## Usage
 
-If you're coming from babel-plugin-module-alias, please read this section: Updating from [babel-plugin-module-alias](#updating-from-babel-plugin-module-alias).
-
 Install the plugin
 
 ```
@@ -75,38 +73,6 @@ Using the config from this example `'@namespace/foo-bar'` will become `'packages
 You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the whole matched path).
 
 To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
-
-### Updating from babel-plugin-module-alias
-
-babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
-
-Updating is very easy. For example, if you had this configuration:
-```json
-// This configuration is outdated, this is just an example
-{
-  "plugins": [
-    ["module-alias", [
-      { "src": "./src/utils", "expose": "utils" },
-      { "src": "./src/components", "expose": "components" },
-      { "src": "./src/actions", "expose": "actions" },
-      { "src": "npm:lodash", "expose": "underscore" }
-    ]]
-  ]
-}
-```
-You only have to update the plugin options to be like this:
-```json
-{
-  "plugins": [
-      ["module-resolver", {
-        "root": ["./src"],
-        "alias": {
-          "underscore": "lodash"
-        }
-      }]
-    ]
-}
-```
 
 ## ESLint plugin
 
