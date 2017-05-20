@@ -15,7 +15,7 @@ describe('custom calls', () => {
         alias: {
           test: './test/testproject/test',
         },
-        transformedMethods: [
+        transformFunctions: [
           'customMethod.something',
         ],
       }],

@@ -101,10 +101,10 @@ function normalizeAlias(opts) {
 }
 
 function normalizeTransformedMethods(opts) {
-  if (opts.transformedMethods) {
-    opts.transformedMethods = [...defaultTransformedMethods, ...opts.transformedMethods];
+  if (opts.transformFunctions) {
+    opts.transformFunctions = [...defaultTransformedMethods, ...opts.transformFunctions];
   } else {
-    opts.transformedMethods = defaultTransformedMethods;
+    opts.transformFunctions = defaultTransformedMethods;
   }
 }
 
