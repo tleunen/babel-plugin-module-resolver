@@ -7,6 +7,16 @@ import pkgUp from 'pkg-up';
 
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
+const defaultTransformedMethods = [
+  'require',
+  'require.resolve',
+  'System.import',
+  'jest.genMockFromModule',
+  'jest.mock',
+  'jest.unmock',
+  'jest.doMock',
+  'jest.dontMock',
+];
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
@@ -90,10 +100,19 @@ function normalizeAlias(opts) {
   }
 }
 
+function normalizeTransformedMethods(opts) {
+  if (opts.transformFunctions) {
+    opts.transformFunctions = [...defaultTransformedMethods, ...opts.transformFunctions];
+  } else {
+    opts.transformFunctions = defaultTransformedMethods;
+  }
+}
+
 export default function normalizeOptions(opts, file) {
   normalizeCwd(opts, file); // This has to go first because other options rely on cwd
   normalizeRoot(opts);
   normalizeAlias(opts);
+  normalizeTransformedMethods(opts);
 
   if (!opts.extensions) {
     opts.extensions = defaultExtensions;
