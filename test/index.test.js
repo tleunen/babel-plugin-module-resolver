@@ -510,58 +510,59 @@ describe('module-resolver', () => {
       });
     });
 
-    describe('multiple alias application warning', () => {
-      const mockWarn = jest.fn();
-      jest.mock('../src/log', () => ({
-        warn: mockWarn,
-      }));
-      jest.resetModules();
-      const pluginWithMock = require.requireActual('../src').default;
-      const fileName = path.resolve('test/testproject/src/app.js');
+    describe('multiple alias application', () => {
+      it('should resolve the cyclic alias only once', () => {
+        const fileName = path.resolve('test/testproject/src/app.js');
+        const cycleAliasTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              alias: {
+                first: 'second',
+                second: 'first',
+              },
+            }],
+            [plugin, {
+              alias: {
+                first: 'second',
+                second: 'first',
+              },
+            }],
+          ],
+          filename: fileName,
+        };
 
-      const cycleAliasTransformerOpts = {
-        babelrc: false,
-        plugins: [
-          [pluginWithMock, {
-            alias: {
-              first: 'second',
-              second: 'first',
-            },
-          }],
-        ],
-        filename: fileName,
-      };
-
-      beforeEach(() => {
-        mockWarn.mockClear();
-        process.env.NODE_ENV = 'development';
-      });
-
-      it('should print a warning for a package that may be resolved multiple times', () => {
         testWithImport(
           'first',
           'second',
           cycleAliasTransformerOpts,
         );
-
-        expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith('Resolving "first" may give different results if done multiple times. Remove cycles from the configuration or alias to absolute paths.');
       });
 
-      describe('production environment', () => {
-        beforeEach(() => {
-          process.env.NODE_ENV = 'production';
-        });
+      it('should resolve the prefix alias only once', () => {
+        const fileName = path.resolve('test/testproject/src/app.js');
+        const cycleAliasTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              alias: {
+                prefix: 'prefix/lib',
+              },
+            }],
+            [plugin, {
+              alias: {
+                prefix: 'prefix/lib',
+              },
+            }],
+          ],
+          filename: fileName,
+        };
 
-        it('should not print a warning for a package that may be resolved multiple times', () => {
-          testWithImport(
-            'first',
-            'second',
-            cycleAliasTransformerOpts,
-          );
-
-          expect(mockWarn.mock.calls.length).toBe(0);
-        });
+        testWithImport(
+          'prefix/test',
+          'prefix/lib/test',
+          cycleAliasTransformerOpts,
+        );
       });
     });
   });
