@@ -7,7 +7,7 @@ import pkgUp from 'pkg-up';
 
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
-const defaultTransformedMethods = [
+const defaultTransformedFunctions = [
   'require',
   'require.resolve',
   'System.import',
@@ -98,19 +98,19 @@ function normalizeAlias(optsAlias) {
   ));
 }
 
-function normalizeTransformedMethods(optsTransformFunctions) {
+function normalizeTransformedFunctions(optsTransformFunctions) {
   if (!optsTransformFunctions) {
-    return defaultTransformedMethods;
+    return defaultTransformedFunctions;
   }
 
-  return [...defaultTransformedMethods, ...optsTransformFunctions];
+  return [...defaultTransformedFunctions, ...optsTransformFunctions];
 }
 
 export default function normalizeOptions(currentFile, opts) {
   const cwd = normalizeCwd(opts.cwd, currentFile);
   const root = normalizeRoot(opts.root, cwd);
   const alias = normalizeAlias(opts.alias);
-  const transformFunctions = normalizeTransformedMethods(opts.transformFunctions);
+  const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
   const extensions = opts.extensions || defaultExtensions;
 
   return {
