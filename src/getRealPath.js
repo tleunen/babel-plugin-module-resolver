@@ -78,26 +78,6 @@ const resolvers = [
   getRealPathFromAliasConfig,
 ];
 
-function getResolvedPath(sourcePath, currentFile, opts) {
-  let resolvedPath = null;
-
-  resolvers.some((resolver) => {
-    resolvedPath = resolver(sourcePath, currentFile, opts);
-    return resolvedPath !== null;
-  });
-
-  return resolvedPath;
-}
-
-function checkIfDoubleApplicationPossible(sourcePath, resolvedPath, currentFile, opts) {
-  if (resolvedPath !== null) {
-    const resolvedAgainPath = getResolvedPath(resolvedPath, currentFile, opts);
-    if (resolvedAgainPath !== null && resolvedAgainPath !== resolvedPath) {
-      warn(`Resolving "${sourcePath}" may give different results if done multiple times. Remove cycles from the configuration or alias to absolute paths.`);
-    }
-  }
-}
-
 export default function getRealPath(sourcePath, { file, opts }) {
   if (sourcePath[0] === '.') {
     return sourcePath;
@@ -106,11 +86,12 @@ export default function getRealPath(sourcePath, { file, opts }) {
   // File param is a relative path from the environment current working directory
   // (not from cwd param)
   const currentFile = path.resolve(file.opts.filename);
-  const resolvedPath = getResolvedPath(sourcePath, currentFile, opts);
+  let resolvedPath = null;
 
-  if (process.env.NODE_ENV !== 'production') {
-    checkIfDoubleApplicationPossible(sourcePath, resolvedPath, currentFile, opts);
-  }
+  resolvers.some((resolver) => {
+    resolvedPath = resolver(sourcePath, currentFile, opts);
+    return resolvedPath !== null;
+  });
 
   return resolvedPath;
 }
