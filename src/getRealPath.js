@@ -78,18 +78,18 @@ const resolvers = [
   getRealPathFromAliasConfig,
 ];
 
-export default function getRealPath(sourcePath, { file, opts }) {
+export default function getRealPath(sourcePath, currentFile, opts) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }
 
   // File param is a relative path from the environment current working directory
   // (not from cwd param)
-  const currentFile = path.resolve(file.opts.filename);
+  const absoluteCurrentFile = path.resolve(currentFile);
   let resolvedPath = null;
 
   resolvers.some((resolver) => {
-    resolvedPath = resolver(sourcePath, currentFile, opts);
+    resolvedPath = resolver(sourcePath, absoluteCurrentFile, opts);
     return resolvedPath !== null;
   });
 

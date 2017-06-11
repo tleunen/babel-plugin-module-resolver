@@ -1,6 +1,13 @@
+import getRealPath from './getRealPath';
 import normalizeOptions from './normalizeOptions';
 import transformCall from './transformers/call';
 import transformImport from './transformers/import';
+
+
+// Public API for external plugins
+export {
+  getRealPath,
+};
 
 
 const importVisitors = {
