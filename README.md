@@ -22,8 +22,6 @@ const MyUtilFn = require('../../../../utils/MyUtilFn');
 
 ## Usage
 
-If you're coming from babel-plugin-module-alias, please read this section: Updating from [babel-plugin-module-alias](#updating-from-babel-plugin-module-alias).
-
 Install the plugin
 
 ```
@@ -47,12 +45,13 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 
 ### Options
 
-- `root`: Array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
-- `alias`: Map of alias. You can also alias node_modules dependencies, not just local files.
-- `extensions`: Array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6']`).
+- `root`: A string or an array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
+- `alias`: A map of alias. You can also alias node_modules dependencies, not just local files.
+- `extensions`: An array of extensions used in the resolver. Override the default extensions (`['.js', '.jsx', '.es', '.es6', '.mjs']`).
 - `cwd`: By default, the working directory is the one used for the resolver, but you can override it for your project.
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
     - The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
+- `transformFunctions`: Array of functions and methods that will have their first argument transformed. By default those methods are: `require`, `require.resolve`, `System.import`, `jest.genMockFromModule`, `jest.mock`, `jest.unmock`, `jest.doMock`, `jest.dontMock`.
 
 ### Regular expression alias
 
@@ -75,38 +74,6 @@ Using the config from this example `'@namespace/foo-bar'` will become `'packages
 You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the whole matched path).
 
 To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
-
-### Updating from babel-plugin-module-alias
-
-babel-plugin-module-resolver is a new version of the old babel-plugin-module-alias. Therefore, you also need to make a few modifications to your plugin configuration to make it work with this new plugin.
-
-Updating is very easy. For example, if you had this configuration:
-```json
-// This configuration is outdated, this is just an example
-{
-  "plugins": [
-    ["module-alias", [
-      { "src": "./src/utils", "expose": "utils" },
-      { "src": "./src/components", "expose": "components" },
-      { "src": "./src/actions", "expose": "actions" },
-      { "src": "npm:lodash", "expose": "underscore" }
-    ]]
-  ]
-}
-```
-You only have to update the plugin options to be like this:
-```json
-{
-  "plugins": [
-      ["module-resolver", {
-        "root": ["./src"],
-        "alias": {
-          "underscore": "lodash"
-        }
-      }]
-    ]
-}
-```
 
 ## ESLint plugin
 
