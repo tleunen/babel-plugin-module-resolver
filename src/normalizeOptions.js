@@ -22,53 +22,52 @@ function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
 }
 
-function normalizeCwd(opts, file) {
-  if (opts.cwd === 'babelrc') {
-    const startPath = (file.opts.filename === 'unknown')
+const specialCwd = {
+  babelrc: startPath => findBabelConfig.sync(startPath).file,
+  packagejson: startPath => pkgUp.sync(startPath),
+};
+
+function normalizeCwd(optsCwd, currentFile) {
+  let cwd;
+
+  if (optsCwd in specialCwd) {
+    const startPath = (currentFile === 'unknown')
       ? './'
-      : file.opts.filename;
+      : currentFile;
 
-    const { file: babelPath } = findBabelConfig.sync(startPath);
+    const computedCwd = specialCwd[optsCwd](startPath);
 
-    opts.cwd = babelPath
-      ? path.dirname(babelPath)
+    cwd = computedCwd
+      ? path.dirname(computedCwd)
       : null;
-  } else if (opts.cwd === 'packagejson') {
-    const startPath = (file.opts.filename === 'unknown')
-      ? './'
-      : file.opts.filename;
-
-    const pkgPath = pkgUp.sync(startPath);
-
-    opts.cwd = pkgPath
-      ? path.dirname(pkgPath)
-      : null;
+  } else {
+    cwd = optsCwd;
   }
-  if (!opts.cwd) {
-    opts.cwd = process.cwd();
-  }
+
+  return cwd || process.cwd();
 }
 
-function normalizeRoot(opts) {
-  if (opts.root) {
-    if (!Array.isArray(opts.root)) {
-      opts.root = [opts.root];
-    }
-    opts.root = opts.root
-      .map(dirPath => path.resolve(opts.cwd, dirPath))
-      .reduce((resolvedDirs, absDirPath) => {
-        if (glob.hasMagic(absDirPath)) {
-          const roots = glob.sync(absDirPath)
-            .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
-
-          return [...resolvedDirs, ...roots];
-        }
-
-        return [...resolvedDirs, absDirPath];
-      }, []);
-  } else {
-    opts.root = [];
+function normalizeRoot(optsRoot, cwd) {
+  if (!optsRoot) {
+    return [];
   }
+
+  const rootArray = Array.isArray(optsRoot)
+    ? optsRoot
+    : [optsRoot];
+
+  return rootArray
+    .map(dirPath => path.resolve(cwd, dirPath))
+    .reduce((resolvedDirs, absDirPath) => {
+      if (glob.hasMagic(absDirPath)) {
+        const roots = glob.sync(absDirPath)
+          .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
+
+        return [...resolvedDirs, ...roots];
+      }
+
+      return [...resolvedDirs, absDirPath];
+    }, []);
 }
 
 function getAliasPair(key, value) {
@@ -85,36 +84,40 @@ function getAliasPair(key, value) {
   return [new RegExp(key), substitute];
 }
 
-function normalizeAlias(opts) {
-  if (opts.alias) {
-    const { alias } = opts;
-    const aliasKeys = Object.keys(alias);
-
-    opts.alias = aliasKeys.map(key => (
-      isRegExp(key) ?
-        getAliasPair(key, alias[key]) :
-        getAliasPair(`^${key}(/.*|)$`, `${alias[key]}\\1`)
-    ));
-  } else {
-    opts.alias = [];
+function normalizeAlias(optsAlias) {
+  if (!optsAlias) {
+    return [];
   }
+
+  const aliasKeys = Object.keys(optsAlias);
+
+  return aliasKeys.map(key => (
+    isRegExp(key) ?
+      getAliasPair(key, optsAlias[key]) :
+      getAliasPair(`^${key}(/.*|)$`, `${optsAlias[key]}\\1`)
+  ));
 }
 
-function normalizeTransformedMethods(opts) {
-  if (opts.transformFunctions) {
-    opts.transformFunctions = [...defaultTransformedMethods, ...opts.transformFunctions];
-  } else {
-    opts.transformFunctions = defaultTransformedMethods;
+function normalizeTransformedMethods(optsTransformFunctions) {
+  if (!optsTransformFunctions) {
+    return defaultTransformedMethods;
   }
+
+  return [...defaultTransformedMethods, ...optsTransformFunctions];
 }
 
-export default function normalizeOptions(opts, file) {
-  normalizeCwd(opts, file); // This has to go first because other options rely on cwd
-  normalizeRoot(opts);
-  normalizeAlias(opts);
-  normalizeTransformedMethods(opts);
+export default function normalizeOptions(currentFile, opts) {
+  const cwd = normalizeCwd(opts.cwd, currentFile);
+  const root = normalizeRoot(opts.root, cwd);
+  const alias = normalizeAlias(opts.alias);
+  const transformFunctions = normalizeTransformedMethods(opts.transformFunctions);
+  const extensions = opts.extensions || defaultExtensions;
 
-  if (!opts.extensions) {
-    opts.extensions = defaultExtensions;
-  }
+  return {
+    cwd,
+    root,
+    alias,
+    transformFunctions,
+    extensions,
+  };
 }

@@ -7,6 +7,7 @@ import transformImport from './transformers/import';
 // Public API for external plugins
 export {
   getRealPath,
+  normalizeOptions,
 };
 
 
@@ -26,7 +27,9 @@ const visitor = {
 export default ({ types }) => ({
   pre(file) {
     this.types = types;
-    normalizeOptions(this.opts, file);
+
+    const currentFile = file.opts.filename;
+    this.opts = normalizeOptions(currentFile, this.opts);
   },
 
   visitor,
