@@ -54,7 +54,12 @@ export function mapPathString(nodePath, state) {
 
   const modulePath = getRealPath(sourcePath, currentFile, opts);
   if (modulePath) {
+    if (nodePath.node.pathResolved) {
+      return;
+    }
+
     nodePath.replaceWith(state.types.stringLiteral(modulePath));
+    nodePath.node.pathResolved = true;
   }
 }
 
