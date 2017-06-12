@@ -509,6 +509,62 @@ describe('module-resolver', () => {
         });
       });
     });
+
+    describe('multiple alias application', () => {
+      it('should resolve the cyclic alias only once', () => {
+        const fileName = path.resolve('test/testproject/src/app.js');
+        const cycleAliasTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              alias: {
+                first: 'second',
+                second: 'first',
+              },
+            }],
+            [plugin, {
+              alias: {
+                first: 'second',
+                second: 'first',
+              },
+            }],
+          ],
+          filename: fileName,
+        };
+
+        testWithImport(
+          'first',
+          'second',
+          cycleAliasTransformerOpts,
+        );
+      });
+
+      it('should resolve the prefix alias only once', () => {
+        const fileName = path.resolve('test/testproject/src/app.js');
+        const cycleAliasTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              alias: {
+                prefix: 'prefix/lib',
+              },
+            }],
+            [plugin, {
+              alias: {
+                prefix: 'prefix/lib',
+              },
+            }],
+          ],
+          filename: fileName,
+        };
+
+        testWithImport(
+          'prefix/test',
+          'prefix/lib/test',
+          cycleAliasTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('with custom cwd', () => {
