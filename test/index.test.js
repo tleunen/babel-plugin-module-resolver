@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { transform } from 'babel-core';
-import plugin, { getRealPath, normalizeOptions } from '../src';
+import plugin, { resolvePath } from '../src';
 
 
 describe('module-resolver', () => {
@@ -13,45 +13,18 @@ describe('module-resolver', () => {
   }
 
   describe('exports', () => {
-    describe('getRealPath', () => {
+    describe('resolvePath', () => {
       it('should be a function', () => {
-        expect(getRealPath).toEqual(expect.any(Function));
+        expect(resolvePath).toEqual(expect.any(Function));
       });
 
       it('should resolve the file path', () => {
         const opts = {
           root: ['./test/testproject/src'],
         };
-        const result = getRealPath('app', './test/testproject/src/app', opts);
+        const result = resolvePath('app', './test/testproject/src/app', opts);
 
         expect(result).toBe('./app');
-      });
-    });
-
-    describe('normalizeOptions', () => {
-      it('should be a function', () => {
-        expect(normalizeOptions).toEqual(expect.any(Function));
-      });
-
-      it('should normalizeOptions the options', () => {
-        const currentFile = './test/testproject/src/app';
-        const opts = {
-          root: './test/testproject/src',
-        };
-        const result = normalizeOptions(currentFile, opts);
-
-        expect(Object.keys(result).sort()).toMatchSnapshot();
-      });
-
-      it('should not change the original options', () => {
-        const currentFile = './test/testproject/src/app';
-        const opts = Object.freeze({
-          root: './test/testproject/src',
-        });
-
-        expect(() => {
-          normalizeOptions(currentFile, opts);
-        }).not.toThrow();
       });
     });
   });

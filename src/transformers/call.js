@@ -7,7 +7,7 @@ import {
 
 export default function transformCall(nodePath, state) {
   const calleePath = nodePath.get('callee');
-  const isNormalCall = state.opts.transformFunctions.some(
+  const isNormalCall = state.normalizedOpts.transformFunctions.some(
     pattern => matchesPattern(state.types, calleePath, pattern),
   );
 

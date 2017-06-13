@@ -1,14 +1,11 @@
-import getRealPath from './getRealPath';
 import normalizeOptions from './normalizeOptions';
+import resolvePath from './resolvePath';
 import transformCall from './transformers/call';
 import transformImport from './transformers/import';
 
 
 // Public API for external plugins
-export {
-  getRealPath,
-  normalizeOptions,
-};
+export { resolvePath };
 
 
 const importVisitors = {
@@ -29,7 +26,7 @@ export default ({ types }) => ({
     this.types = types;
 
     const currentFile = file.opts.filename;
-    this.opts = normalizeOptions(currentFile, this.opts);
+    this.normalizedOpts = normalizeOptions(currentFile, this.opts);
   },
 
   visitor,

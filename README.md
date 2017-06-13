@@ -142,21 +142,16 @@ More configuration options are located in [the Flow documentation](https://flowt
 
 ## For plugin authors
 
-Aside from the main export, which is the plugin itself as needed by Babel, there are some functions used internally that are exposed:
+Aside from the main export, which is the plugin itself as needed by Babel, there is a function used internally that is exposed:
 
 ```js
-import { normalizeOptions, getRealPath } from 'babel-plugin-module-resolver';
+import { resolvePath } from 'babel-plugin-module-resolver';
 
 // `opts` are the options as passed to the Babel config (should have keys like "root", "alias", etc.)
-const normalizedOpts = normalizeOptions(currentFile, opts);
-
-// `getRealPath` depends on the options to be normalized
-const realPath = getRealPath(sourcePath, currentFile, normalizedOpts);
+const realPath = resolvePath(sourcePath, currentFile, opts);
 ```
 
-First, you can use `normalizeOptions` to get normalized options with respect to the currently processed file.
-
-Then for each path in the file you can use `getRealPath` to get the same path that module-resolver will output.
+For each path in the file you can use `resolvePath` to get the same path that module-resolver will output.
 
 In each case, `currentFile` can be a relative path (will be resolved with respect to the CWD, not `opts.cwd`), or an absolute path.
 
