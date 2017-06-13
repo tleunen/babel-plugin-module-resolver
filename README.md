@@ -153,7 +153,7 @@ const realPath = resolvePath(sourcePath, currentFile, opts);
 
 For each path in the file you can use `resolvePath` to get the same path that module-resolver will output.
 
-In each case, `currentFile` can be a relative path (will be resolved with respect to the CWD, not `opts.cwd`), or an absolute path.
+`currentFile` can be either a relative path (will be resolved with respect to the CWD, not `opts.cwd`), or an absolute path.
 
 ## License
 
