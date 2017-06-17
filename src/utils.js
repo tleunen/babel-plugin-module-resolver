@@ -52,7 +52,7 @@ export function mapPathString(nodePath, state) {
   const currentFile = state.file.opts.filename;
   const opts = state.opts;
 
-  const modulePath = resolvePath.call(state, sourcePath, currentFile, opts);
+  const modulePath = resolvePath(sourcePath, currentFile, opts);
   if (modulePath) {
     if (nodePath.node.pathResolved) {
       return;

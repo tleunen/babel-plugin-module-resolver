@@ -84,9 +84,7 @@ export default function resolvePath(sourcePath, currentFile, opts) {
     return sourcePath;
   }
 
-  const normalizedOpts = this && this.normalizedOpts
-    ? this.normalizedOpts
-    : normalizeOptions(currentFile, opts);
+  const normalizedOpts = normalizeOptions(currentFile, opts);
 
   // File param is a relative path from the environment current working directory
   // (not from cwd param)
