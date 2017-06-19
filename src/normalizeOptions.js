@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { createSelector } from 'reselect';
 
 import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
@@ -106,18 +107,23 @@ function normalizeTransformedFunctions(optsTransformFunctions) {
   return [...defaultTransformedFunctions, ...optsTransformFunctions];
 }
 
-export default function normalizeOptions(currentFile, opts) {
-  const cwd = normalizeCwd(opts.cwd, currentFile);
-  const root = normalizeRoot(opts.root, cwd);
-  const alias = normalizeAlias(opts.alias);
-  const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
-  const extensions = opts.extensions || defaultExtensions;
+export default createSelector(
+  // The currentFile should have an extension; otherwise it's considered a special value
+  currentFile => (currentFile.includes('.') ? path.dirname(currentFile) : currentFile),
+  (_, opts) => opts,
+  (currentFile, opts) => {
+    const cwd = normalizeCwd(opts.cwd, currentFile);
+    const root = normalizeRoot(opts.root, cwd);
+    const alias = normalizeAlias(opts.alias);
+    const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
+    const extensions = opts.extensions || defaultExtensions;
 
-  return {
-    cwd,
-    root,
-    alias,
-    transformFunctions,
-    extensions,
-  };
-}
+    return {
+      cwd,
+      root,
+      alias,
+      transformFunctions,
+      extensions,
+    };
+  },
+);
