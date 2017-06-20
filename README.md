@@ -43,6 +43,8 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 }
 ```
 
+Are you a plugin author (e.g. IDE integration)? We have [documented the exposed functions](#for-plugin-authors) for use in your plugins!
+
 ### Options
 
 - `root`: A string or an array of root directories. Specify the paths or a glob path (eg. `./src/**/components`)
@@ -137,6 +139,21 @@ More configuration options are located in [the Flow documentation](https://flowt
 
 - Atom: Uses [atom-autocomplete-modules][atom-autocomplete-modules] and enable the `babel-plugin-module-resolver` option.
 - IntelliJ/WebStorm: You can add custom resources root directories, make sure it matches what you have in this plugin.
+
+## For plugin authors
+
+Aside from the main export, which is the plugin itself as needed by Babel, there is a function used internally that is exposed:
+
+```js
+import { resolvePath } from 'babel-plugin-module-resolver';
+
+// `opts` are the options as passed to the Babel config (should have keys like "root", "alias", etc.)
+const realPath = resolvePath(sourcePath, currentFile, opts);
+```
+
+For each path in the file you can use `resolvePath` to get the same path that module-resolver will output.
+
+`currentFile` can be either a relative path (will be resolved with respect to the CWD, not `opts.cwd`), or an absolute path.
 
 ## License
 

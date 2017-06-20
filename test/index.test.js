@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { transform } from 'babel-core';
-import plugin from '../src';
+import plugin, { resolvePath } from '../src';
 
 
 describe('module-resolver', () => {
@@ -11,6 +11,23 @@ describe('module-resolver', () => {
 
     expect(result.code).toBe(`import something from "${output}";`);
   }
+
+  describe('exports', () => {
+    describe('resolvePath', () => {
+      it('should be a function', () => {
+        expect(resolvePath).toEqual(expect.any(Function));
+      });
+
+      it('should resolve the file path', () => {
+        const opts = {
+          root: ['./test/testproject/src'],
+        };
+        const result = resolvePath('app', './test/testproject/src/app', opts);
+
+        expect(result).toBe('./app');
+      });
+    });
+  });
 
   describe('root', () => {
     describe('simple root', () => {

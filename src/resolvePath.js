@@ -2,6 +2,7 @@ import path from 'path';
 
 import { warn } from './log';
 import mapToRelative from './mapToRelative';
+import normalizeOptions from './normalizeOptions';
 import { nodeResolvePath, replaceExtension, toLocalPath, toPosixPath } from './utils';
 
 
@@ -17,7 +18,7 @@ function findPathInRoots(sourcePath, { extensions, root }) {
   return resolvedSourceFile;
 }
 
-function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
+function resolvePathFromRootConfig(sourcePath, currentFile, opts) {
   const absFileInRoot = findPathInRoots(sourcePath, opts);
 
   if (!absFileInRoot) {
@@ -42,7 +43,7 @@ function checkIfPackageExists(modulePath, currentFile, extensions) {
   }
 }
 
-function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
+function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
   opts.alias.find(([regExp, substitute]) => {
@@ -74,22 +75,24 @@ function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
 }
 
 const resolvers = [
-  getRealPathFromRootConfig,
-  getRealPathFromAliasConfig,
+  resolvePathFromRootConfig,
+  resolvePathFromAliasConfig,
 ];
 
-export default function getRealPath(sourcePath, { file, opts }) {
+export default function resolvePath(sourcePath, currentFile, opts) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }
 
+  const normalizedOpts = normalizeOptions(currentFile, opts);
+
   // File param is a relative path from the environment current working directory
   // (not from cwd param)
-  const currentFile = path.resolve(file.opts.filename);
+  const absoluteCurrentFile = path.resolve(currentFile);
   let resolvedPath = null;
 
   resolvers.some((resolver) => {
-    resolvedPath = resolver(sourcePath, currentFile, opts);
+    resolvedPath = resolver(sourcePath, absoluteCurrentFile, normalizedOpts);
     return resolvedPath !== null;
   });
 

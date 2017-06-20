@@ -1,7 +1,7 @@
 import path from 'path';
 
 import resolve from 'resolve';
-import getRealPath from './getRealPath';
+import resolvePath from './resolvePath';
 
 
 export function nodeResolvePath(modulePath, basedir, extensions) {
@@ -48,7 +48,11 @@ export function mapPathString(nodePath, state) {
     return;
   }
 
-  const modulePath = getRealPath(nodePath.node.value, state);
+  const sourcePath = nodePath.node.value;
+  const currentFile = state.file.opts.filename;
+  const opts = state.opts;
+
+  const modulePath = resolvePath(sourcePath, currentFile, opts);
   if (modulePath) {
     if (nodePath.node.pathResolved) {
       return;
