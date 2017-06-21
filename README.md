@@ -54,6 +54,7 @@ Are you a plugin author (e.g. IDE integration)? We have [documented the exposed 
     - The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
     - The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
 - `transformFunctions`: Array of functions and methods that will have their first argument transformed. By default those methods are: `require`, `require.resolve`, `System.import`, `jest.genMockFromModule`, `jest.mock`, `jest.unmock`, `jest.doMock`, `jest.dontMock`.
+- `resolvePath(sourcePath, currentFile, opts)`: A function that is called for each path in the file. By default module-resolver is using an internal function, exposed like so: `import { resolvePath } from 'babel-plugin-module-resolver`'. The `opts` argument is the options object that is passed through the Babel config.
 
 ### Regular expression alias
 

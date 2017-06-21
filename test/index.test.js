@@ -847,4 +847,44 @@ describe('module-resolver', () => {
       });
     });
   });
+
+  describe('resolvePath', () => {
+    it('should work with a custom function', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            resolvePath() {
+              return 'real path';
+            },
+          }],
+        ],
+      };
+
+      testWithImport(
+        'app',
+        'real path',
+        rootTransformerOpts,
+      );
+    });
+
+    it('should work with the original function', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            resolvePath,
+          }],
+        ],
+      };
+
+      testWithImport(
+        'app',
+        './test/testproject/src/app',
+        rootTransformerOpts,
+      );
+    });
+  });
 });
