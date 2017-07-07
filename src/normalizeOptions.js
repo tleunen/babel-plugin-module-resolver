@@ -6,6 +6,8 @@ import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
 import pkgUp from 'pkg-up';
 
+import defaultResolvePath from './resolvePath';
+
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
 const defaultTransformedFunctions = [
@@ -117,6 +119,7 @@ export default createSelector(
     const alias = normalizeAlias(opts.alias);
     const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
     const extensions = opts.extensions || defaultExtensions;
+    const resolvePath = opts.resolvePath || defaultResolvePath;
 
     return {
       cwd,
@@ -124,6 +127,7 @@ export default createSelector(
       alias,
       transformFunctions,
       extensions,
+      resolvePath,
     };
   },
 );
