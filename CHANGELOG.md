@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0-beta.4"></a>
+# [3.0.0-beta.4](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2017-07-10)
+
+
+### Bug Fixes
+
+* Prevent double application of the transform ([#176](https://github.com/tleunen/babel-plugin-module-resolver/issues/176)) ([feefe9e](https://github.com/tleunen/babel-plugin-module-resolver/commit/feefe9e))
+
+
+### Features
+
+* Add the resolvePath option ([#195](https://github.com/tleunen/babel-plugin-module-resolver/issues/195)) ([59115e0](https://github.com/tleunen/babel-plugin-module-resolver/commit/59115e0)), closes [#165](https://github.com/tleunen/babel-plugin-module-resolver/issues/165)
+
+
+
 <a name="3.0.0-beta.3"></a>
 # [3.0.0-beta.3](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2017-05-16)
 
