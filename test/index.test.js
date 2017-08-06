@@ -308,6 +308,30 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('with alias for a relative path (with respect to the cwd)', () => {
+      it('should alias the file path sharing a directory', () => {
+        testWithImport(
+          'test',
+          './testproject/test',
+          {
+            ...aliasTransformerOpts,
+            filename: './test/foo.js',
+          },
+        );
+      });
+
+      it('should alias the file path in another directory', () => {
+        testWithImport(
+          'test',
+          '../test/testproject/test',
+          {
+            ...aliasTransformerOpts,
+            filename: './lib/bar.js',
+          },
+        );
+      });
+    });
+
     describe('with an alias containing a slash', () => {
       it('should alias the file path', () => {
         testWithImport(
