@@ -82,6 +82,24 @@ To use the backslash character (`\`) just escape it like so: `'\\\\'` (double es
 
 If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-import], and [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] to remove falsy unresolved modules.
 
+## Usage with React Native
+
+To let the packager resolve the right module for each platform, you have to add the ```.ios.js```and ```.android.js``` extensions :
+
+```json
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "extensions": [".js", ".ios.js", ".android.js"]
+      }
+    ]
+  ]
+}
+```
+
 ## Usage with Flow
 
 To allow Flow to find your modules, add configuration options
