@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0-beta.5"></a>
+# [3.0.0-beta.5](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2017-08-17)
+
+
+### Bug Fixes
+
+* Fix strip extensions for RN support ([#205](https://github.com/tleunen/babel-plugin-module-resolver/issues/205)) ([f22cb68](https://github.com/tleunen/babel-plugin-module-resolver/commit/f22cb68))
+
+
+
 <a name="3.0.0-beta.4"></a>
 # [3.0.0-beta.4](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2017-07-10)
 
