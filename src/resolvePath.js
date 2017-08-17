@@ -33,6 +33,7 @@ function resolvePathFromRootConfig(sourcePath, currentFile, opts) {
   return toLocalPath(toPosixPath(replaceExtension(
     mapToRelative(opts.cwd, currentFile, absFileInRoot),
     ext,
+    opts,
   )));
 }
 

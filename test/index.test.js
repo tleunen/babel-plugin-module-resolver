@@ -235,6 +235,34 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('non-standard double extensions', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            extensions: ['.js', '.ios.js', '.android.js'],
+          }],
+        ],
+      };
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          'text',
+          'text',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file path with a known defined extension & strip the extension', () => {
+        testWithImport(
+          'rn',
+          './test/testproject/src/rn',
+          rootTransformerOpts,
+        );
+      });
+    });
+
     describe('root and alias', () => {
       const rootTransformerOpts = {
         babelrc: false,
