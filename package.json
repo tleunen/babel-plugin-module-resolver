@@ -39,16 +39,16 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-jest": "^20.0.3",
+    "babel-jest": "^21.2.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "common-tags": "^1.4.0",
-    "eslint": "^4.4.1",
-    "eslint-config-airbnb-base": "^11.3.1",
-    "eslint-plugin-import": "^2.7.0",
-    "jest": "^20.0.4",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^11.3.2",
+    "eslint-plugin-import": "^2.8.0",
+    "jest": "^21.2.1",
     "standard-version": "^4.2.0"
   },
   "scripts": {
