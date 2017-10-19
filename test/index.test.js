@@ -264,23 +264,23 @@ describe('module-resolver', () => {
     });
 
     describe('root and alias', () => {
-      const rootTransformerOpts = {
+      const aliasTransformerOpts = {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: './test/testproject/src',
+            root: './test/fakepath/',
             alias: {
-              constants: 'constants/actions',
+              constants: './test/testproject/src/constants',
             },
           }],
         ],
       };
 
-      it('should resolve the path using root first and alias otherwise', () => {
+      it('should resolve the path using alias first and root otherwise', () => {
         testWithImport(
           'constants',
           './test/testproject/src/constants',
-          rootTransformerOpts,
+          aliasTransformerOpts,
         );
       });
     });
