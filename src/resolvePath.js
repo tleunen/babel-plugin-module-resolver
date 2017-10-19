@@ -76,8 +76,8 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
 }
 
 const resolvers = [
-  resolvePathFromRootConfig,
   resolvePathFromAliasConfig,
+  resolvePathFromRootConfig,
 ];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
