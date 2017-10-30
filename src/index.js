@@ -23,6 +23,7 @@ const visitor = {
 
 export default ({ types }) => ({
   name: 'module-resolver',
+
   pre(file) {
     this.types = types;
 

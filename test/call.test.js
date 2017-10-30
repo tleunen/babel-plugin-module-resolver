@@ -13,6 +13,8 @@ const calls = [
   'jest.doMock',
   'jest.dontMock',
   'jest.setMock',
+  'require.requireActual',
+  'require.requireMock',
 ];
 
 describe('function and method calls', () => {
