@@ -19,6 +19,7 @@ const defaultTransformedFunctions = [
   'jest.unmock',
   'jest.doMock',
   'jest.dontMock',
+  'jest.setMock',
 ];
 
 function isRegExp(string) {

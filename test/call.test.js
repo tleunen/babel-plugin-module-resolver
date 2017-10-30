@@ -12,6 +12,7 @@ const calls = [
   'jest.unmock',
   'jest.doMock',
   'jest.dontMock',
+  'jest.setMock',
 ];
 
 describe('function and method calls', () => {
