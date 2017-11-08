@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.5...v3.0.0) (2017-11-08)
+
+
+### Features
+
+* Add jest.setMock to the list of transformed jest functions ([#225](https://github.com/tleunen/babel-plugin-module-resolver/issues/225)) ([a7c04b0](https://github.com/tleunen/babel-plugin-module-resolver/commit/a7c04b0))
+* Add require.requireActual and require.requireMock to the list of transformed Jest functions ([#227](https://github.com/tleunen/babel-plugin-module-resolver/issues/227)) ([47fd5ba](https://github.com/tleunen/babel-plugin-module-resolver/commit/47fd5ba))
+* Make alias config take precedence over root config ([#221](https://github.com/tleunen/babel-plugin-module-resolver/issues/221)) ([3c711f8](https://github.com/tleunen/babel-plugin-module-resolver/commit/3c711f8))
+
+
+### BREAKING CHANGES
+
+* This makes alias taking precedence over the root config because it's usually more specific.
+
+
+
 <a name="3.0.0-beta.5"></a>
 # [3.0.0-beta.5](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2017-08-17)
 
