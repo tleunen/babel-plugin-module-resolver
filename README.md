@@ -122,7 +122,7 @@ Instruct Flow where to resolve modules from:
 
 [options]
 module.system.node.resolve_dirname=node_modules
-module.system.node.resolve_dirname=src
+module.system.node.resolve_dirname=./src
 ```
 
 Be sure to add any sub-directories if you refer to files further down the
