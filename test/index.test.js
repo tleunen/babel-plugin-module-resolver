@@ -634,6 +634,43 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('correct alias order application', () => {
+      const arrayAliasTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            alias: [{
+              '~/foo': './src/lib/foo',
+            }, {
+              '~/bar': './src/lib/bar',
+            }, {
+              '~': './src',
+            }],
+          }],
+        ],
+      };
+
+      it('should resolve aliases following the insertion order', () => {
+        testWithImport(
+          '~/foo',
+          './src/lib/foo',
+          arrayAliasTransformerOpts,
+        );
+
+        testWithImport(
+          '~/bar',
+          './src/lib/bar',
+          arrayAliasTransformerOpts,
+        );
+
+        testWithImport(
+          '~',
+          './src',
+          arrayAliasTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('with custom cwd', () => {
