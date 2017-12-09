@@ -97,13 +97,21 @@ function normalizeAlias(optsAlias) {
     return [];
   }
 
-  const aliasKeys = Object.keys(optsAlias);
+  const aliasArray = Array.isArray(optsAlias) ? optsAlias : [optsAlias];
 
-  return aliasKeys.map(key => (
-    isRegExp(key) ?
-      getAliasPair(key, optsAlias[key]) :
-      getAliasPair(`^${key}(/.*|)$`, `${optsAlias[key]}\\1`)
-  ));
+  return aliasArray.reduce((acc, alias) => {
+    const aliasKeys = Object.keys(alias);
+
+    aliasKeys.forEach((key) => {
+      const aliasPair = isRegExp(key)
+        ? getAliasPair(key, alias[key])
+        : getAliasPair(`^${key}(/.*|)$`, `${alias[key]}\\1`);
+
+      acc.push(aliasPair);
+    });
+
+    return acc;
+  }, []);
 }
 
 function normalizeTransformedFunctions(optsTransformFunctions) {

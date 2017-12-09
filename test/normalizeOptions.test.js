@@ -33,4 +33,23 @@ describe('normalizeOptions', () => {
     expect(result).not.toBe(result2);
     expect(normalizeOptions.recomputations()).toEqual(2);
   });
+
+  it('should correctly normalize alias option if it is an array', () => {
+    const options = {
+      alias: [
+        {
+          foo: 'A',
+          bar: 'B',
+        },
+        {
+          baz: 'C',
+        },
+      ],
+    };
+    const { alias } = normalizeOptions('path/to/file.js', options);
+
+    expect(alias[0][0]).toEqual(/^foo(\/.*|)$/);
+    expect(alias[1][0]).toEqual(/^bar(\/.*|)$/);
+    expect(alias[2][0]).toEqual(/^baz(\/.*|)$/);
+  });
 });
