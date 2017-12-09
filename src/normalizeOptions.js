@@ -79,6 +79,10 @@ function normalizeRoot(optsRoot, cwd) {
 }
 
 function getAliasPair(key, value) {
+  if (typeof value === 'function') {
+    return [new RegExp(key), value];
+  }
+
   const parts = value.split('\\\\');
 
   function substitute(execResult) {

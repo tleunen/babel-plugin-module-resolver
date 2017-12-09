@@ -492,6 +492,45 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('with a regular expression and a function', () => {
+      const mockSubstitute = jest.fn();
+      const regExpSubsituteOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            alias: {
+              '^@regexp-function/(.+)': mockSubstitute,
+            },
+          }],
+        ],
+      };
+
+      beforeEach(() => {
+        mockSubstitute.mockClear();
+      });
+
+      it('should call the substitute with the right arguments', () => {
+        mockSubstitute.mockReturnValue('./test/testproject/test');
+
+        testWithImport(
+          '@regexp-function/something',
+          './test/testproject/test',
+          regExpSubsituteOpts,
+        );
+
+        expect(mockSubstitute.mock.calls.length).toBe(1);
+
+        const execResult = Object.assign(
+          ['@regexp-function/something', 'something'],
+          {
+            index: 0,
+            input: '@regexp-function/something',
+          },
+        );
+        expect(mockSubstitute).toBeCalledWith(execResult);
+      });
+    });
+
     describe('with the plugin applied twice', () => {
       const doubleAliasTransformerOpts = {
         babelrc: false,
