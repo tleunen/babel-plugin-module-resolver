@@ -43,7 +43,7 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 }
 ```
 
-## Documentation 
+## Documentation
 
 babel-plugin-module-resolver can be configured and controlled easily, check the [documentation](DOCS.md) for more details
 
@@ -57,6 +57,20 @@ If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-impo
 
 - Atom: Uses [atom-autocomplete-modules][atom-autocomplete-modules] and enable the `babel-plugin-module-resolver` option.
 - IntelliJ/WebStorm: You can add custom resources root directories, make sure it matches what you have in this plugin.
+- VS Code: Configure the [path mapping](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping) in `jsconfig.json` (`tsconfig.json` for TypeScript), e.g.:
+
+```js
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"],
+      "test/*": ["test/*"],
+      "underscore": ["lodash"]
+    }
+  }
+}
+```
 
 ## License
 
