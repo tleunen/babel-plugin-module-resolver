@@ -78,22 +78,27 @@ function normalizeRoot(optsRoot, cwd) {
     }, []);
 }
 
-function getAliasPair(key, value) {
+function getAliasTarget(key, isKeyRegExp) {
+  const regExpPattern = isKeyRegExp ? key : `^${key}(/.*|)$`;
+  return new RegExp(regExpPattern);
+}
+
+function getAliasSubstitute(value, isKeyRegExp) {
   if (typeof value === 'function') {
-    return [new RegExp(key), value];
+    return value;
+  }
+
+  if (!isKeyRegExp) {
+    return ([, match]) => `${value}${match}`;
   }
 
   const parts = value.split('\\\\');
 
-  function substitute(execResult) {
-    return parts
-      .map(part =>
-        part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
-      )
-      .join('\\');
-  }
-
-  return [new RegExp(key), substitute];
+  return execResult => parts
+    .map(part =>
+      part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
+    )
+    .join('\\');
 }
 
 function normalizeAlias(optsAlias) {
@@ -103,18 +108,18 @@ function normalizeAlias(optsAlias) {
 
   const aliasArray = Array.isArray(optsAlias) ? optsAlias : [optsAlias];
 
-  return aliasArray.reduce((acc, alias) => {
+  return aliasArray.reduce((aliasPairs, alias) => {
     const aliasKeys = Object.keys(alias);
 
     aliasKeys.forEach((key) => {
-      const aliasPair = isRegExp(key)
-        ? getAliasPair(key, alias[key])
-        : getAliasPair(`^${key}(/.*|)$`, `${alias[key]}\\1`);
-
-      acc.push(aliasPair);
+      const isKeyRegExp = isRegExp(key);
+      aliasPairs.push([
+        getAliasTarget(key, isKeyRegExp),
+        getAliasSubstitute(alias[key], isKeyRegExp),
+      ]);
     });
 
-    return acc;
+    return aliasPairs;
   }, []);
 }
 

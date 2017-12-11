@@ -66,7 +66,7 @@ You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the who
 
 To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
 
-### Regular expressions with a function
+### Passing a substitute function
 
 If you need even more power over the aliased path, you can pass a function in the alias configuration:
 
@@ -75,6 +75,7 @@ module.exports = {
   plugins: [
     ["module-resolver", {
       alias: {
+        "foo": ([, name]) => path.join('bar', name)
         "^@namespace/foo-(.+)": ([, name]) => path.join('packages', name)
       }
     }]
@@ -82,13 +83,13 @@ module.exports = {
 }
 ```
 
-Using the config from this example `'@namespace/foo-bar'` will become `'packages/bar'` or `'packages\\bar'` depending on the OS.
+Using the config from this example:
+* `'foo/baz'` will become `'bar/baz'` or `'bar\\baz'`
+* `'@namespace/foo-bar'` will become `'packages/bar'` or `'packages\\bar'`
 
 The only argument is the result of calling `RegExp.prototype.exec` on the matched path. It's an array with the matched string and all matched groups.
 
 Because the function is only called when there is a match, the argument can never be `null`.
-
-*Important: a function can only be used with regular expressions.*
 
 ## extensions
 
