@@ -72,10 +72,23 @@ If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-impo
 }
 ```
 
+
 ## License
 
 MIT, see [LICENSE.md](/LICENSE.md) for details.
 
+## Who is using babel-plugin-module-resolver ?
+
+- Airbnb: [Lottie React Native](https://github.com/airbnb/lottie-react-native)
+- AppDirect
+- Callstack: [React Native Paper](https://github.com/callstack/react-native-paper)
+- Codility
+- Expo: [Expo SDK](https://github.com/expo/expo-sdk)
+- Uber: [Seer](https://github.com/uber-web/Seer)
+- Zeit: [Next.js](https://github.com/zeit/next.js)
+- Zenika: [Immutadot](https://github.com/Zenika/immutadot)
+
+Are you also using it? Send a PR!
 
 [status-image]: https://img.shields.io/badge/status-maintained-brightgreen.svg
 [status-url]: https://github.com/tleunen/babel-plugin-module-resolver
