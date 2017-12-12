@@ -75,8 +75,8 @@ module.exports = {
   plugins: [
     ["module-resolver", {
       alias: {
-        "foo": ([, name]) => path.join('bar', name)
-        "^@namespace/foo-(.+)": ([, name]) => path.join('packages', name)
+        "foo": ([, name]) => `bar${name}`,
+        "^@namespace/foo-(.+)": ([, name]) => `packages/${name}`
       }
     }]
   ]
@@ -84,8 +84,9 @@ module.exports = {
 ```
 
 Using the config from this example:
-* `'foo/baz'` will become `'bar/baz'` or `'bar\\baz'`
-* `'@namespace/foo-bar'` will become `'packages/bar'` or `'packages\\bar'`
+* `'foo'` will become `'bar'` (`name` is empty)
+* `'foo/baz'` will become `'bar/baz'` (`name` includes the slash in this case)
+* `'@namespace/foo-bar'` will become `'packages/bar'`
 
 The only argument is the result of calling `RegExp.prototype.exec` on the matched path. It's an array with the matched string and all matched groups.
 
