@@ -79,12 +79,18 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 
 ## Who is using babel-plugin-module-resolver ?
 
+- Algolia: [InstantSearch.js](https://github.com/algolia/instantsearch.js)
 - Airbnb: [Lottie React Native](https://github.com/airbnb/lottie-react-native)
 - AppDirect
 - Callstack: [React Native Paper](https://github.com/callstack/react-native-paper)
 - Codility
+- Eleme: [Element](https://github.com/ElemeFE/element) 
 - Expo: [Expo SDK](https://github.com/expo/expo-sdk)
-- Uber: [Seer](https://github.com/uber-web/Seer)
+- FormidableLabs: [Victory Native](https://github.com/FormidableLabs/victory-native)
+- OpenCollective: [OpenCollective](https://github.com/opencollective/frontend)
+- React Community: [React Native Maps](https://github.com/react-community/react-native-maps)
+- Uber: [Seer](https://github.com/uber-web/Seer), [react-vis](https://github.com/uber/react-vis)
+- Vuetify.js [Vuetify](https://github.com/vuetifyjs/vuetify)
 - Zeit: [Next.js](https://github.com/zeit/next.js)
 - Zenika: [Immutadot](https://github.com/Zenika/immutadot)
 
