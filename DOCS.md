@@ -66,6 +66,32 @@ You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the who
 
 To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
 
+### Passing a substitute function
+
+If you need even more power over the aliased path, you can pass a function in the alias configuration:
+
+```js
+module.exports = {
+  plugins: [
+    ["module-resolver", {
+      alias: {
+        "foo": ([, name]) => `bar${name}`,
+        "^@namespace/foo-(.+)": ([, name]) => `packages/${name}`
+      }
+    }]
+  ]
+}
+```
+
+Using the config from this example:
+* `'foo'` will become `'bar'` (`name` is empty)
+* `'foo/baz'` will become `'bar/baz'` (`name` includes the slash in this case)
+* `'@namespace/foo-bar'` will become `'packages/bar'`
+
+The only argument is the result of calling `RegExp.prototype.exec` on the matched path. It's an array with the matched string and all matched groups.
+
+Because the function is only called when there is a match, the argument can never be `null`.
+
 ## extensions
 
 An array of extensions used in the resolver.
@@ -95,7 +121,7 @@ Array of functions and methods that will have their first argument transformed. 
   "plugins": [
     ["module-resolver", {
       "transformFunctions": [
-          "require", 
+          "require",
           "require.resolve",
           "System.import",
           "jest.genMockFromModule",

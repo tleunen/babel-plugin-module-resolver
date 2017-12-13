@@ -492,6 +492,67 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('with a function', () => {
+      const mockSubstitute = jest.fn();
+      const regExpSubsituteOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            alias: {
+              'basic-function': mockSubstitute,
+              '^@regexp-function/(.+)': mockSubstitute,
+            },
+          }],
+        ],
+      };
+
+      beforeEach(() => {
+        mockSubstitute.mockClear();
+      });
+
+      it('should call the substitute with the right arguments (basic)', () => {
+        mockSubstitute.mockReturnValue('./test/testproject/test');
+
+        testWithImport(
+          'basic-function/something',
+          './test/testproject/test',
+          regExpSubsituteOpts,
+        );
+
+        expect(mockSubstitute.mock.calls.length).toBe(1);
+
+        const execResult = Object.assign(
+          ['basic-function/something', '/something'],
+          {
+            index: 0,
+            input: 'basic-function/something',
+          },
+        );
+        expect(mockSubstitute).toBeCalledWith(execResult);
+      });
+
+      it('should call the substitute with the right arguments (regexp)', () => {
+        mockSubstitute.mockReturnValue('./test/testproject/test');
+
+        testWithImport(
+          '@regexp-function/something',
+          './test/testproject/test',
+          regExpSubsituteOpts,
+        );
+
+        expect(mockSubstitute.mock.calls.length).toBe(1);
+
+        const execResult = Object.assign(
+          ['@regexp-function/something', 'something'],
+          {
+            index: 0,
+            input: '@regexp-function/something',
+          },
+        );
+        expect(mockSubstitute).toBeCalledWith(execResult);
+      });
+    });
+
     describe('with the plugin applied twice', () => {
       const doubleAliasTransformerOpts = {
         babelrc: false,
