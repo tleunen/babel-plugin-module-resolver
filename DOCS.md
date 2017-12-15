@@ -7,6 +7,7 @@
   * [transformFunctions](#transformfunctions)
   * [resolvePath](#resolvepath)
 * [Usage with React Native](#usage-with-react-native)
+* [Usage with Proxyquire](#usage-with-proxyquire)
 * [Usage with Flow](#usage-with-flow)
 * [For plugin authors](#for-plugin-authors)
 
