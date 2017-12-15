@@ -5,6 +5,17 @@ import mapToRelative from './mapToRelative';
 import normalizeOptions from './normalizeOptions';
 import { nodeResolvePath, replaceExtension, toLocalPath, toPosixPath } from './utils';
 
+function getRelativePath(sourcePath, currentFile, absFileInRoot, opts) {
+  const realSourceFileExtension = path.extname(absFileInRoot);
+  const sourceFileExtension = path.extname(sourcePath);
+
+  let relativePath = mapToRelative(opts.cwd, currentFile, absFileInRoot);
+  if (realSourceFileExtension !== sourceFileExtension) {
+    relativePath = replaceExtension(relativePath, opts);
+  }
+
+  return toLocalPath(toPosixPath(relativePath));
+}
 
 function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
@@ -25,16 +36,7 @@ function resolvePathFromRootConfig(sourcePath, currentFile, opts) {
     return null;
   }
 
-  const realSourceFileExtension = path.extname(absFileInRoot);
-  const sourceFileExtension = path.extname(sourcePath);
-
-  // Map the source and keep its extension if the import/require had one
-  const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
-  return toLocalPath(toPosixPath(replaceExtension(
-    mapToRelative(opts.cwd, currentFile, absFileInRoot),
-    ext,
-    opts,
-  )));
+  return getRelativePath(sourcePath, currentFile, absFileInRoot, opts);
 }
 
 function checkIfPackageExists(modulePath, currentFile, extensions) {
