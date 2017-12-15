@@ -298,6 +298,14 @@ describe('module-resolver', () => {
           rootTransformerOpts,
         );
       });
+
+      it('should resolve the relative file path with a known defined extension', () => {
+        testWithImport(
+          './test/testproject/src/rn/file',
+          './test/testproject/src/rn/file.android.js',
+          rootTransformerOpts,
+        );
+      });
     });
 
     describe('root and alias', () => {
@@ -318,6 +326,28 @@ describe('module-resolver', () => {
           'constants',
           './test/testproject/src/constants',
           aliasTransformerOpts,
+        );
+      });
+    });
+
+    describe('with the plugin applied twice', () => {
+      const doubleAliasTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, { root: '.' }],
+          [plugin, {
+            alias: {
+              '^@namespace/foo-(.+)': './packages/\\1',
+            },
+          }],
+        ],
+      };
+
+      it('should support replacing parts of a path', () => {
+        testWithImport(
+          '@namespace/foo-bar',
+          './packages/bar',
+          doubleAliasTransformerOpts,
         );
       });
     });
@@ -587,28 +617,6 @@ describe('module-resolver', () => {
           },
         );
         expect(mockSubstitute).toBeCalledWith(execResult);
-      });
-    });
-
-    describe('with the plugin applied twice', () => {
-      const doubleAliasTransformerOpts = {
-        babelrc: false,
-        plugins: [
-          [plugin, { root: '.' }],
-          [plugin, {
-            alias: {
-              '^@namespace/foo-(.+)': './packages/\\1',
-            },
-          }],
-        ],
-      };
-
-      it('should support replacing parts of a path', () => {
-        testWithImport(
-          '@namespace/foo-bar',
-          './packages/bar',
-          doubleAliasTransformerOpts,
-        );
       });
     });
 
