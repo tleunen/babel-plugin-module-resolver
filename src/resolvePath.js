@@ -3,7 +3,7 @@ import path from 'path';
 import { warn } from './log';
 import mapToRelative from './mapToRelative';
 import normalizeOptions from './normalizeOptions';
-import { nodeResolvePath, replaceExtension, toLocalPath, toPosixPath } from './utils';
+import { nodeResolvePath, replaceExtension, isRelativePath, toLocalPath, toPosixPath } from './utils';
 
 function getRelativePath(sourcePath, currentFile, absFileInRoot, opts) {
   const realSourceFileExtension = path.extname(absFileInRoot);
@@ -64,7 +64,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
     return null;
   }
 
-  if (aliasedSourceFile[0] === '.') {
+  if (isRelativePath(aliasedSourceFile)) {
     return toLocalPath(toPosixPath(
       mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
     );
@@ -83,7 +83,7 @@ const resolvers = [
 ];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
-  if (sourcePath[0] === '.') {
+  if (isRelativePath(sourcePath)) {
     return sourcePath;
   }
 

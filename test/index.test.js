@@ -769,6 +769,45 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('dot files', () => {
+      const dotFileAliasTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            alias: {
+              '.babel': 'babel-core',
+              elintrc: './.eslintrc',
+              folderdot: './src/folder.',
+            },
+          }],
+        ],
+      };
+
+      it('should not match folder names with dot at end', () => {
+        testWithImport(
+          'folderdot/file',
+          './src/folder./file',
+          dotFileAliasTransformerOpts,
+        );
+      });
+
+      it('should resolve alias with dot', () => {
+        testWithImport(
+          '.babel/register',
+          'babel-core/register',
+          dotFileAliasTransformerOpts,
+        );
+      });
+
+      it('should resolve sibling dot files using alias', () => {
+        testWithImport(
+          'elintrc',
+          './.eslintrc',
+          dotFileAliasTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('with custom cwd', () => {
