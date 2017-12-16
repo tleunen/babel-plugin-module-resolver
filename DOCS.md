@@ -7,6 +7,7 @@
   * [transformFunctions](#transformfunctions)
   * [resolvePath](#resolvepath)
 * [Usage with React Native](#usage-with-react-native)
+* [Usage with Proxyquire](#usage-with-proxyquire)
 * [Usage with Flow](#usage-with-flow)
 * [For plugin authors](#for-plugin-authors)
 
@@ -181,6 +182,34 @@ To let the packager resolve the right module for each platform, you have to add 
     ]
   ]
 }
+```
+
+# Usage with Proxyquire
+
+If you use the mocking library [proxyquire](), or otherwise need to define path strings which aren't direct arguments to  `transformFunctions`, you have a problem: the plug-in won't convert them.
+
+Because proxyquire expects paths not just as direct arguments, but also as object keys, simply adding proxyquire to `transformFunctions` isn't enough:
+
+```js
+const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', { // this path will be converted
+    '~/modifiedPathToDependency': { mockVersionOfDependency } // this path won't be converted
+});
+```
+
+The solution in this case is to use or create a function like Lodash's/Underscore's `_.identity`, which simply returns its argument.  Next, add it to `transformFunctions`, and then use it to convert the problematic path string:
+
+```json
+"transformFunctions": [
+    "proxyquire",
+    "resolvePath"
+]
+```
+
+```js
+const resolvePath = x => x;
+const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', { // this path will be converted
+    [resolvePath('~/modifiedPathToDependency')]: { mockVersionOfDependency } // this path will be converted
+});
 ```
 
 # Usage with Flow
