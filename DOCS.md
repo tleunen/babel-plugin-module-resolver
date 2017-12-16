@@ -186,7 +186,7 @@ To let the packager resolve the right module for each platform, you have to add 
 
 # Usage with Proxyquire
 
-If you use the mocking library [proxyquire](), or otherwise need to define path strings which aren't direct arguments to  `transformFunctions`, you have a problem: the plug-in won't convert them.
+If you use the mocking library [proxyquire](https://github.com/thlorenz/proxyquire), or otherwise need to define path strings which aren't direct arguments to  `transformFunctions`, you have a problem: the plug-in won't convert them.
 
 Because proxyquire expects paths not just as direct arguments, but also as object keys, simply adding proxyquire to `transformFunctions` isn't enough:
 
