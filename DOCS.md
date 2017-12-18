@@ -111,7 +111,25 @@ An array of extensions used in the resolver.
 
 By default, the working directory is the one used for the resolver, but you can override it for your project.
 * The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
+```json
+{
+  "plugins": [
+    ["module-resolver", {
+      "cwd": "babelrc"
+    }]
+  ]
+}
+```
 * The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
+```json
+{
+  "plugins": [
+    ["module-resolver", {
+      "cwd": "packagejson"
+    }]
+  ]
+}
+```
 
 ## transformFunctions
 
