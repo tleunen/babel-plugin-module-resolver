@@ -241,7 +241,7 @@ describe('module-resolver', () => {
         plugins: [
           [plugin, {
             root: './test/testproject/src',
-            extensions: ['.js', '.ios.js', '.android.js'],
+            extensions: ['.ios.js', '.android.js', '.js'],
           }],
         ],
       };
@@ -258,6 +258,43 @@ describe('module-resolver', () => {
         testWithImport(
           'rn',
           './test/testproject/src/rn',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file path with an explicit extension and not strip the extension', () => {
+        testWithImport(
+          'rn/index.ios.js',
+          './test/testproject/src/rn/index.ios.js',
+          rootTransformerOpts,
+        );
+      });
+    });
+
+    describe('non-standard double extensions with strip extensions', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: './test/testproject/src',
+            extensions: ['.js', '.ios.js', '.android.js'],
+            stripExtensions: [],
+          }],
+        ],
+      };
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          'text',
+          'text',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file path with a known defined extension', () => {
+        testWithImport(
+          'rn',
+          './test/testproject/src/rn/index.ios.js',
           rootTransformerOpts,
         );
       });
