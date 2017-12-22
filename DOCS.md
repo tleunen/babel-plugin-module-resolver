@@ -3,6 +3,7 @@
   * [root](#root)
   * [alias](#alias)
   * [extensions](#extensions)
+  * [stripExtensions](#stripExtensions)
   * [cwd](#cwd)
   * [transformFunctions](#transformfunctions)
   * [resolvePath](#resolvepath)
@@ -20,6 +21,7 @@ $ npm install --save-dev babel-plugin-module-resolver
 ```
 
 Specify the plugin in your `.babelrc` with the custom root or alias. Here's an example:
+
 ```json
 {
   "plugins": [
@@ -100,9 +102,29 @@ An array of extensions used in the resolver.
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "extensions": [".js", ".jsx", ".es", ".es6", ".mjs"]
-    }]
+    [
+      "module-resolver",
+      {
+        "extensions": [".js", ".jsx", ".es", ".es6", ".mjs"]
+      }
+    ]
+  ]
+}
+```
+
+## stripExtensions
+
+An array of extensions that will be stripped from file paths. Defaults to the `extensions` option value.
+
+```json
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "stripExtensions": [".js", ".jsx", ".es", ".es6", ".mjs"]
+      }
+    ]
   ]
 }
 ```
