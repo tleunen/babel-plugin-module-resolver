@@ -178,33 +178,29 @@ Array of functions and methods that will have their first argument transformed. 
 
 ## resolvePath
 
-String poiting to a JavaScript file exporting a function. That function is called for each path in the project. By default `module-resolver` is using an internal function.
+A function that is called to resolve each path in the project. By default `module-resolver` is using an internal function - the same one that's exported from the plugin itself (see [For plugin authors](#for-plugin-authors) for more info).
 
-```json
-{
-  "plugins": [
+```js
+module.exports = {
+  plugins: [
     ["module-resolver", {
-      "extensions": [".js"],
-      "resolvePath": "./scripts/resolvePath.js"
+      extensions: [".js"],
+      resolvePath(sourcePath, currentFile, opts) {
+        /**
+         * The `opts` argument is the options object that is passed through the Babel config.
+         * opts = {
+         *   extensions: [".js"],
+         *   resolvePath: ...,
+         * }
+         */
+        return "resolvedPath";
+      }
     }]
   ]
 }
 ```
 
-```js
-// myapp/scripts/resolvePath.js
-
-export default function resolvePath(sourcePath, currentFile, opts) {
-    /**
-     * The `opts` argument is the options object that is passed through the Babel config.
-     * opts = {
-     *   "extensions": [".js"],
-     *   "resolvePath": "./scripts/resolvePath.js"
-     * }
-     */
-    return "resolvedPath";
-}
-```
+If you want to leave some paths as-is, then you can return `undefined` or any other falsy value from the function.
 
 # Usage with create-react-app
 
