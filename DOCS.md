@@ -202,6 +202,30 @@ module.exports = {
 
 If you want to leave some paths as-is, then you can return `undefined` or any other falsy value from the function.
 
+# Usage with create-react-app
+
+create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add plugins property within js loader like below. Note that plugins recieve an array.
+
+```json
+// Process JS with Babel.
+{
+  test: /\.(js|jsx|mjs)$/,
+  include: paths.appSrc,
+  loader: require.resolve('babel-loader'),
+  options: {
+    plugins: [
+        ["module-resolver", {
+        "root": ["./src/App"],
+        "alias": {
+          "test": "./test",
+        }
+      }]
+    ],
+    cacheDirectory: true
+  }
+}
+```
+
 # Usage with React Native
 
 To let the packager resolve the right module for each platform, you have to add the ```.ios.js```and ```.android.js``` extensions :
