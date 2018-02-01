@@ -52,7 +52,7 @@ function normalizeCwd(optsCwd, currentFile) {
     cwd = optsCwd;
   }
 
-  return cwd || process.cwd();
+  return cwd || path.resolve(__dirname, './../../../');
 }
 
 function normalizeRoot(optsRoot, cwd) {
