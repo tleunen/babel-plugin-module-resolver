@@ -56,4 +56,26 @@ describe('import()', () => {
 
     expect(result.code).toBe('import("").then(() => {}).catch(() => {});');
   });
+
+  it('should handle imports added by other transforms', () => {
+    const options = {
+      ...transformerOpts,
+      plugins: [
+        function fakePlugin({ types }) {
+          return {
+            visitor: {
+              Identifier(path) {
+                path.replaceWith(types.Import());
+              },
+            },
+          };
+        },
+        ...transformerOpts.plugins,
+      ],
+    };
+    const code = 'boo("components/Header/SubHeader");';
+    const result = transform(code, options);
+
+    expect(result.code).toBe('import("./test/testproject/src/components/Header/SubHeader");');
+  });
 });
