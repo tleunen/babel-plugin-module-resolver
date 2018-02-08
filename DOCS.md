@@ -47,7 +47,7 @@ A string or an array of root directories. Specify the paths or a glob path (eg. 
 
 A map of alias. You can also alias `node_modules` dependencies, not just local files.
 
-### Regular expressions
+### Regular expressions
 
 It is possible to specify an alias using a regular expression. To do that, either start an alias with `'^'` or end it with `'$'`:
 
@@ -69,7 +69,7 @@ You can reference the n-th matched group with `'\\n'` (`'\\0'` refers to the who
 
 To use the backslash character (`\`) just escape it like so: `'\\\\'` (double escape is needed because of JSON already using `\` for escaping).
 
-### Passing a substitute function
+### Passing a substitute function
 
 If you need even more power over the aliased path, you can pass a function in the alias configuration:
 
