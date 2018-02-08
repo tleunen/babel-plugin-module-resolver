@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0...v3.1.0) (2018-02-08)
+
+
+### Bug Fixes
+
+* Fix path transformation for dot files that are siblings ([#253](https://github.com/tleunen/babel-plugin-module-resolver/issues/253)) ([7dc2da6](https://github.com/tleunen/babel-plugin-module-resolver/commit/7dc2da6))
+
+
+### Features
+
+* Ability to declare aliases in an array to preserve the order ([#243](https://github.com/tleunen/babel-plugin-module-resolver/issues/243)) ([d03715d](https://github.com/tleunen/babel-plugin-module-resolver/commit/d03715d))
+* Add stripExtensions option to determine which extensions get removed ([#247](https://github.com/tleunen/babel-plugin-module-resolver/issues/247)) ([fdf5da9](https://github.com/tleunen/babel-plugin-module-resolver/commit/fdf5da9))
+* Allow using a function to define the result of an alias ([#245](https://github.com/tleunen/babel-plugin-module-resolver/issues/245)) ([9299d9a](https://github.com/tleunen/babel-plugin-module-resolver/commit/9299d9a))
+* run plugin also on Program exit to handle dynamically added imports from other transforms ([#269](https://github.com/tleunen/babel-plugin-module-resolver/issues/269)) ([12a2d07](https://github.com/tleunen/babel-plugin-module-resolver/commit/12a2d07))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0-beta.5...v3.0.0) (2017-11-08)
 
