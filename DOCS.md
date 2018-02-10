@@ -206,7 +206,7 @@ If you want to leave some paths as-is, then you can return `undefined` or any ot
 
 create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add plugins property within js loader like below. Note that plugins recieve an array.
 
-```json
+```js
 // Process JS with Babel.
 {
   test: /\.(js|jsx|mjs)$/,
