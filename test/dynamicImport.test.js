@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
+import { stripIndent } from 'common-tags';
 import plugin from '../src';
 
 // According to https://github.com/tc39/proposal-dynamic-import
@@ -77,5 +78,42 @@ describe('import()', () => {
     const result = transform(code, options);
 
     expect(result.code).toBe('import("./test/testproject/src/components/Header/SubHeader");');
+  });
+
+  it('should support dynamic import plugin', () => {
+    const options = {
+      babelrc: false,
+      plugins: [
+        'dynamic-import-webpack',
+        [plugin, {
+          root: [
+            './test/testproject/src',
+          ],
+          alias: {
+            test: './test/testproject/test',
+          },
+        }],
+      ],
+    };
+
+    const code = 'import("components/Header/SubHeader")';
+    const result = transform(code, options);
+
+    expect(result.code).toBe(stripIndent(`
+      new Promise(resolve => {
+        require.ensure([], require => {
+          resolve(require("./test/testproject/src/components/Header/SubHeader"));
+        });
+      });
+    `));
+
+    const resultAlias = transform('import("test")', options);
+    expect(resultAlias.code).toBe(stripIndent(`
+      new Promise(resolve => {
+        require.ensure([], require => {
+          resolve(require("./test/testproject/test"));
+        });
+      });
+    `));
   });
 });
