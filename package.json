@@ -10,9 +10,7 @@
   "engines": {
     "node": ">= 6.0.0"
   },
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "author": {
     "name": "Tommy Leunen",
     "email": "tommy.leunen@gmail.com",
@@ -42,40 +40,39 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-jest": "^21.2.0",
+    "babel-jest": "^22.4.1",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "common-tags": "^1.4.0",
-    "eslint": "^4.9.0",
-    "eslint-config-airbnb-base": "^11.3.2",
-    "eslint-plugin-import": "^2.8.0",
-    "jest": "^21.2.1",
+    "eslint": "^4.19.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.9.0",
+    "husky": "^0.14.3",
+    "jest": "^22.4.2",
+    "lint-staged": "^7.0.0",
+    "prettier-eslint-cli": "^4.7.1",
     "standard-version": "^4.2.0"
   },
   "scripts": {
     "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
     "pretest": "npm run lint",
-    "test": "jest --coverage",
-    "test:suite": "jest",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "prepublish": "npm run compile",
-    "release": "standard-version"
+    "release": "standard-version",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{json,md}": ["prettier-eslint --write", "git add"],
+    "*.{js}": ["prettier-eslint --write", "eslint --fix", "git add"]
   },
   "jest": {
     "testRegex": "/test/.*\\.test\\.js$",
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/log.js"
-    ]
-  },
-  "greenkeeper": {
-    "ignore": [
-      "babel-jest",
-      "eslint",
-      "eslint-plugin-import"
-    ]
+    "collectCoverageFrom": ["src/**/*.js", "!src/log.js"]
   }
 }
