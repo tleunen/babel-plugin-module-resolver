@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    ["../../../src/index.js", {
+      "root": "./test/testproject/src",
+      "alias": {
+        "test": "./test/testproject/test"
+      },
+      "transformFunctions": [
+        "customMethod.something"
+      ]
+    }]
+  ]
+}
