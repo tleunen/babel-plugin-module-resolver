@@ -72,6 +72,7 @@
     "*.{js}": ["prettier-eslint --write", "eslint --fix", "git add"]
   },
   "jest": {
+    "testEnvironment": "node",
     "testRegex": "/test/.*\\.test\\.js$",
     "collectCoverageFrom": ["src/**/*.js", "!src/log.js"]
   }
