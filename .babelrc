@@ -2,7 +2,7 @@
   "presets": [
     ["env", {
       "targets": {
-        "node": 6
+        "node": 4
       },
       "loose": true,
       "useBuiltIns": true
