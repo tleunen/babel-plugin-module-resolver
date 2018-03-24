@@ -68,8 +68,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{json,md}": ["prettier-eslint --write", "git add"],
-    "*.{js}": ["prettier-eslint --write", "eslint --fix", "git add"]
+    "*.{js}": ["prettier-eslint --write", "git add"]
   },
   "jest": {
     "testEnvironment": "node",
