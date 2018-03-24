@@ -1,5 +1,16 @@
 version: 2
 jobs:
+  test_with_node_4:
+    docker:
+      - image: circleci/node:4
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Test
+          command: npm test
   test_with_node_6:
     docker:
       - image: circleci/node:6
@@ -40,6 +51,7 @@ workflows:
   version: 2
   test_all:
     jobs:
+      - test_with_node_4
       - test_with_node_6
       - test_with_node_8
       - test_with_node_9
