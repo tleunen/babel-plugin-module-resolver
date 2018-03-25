@@ -60,7 +60,7 @@
     "standard-version": "^4.2.0"
   },
   "scripts": {
-    "lint": "eslint src test --ignore-pattern test/fixtures/**/*.js",
+    "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
     "pretest": "npm run lint",
     "test": "jest",
@@ -72,8 +72,8 @@
   },
   "lint-staged": {
     "*.js": [
-      "prettier-eslint --write --ignore **/test/fixtures/**/*.js",
-      "eslint --fix --ignore-pattern test/fixtures/**/*.js",
+      "prettier-eslint --write",
+      "eslint --fix",
       "git add"
     ]
   },
