@@ -1,10 +1,10 @@
-module.exports = function fakePlugin({ types }) {
+module.exports = function fakePlugin(opts) {
   return {
     name: 'fake-plugin',
     visitor: {
       Identifier(path) {
         if (path.node.name === 'bootest') {
-          path.replaceWith(types.Import());
+          path.replaceWith(opts.types.Import());
         }
       },
     },
