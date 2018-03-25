@@ -2,26 +2,16 @@
 // Currently stage 3.
 
 // should resolve the path based on the root config
-import('../../testproject/src/components/Header/SubHeader')
-  .then(() => {})
-  .catch(() => {});
+import('../../testproject/src/components/Header/SubHeader').then(() => {}).catch(() => {});
 
 // should alias the path
-import('../../testproject/test')
-  .then(() => {})
-  .catch(() => {});
+import('../../testproject/test').then(() => {}).catch(() => {});
 
 // should not change a relative path
-import('./utils')
-  .then(() => {})
-  .catch(() => {});
+import('./utils').then(() => {}).catch(() => {});
 
 // should handle the first argument not being a string literal
-import(path)
-  .then(() => {})
-  .catch(() => {});
+import(path).then(() => {}).catch(() => {});
 
 // should handle an empty path
-import('')
-  .then(() => {})
-  .catch(() => {});
+import('').then(() => {}).catch(() => {});

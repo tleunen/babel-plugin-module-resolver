@@ -72,7 +72,7 @@
   },
   "lint-staged": {
     "*.js": [
-      "prettier-eslint --write",
+      "prettier-eslint --write --ignore **/test/fixtures/**/*.js",
       "eslint --fix --ignore-pattern test/fixtures/**/*.js",
       "git add"
     ]
