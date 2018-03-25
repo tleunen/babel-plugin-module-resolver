@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.1"></a>
+## [3.1.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.1.0...v3.1.1) (2018-03-24)
+
+
+### Bug Fixes
+
+* Add support for Node 4 ([#286](https://github.com/tleunen/babel-plugin-module-resolver/issues/286)) ([2d5bf09](https://github.com/tleunen/babel-plugin-module-resolver/commit/2d5bf09)), closes [#285](https://github.com/tleunen/babel-plugin-module-resolver/issues/285) [#236](https://github.com/tleunen/babel-plugin-module-resolver/issues/236)
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.0.0...v3.1.0) (2018-02-08)
 
