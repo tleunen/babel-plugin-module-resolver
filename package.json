@@ -80,6 +80,7 @@
   "jest": {
     "testEnvironment": "node",
     "testRegex": "/test/.*\\.test\\.js$",
+    "transformIgnorePatterns": ["/node_modules/", "/test/fixtures/"],
     "collectCoverageFrom": [
       "src/**/*.js",
       "!src/log.js"

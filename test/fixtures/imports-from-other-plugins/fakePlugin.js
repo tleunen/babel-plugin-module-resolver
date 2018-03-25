@@ -1,8 +1,11 @@
 module.exports = function fakePlugin({ types }) {
   return {
+    name: 'fake-plugin',
     visitor: {
       Identifier(path) {
-        path.replaceWith(types.Import());
+        if (path.node.name === 'bootest') {
+          path.replaceWith(types.Import());
+        }
       },
     },
   };

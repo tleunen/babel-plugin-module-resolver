@@ -1,7 +1,6 @@
 {
   "plugins": [
     "./fakePlugin.js",
-    "syntax-dynamic-import",
     ["../../../src/index.js", {
       "root": "./test/testproject/src"
     }]

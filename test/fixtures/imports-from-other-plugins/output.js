@@ -1,1 +1,1 @@
-import('./test/testproject/src/components/Header/SubHeader');
+import('../../testproject/src/components/Header/SubHeader');
