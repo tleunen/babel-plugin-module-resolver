@@ -237,7 +237,7 @@ To let the packager resolve the right module for each platform, you have to add 
       "module-resolver",
       {
         "root": ["./src"],
-        "extensions": [".js", ".ios.js", ".android.js"]
+        "extensions": [".ios.js", ".android.js", ".js", ".json"]
       }
     ]
   ]
