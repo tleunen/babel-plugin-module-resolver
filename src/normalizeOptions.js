@@ -6,6 +6,7 @@ import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
 import pkgUp from 'pkg-up';
 
+import { escapeRegExp } from './utils';
 import defaultResolvePath from './resolvePath';
 
 
@@ -79,7 +80,7 @@ function normalizeRoot(optsRoot, cwd) {
 }
 
 function getAliasTarget(key, isKeyRegExp) {
-  const regExpPattern = isKeyRegExp ? key : `^${key}(/.*|)$`;
+  const regExpPattern = isKeyRegExp ? key : `^${escapeRegExp(key)}(/.*|)$`;
   return new RegExp(regExpPattern);
 }
 

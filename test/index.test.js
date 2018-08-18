@@ -342,6 +342,7 @@ describe('module-resolver', () => {
             '^regexp-priority': './hit',
             'regexp-priority$': './miss',
             'regexp-priority': './miss',
+            '$src': './test/testproject/src/'
           },
         }],
       ],
@@ -465,6 +466,15 @@ describe('module-resolver', () => {
         aliasTransformerOpts,
       );
     });
+
+    it('should escape regexp', () => {
+      // See https://github.com/tleunen/babel-plugin-module-resolver/issues/312
+      testWithImport(
+        '$src/app',
+        './test/testproject/src/app',
+        aliasTransformerOpts,
+      );
+    })
 
     describe('with a regular expression', () => {
       it('should support replacing parts of a path', () => {
