@@ -80,3 +80,7 @@ export function mapPathString(nodePath, state) {
 export function isImportCall(types, calleePath) {
   return types.isImport(calleePath.node.callee);
 }
+
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
