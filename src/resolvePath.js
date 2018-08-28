@@ -17,6 +17,20 @@ function getRelativePath(sourcePath, currentFile, absFileInRoot, opts) {
   return toLocalPath(toPosixPath(relativePath));
 }
 
+function resolvePathFromRelativeConfig(sourcePath, currentFile, opts) {
+  if (!isRelativePath(sourcePath)) {
+    return null;
+  }
+
+  const absFileInRoot = nodeResolvePath(sourcePath, path.dirname(currentFile), opts.extensions);
+
+  if (!absFileInRoot) {
+    return null;
+  }
+
+  return getRelativePath(sourcePath, currentFile, absFileInRoot, opts);
+}
+
 function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
@@ -78,15 +92,12 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
 }
 
 const resolvers = [
+  resolvePathFromRelativeConfig,
   resolvePathFromAliasConfig,
   resolvePathFromRootConfig,
 ];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
-  if (isRelativePath(sourcePath)) {
-    return sourcePath;
-  }
-
   const normalizedOpts = normalizeOptions(currentFile, opts);
 
   // File param is a relative path from the environment current working directory
