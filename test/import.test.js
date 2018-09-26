@@ -1,5 +1,5 @@
-import { transform } from 'babel-core';
-import transformToCommonJsPlugin from 'babel-plugin-transform-es2015-modules-commonjs';
+import { transform } from '@babel/core';
+import transformToCommonJsPlugin from '@babel/plugin-transform-modules-commonjs';
 import { stripIndent } from 'common-tags';
 import plugin from '../src';
 
@@ -21,10 +21,10 @@ describe('import and export statement', () => {
     });
 
     it('with an export statement', () => {
-      const code = 'export { something };';
+      const code = 'let something; export { something }';
       const result = transform(code, transformerOpts);
 
-      expect(result.code).toBe('export { something };');
+      expect(result.code).toBe('let something;\nexport { something };');
     });
   }
 
@@ -59,7 +59,7 @@ describe('import and export statement', () => {
     });
 
     it('with a transformed export statement', () => {
-      const code = 'export { something };';
+      const code = 'let something; export { something };';
       const result = transform(code, transformerOptsWithCommonJs);
 
       expect(result.code).toBe(stripIndent`
@@ -68,6 +68,8 @@ describe('import and export statement', () => {
         Object.defineProperty(exports, "__esModule", {
           value: true
         });
+        exports.something = void 0;
+        let something;
         exports.something = something;
       `);
     });
@@ -85,7 +87,7 @@ describe('import and export statement', () => {
         root: './test/testproject/src',
         alias: {
           test: './test/testproject/test',
-          'babel-core': 'babel-core/lib',
+          '@babel/core': '@babel/core/lib',
         },
       }],
     ],
@@ -126,8 +128,8 @@ describe('import and export statement', () => {
   describe('should only apply the alias once', () => {
     // If this test breaks, consider selecting another package used by the plugin
     testImports(
-      'babel-core/store',
-      'babel-core/lib/store',
+      '@babel/core/transform',
+      '@babel/core/lib/transform',
       transformerOpts,
     );
   });

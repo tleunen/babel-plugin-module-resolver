@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { transform } from 'babel-core';
+import { transform } from '@babel/core';
 import plugin, { resolvePath } from '../src';
 
 
@@ -334,7 +334,7 @@ describe('module-resolver', () => {
             components: './test/testproject/src/components',
             '~': './test/testproject/src',
             'awesome/components': './test/testproject/src/components',
-            'babel-kernel': 'babel-core',
+            'babel-kernel': '@babel/core/lib',
             '^@namespace/foo-(.+)': './packages/\\1',
             'styles/.+\\.(css|less|scss)$': './style-proxy.\\1',
             '^single-backslash': './pas\\\\sed',
@@ -461,8 +461,8 @@ describe('module-resolver', () => {
     it('should support aliasing a node module', () => {
       // If this test breaks, consider selecting another package used by the plugin
       testWithImport(
-        'babel-kernel/register',
-        'babel-core/register',
+        'babel-kernel/transform',
+        '@babel/core/lib/transform',
         aliasTransformerOpts,
       );
     });
@@ -609,7 +609,7 @@ describe('module-resolver', () => {
             alias: {
               '^@namespace/foo-(.+)': './packages/\\1',
             },
-          }],
+          }, 'second-module-resolver'],
         ],
       };
 
@@ -704,7 +704,7 @@ describe('module-resolver', () => {
                 first: 'second',
                 second: 'first',
               },
-            }],
+            }, 'second-module-resolver'],
           ],
           filename: fileName,
         };
@@ -730,7 +730,7 @@ describe('module-resolver', () => {
               alias: {
                 prefix: 'prefix/lib',
               },
-            }],
+            }, 'second module-resolver'],
           ],
           filename: fileName,
         };
@@ -786,7 +786,7 @@ describe('module-resolver', () => {
         plugins: [
           [plugin, {
             alias: {
-              '.babel': 'babel-core',
+              '.babel': '@babel/core',
               elintrc: './.eslintrc',
               folderdot: './src/folder.',
             },
@@ -805,7 +805,7 @@ describe('module-resolver', () => {
       it('should resolve alias with dot', () => {
         testWithImport(
           '.babel/register',
-          'babel-core/register',
+          '@babel/core/register',
           dotFileAliasTransformerOpts,
         );
       });

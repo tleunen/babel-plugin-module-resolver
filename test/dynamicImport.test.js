@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
+import { transform } from '@babel/core'; // eslint-disable-line import/no-extraneous-dependencies
 import plugin from '../src';
 
 // According to https://github.com/tc39/proposal-dynamic-import
@@ -10,7 +10,7 @@ describe('import()', () => {
     plugins: [
       // We need to add the corresponding syntax plugin
       // in order to parse the `import()`-calls
-      'syntax-dynamic-import',
+      '@babel/plugin-syntax-dynamic-import',
       [plugin, {
         root: [
           './test/testproject/src',
