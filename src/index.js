@@ -27,6 +27,12 @@ const visitor = {
 export default ({ types }) => ({
   name: 'module-resolver',
 
+  manipulateOptions(opts) {
+    if (opts.filename === undefined) {
+      opts.filename = 'unknown';
+    }
+  },
+
   pre(file) {
     this.types = types;
 
