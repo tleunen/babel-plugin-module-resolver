@@ -7,6 +7,7 @@
   * [cwd](#cwd)
   * [transformFunctions](#transformfunctions)
   * [resolvePath](#resolvepath)
+* [Usage with Create React App](#usage-with-create-react-app)
 * [Usage with React Native](#usage-with-react-native)
 * [Usage with Proxyquire](#usage-with-proxyquire)
 * [Usage with Flow](#usage-with-flow)
