@@ -43,6 +43,28 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 }
 ```
 
+**.babelrc.js version**
+Specify the plugin in your `.babelrc.js` file with the custom root or alias. Here's an example:
+```
+
+const plugins = [
+  [
+    require.resolve('babel-plugin-module-resolver'),
+    {
+      root: ["./src/"],
+      alias: {
+        "test": "./test"
+      }
+    }
+    
+  ]
+
+];
+
+```
+Good example: // https://gist.github.com/nodkz/41e189ff22325a27fe6a5ca81df2cb91
+
+
 ## Documentation
 
 babel-plugin-module-resolver can be configured and controlled easily, check the [documentation](DOCS.md) for more details
