@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.2"></a>
+## [3.1.2](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.1.1...v3.1.2) (2019-01-16)
+
+
+### Bug Fixes
+
+* Escape key of alias to support using $ prefix ([#313](https://github.com/tleunen/babel-plugin-module-resolver/issues/313)) ([4c56684](https://github.com/tleunen/babel-plugin-module-resolver/commit/4c56684)), closes [#312](https://github.com/tleunen/babel-plugin-module-resolver/issues/312) [#312](https://github.com/tleunen/babel-plugin-module-resolver/issues/312)
+
+
+
 <a name="3.1.1"></a>
 ## [3.1.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.1.0...v3.1.1) (2018-03-24)
 
