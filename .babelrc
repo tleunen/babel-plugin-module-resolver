@@ -4,8 +4,7 @@
       "targets": {
         "node": 4
       },
-      "loose": true,
-      "useBuiltIns": "usage"
+      "loose": true
     }]
   ]
 }
