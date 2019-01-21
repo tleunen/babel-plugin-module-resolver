@@ -43,6 +43,20 @@ jobs:
           command: npm install
       - run:
           name: Test
+          command: npm test
+      - run:
+          name: Deploy coverage
+          command: bash <(curl -s https://codecov.io/bash)
+  test_with_node_11:
+    docker:
+      - image: circleci/node:11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Test
           command: npm run test:coverage
       - run:
           name: Deploy coverage
@@ -55,3 +69,4 @@ workflows:
       - test_with_node_8
       - test_with_node_9
       - test_with_node_10
+      - test_with_node_11
