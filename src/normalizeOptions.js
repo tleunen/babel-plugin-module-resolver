@@ -132,6 +132,10 @@ function normalizeTransformedFunctions(optsTransformFunctions) {
   return [...defaultTransformedFunctions, ...optsTransformFunctions];
 }
 
+function normalizeLoglevel(optsLoglevel) {
+  return optsLoglevel || 'warn';
+}
+
 export default createSelector(
   // The currentFile should have an extension; otherwise it's considered a special value
   currentFile => (currentFile.includes('.') ? path.dirname(currentFile) : currentFile),
@@ -140,6 +144,7 @@ export default createSelector(
     const cwd = normalizeCwd(opts.cwd, currentFile);
     const root = normalizeRoot(opts.root, cwd);
     const alias = normalizeAlias(opts.alias);
+    const loglevel = normalizeLoglevel(opts.loglevel);
     const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
     const extensions = opts.extensions || defaultExtensions;
     const stripExtensions = opts.stripExtensions || extensions;
@@ -149,6 +154,7 @@ export default createSelector(
       cwd,
       root,
       alias,
+      loglevel,
       transformFunctions,
       extensions,
       stripExtensions,

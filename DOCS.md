@@ -203,6 +203,23 @@ module.exports = {
 
 If you want to leave some paths as-is, then you can return `undefined` or any other falsy value from the function.
 
+## loglevel
+
+One of the [NPM log level options](https://docs.npmjs.com/misc/config#loglevel) to configure console logging during build. Default is `"warn"`. Passing `"silent"` will disable all warnings for path resolution failures.
+
+```js
+module.exports = {
+  plugins: [
+    ["module-resolver", {
+      alias: {
+        "dependency-string": "module-that-does-not-exist" // warning will not log
+      },
+      loglevel: 'silent'
+    }]
+  ]
+}
+```
+
 # Usage with create-react-app
 
 create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add plugins property within js loader like below. Note that plugins recieve an array.

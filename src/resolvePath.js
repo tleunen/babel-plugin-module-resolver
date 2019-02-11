@@ -39,9 +39,9 @@ function resolvePathFromRootConfig(sourcePath, currentFile, opts) {
   return getRelativePath(sourcePath, currentFile, absFileInRoot, opts);
 }
 
-function checkIfPackageExists(modulePath, currentFile, extensions) {
+function checkIfPackageExists(modulePath, currentFile, extensions, loglevel) {
   const resolvedPath = nodeResolvePath(modulePath, currentFile, extensions);
-  if (resolvedPath === null) {
+  if (resolvedPath === null && loglevel !== 'silent') {
     warn(`Could not resolve "${modulePath}" in file ${currentFile}.`);
   }
 }
@@ -71,7 +71,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    checkIfPackageExists(aliasedSourceFile, currentFile, opts.extensions);
+    checkIfPackageExists(aliasedSourceFile, currentFile, opts.extensions, opts.loglevel);
   }
 
   return aliasedSourceFile;

@@ -685,6 +685,28 @@ describe('module-resolver', () => {
           expect(mockWarn.mock.calls.length).toBe(0);
         });
       });
+
+      const silentLoggingOpts = {
+        babelrc: false,
+        plugins: [
+          [pluginWithMock, {
+            alias: {
+              legacy: 'npm:legacy',
+              'non-existing': 'this-package-does-not-exist',
+            },
+            loglevel: 'silent',
+          }],
+        ],
+      };
+
+      it('should respect opt loglevel:silent', () => {
+        testWithImport(
+          'legacy/lib',
+          'npm:legacy/lib',
+          silentLoggingOpts,
+        );
+          expect(mockWarn.mock.calls.length).toBe(0);
+      });
     });
 
     describe('multiple alias application', () => {
