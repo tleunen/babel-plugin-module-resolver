@@ -94,6 +94,9 @@ If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-impo
 }
 ```
 
+## Refactor your code
+
+If you are using this on an existing project, you can use [relative-to-alias](https://github.com/s-yadav/relative-to-alias) to refactor your code to start using the alias.
 
 ## License
 
@@ -106,7 +109,7 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 - AppDirect
 - Callstack: [React Native Paper](https://github.com/callstack/react-native-paper)
 - Codility
-- Eleme: [Element](https://github.com/ElemeFE/element) 
+- Eleme: [Element](https://github.com/ElemeFE/element)
 - Expo: [Expo SDK](https://github.com/expo/expo-sdk)
 - FormidableLabs: [Victory Native](https://github.com/FormidableLabs/victory-native)
 - OpenCollective: [OpenCollective](https://github.com/opencollective/frontend)
