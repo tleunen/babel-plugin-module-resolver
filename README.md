@@ -112,6 +112,7 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 - OpenCollective: [OpenCollective](https://github.com/opencollective/frontend)
 - React Community: [React Native Maps](https://github.com/react-community/react-native-maps)
 - Uber: [Seer](https://github.com/uber-web/Seer), [react-vis](https://github.com/uber/react-vis)
+- Quasar Framework: [Quasar](https://github.com/quasarframework/quasar)
 - Vuetify.js [Vuetify](https://github.com/vuetifyjs/vuetify)
 - Zeit: [Next.js](https://github.com/zeit/next.js)
 - Zenika: [Immutadot](https://github.com/Zenika/immutadot)
