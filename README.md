@@ -107,7 +107,7 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 - Callstack: [React Native Paper](https://github.com/callstack/react-native-paper)
 - Codility
 - Eleme: [Element](https://github.com/ElemeFE/element) 
-- Expo: [Expo SDK](https://github.com/expo/expo-sdk)
+- Expo: [Expo SDK](https://github.com/expo/expo/tree/master/packages/babel-preset-expo)
 - FormidableLabs: [Victory Native](https://github.com/FormidableLabs/victory-native)
 - OpenCollective: [OpenCollective](https://github.com/opencollective/frontend)
 - React Community: [React Native Maps](https://github.com/react-community/react-native-maps)
