@@ -64,6 +64,18 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
     return null;
   }
 
+  // Alias with array of paths
+  if (Array.isArray(aliasedSourceFile)) {
+    return aliasedSourceFile
+      .map(asf => {
+        if (isRelativePath(asf)) {
+          return toLocalPath(toPosixPath(mapToRelative(opts.cwd, currentFile, asf)));
+        }
+        return asf;
+      })
+      .find(src => nodeResolvePath(src, path.dirname(currentFile), opts.extensions));
+  }
+
   if (isRelativePath(aliasedSourceFile)) {
     return toLocalPath(toPosixPath(
       mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),

@@ -90,7 +90,13 @@ function getAliasSubstitute(value, isKeyRegExp) {
   }
 
   if (!isKeyRegExp) {
-    return ([, match]) => `${value}${match}`;
+    return ([, match]) => {
+      // Alias with array of paths
+      if (Array.isArray(value)) {
+        return value.map(v => `${v}${match}`);
+      }
+      return `${value}${match}`;
+    };
   }
 
   const parts = value.split('\\\\');
