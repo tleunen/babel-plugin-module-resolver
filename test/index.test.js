@@ -1057,7 +1057,7 @@ describe('module-resolver', () => {
             [plugin, {
               root: './src',
               alias: {
-                testArr: ['./src', './test'],
+                testArr: ['./src', '/test', './test'],
               },
               cwd: 'packagejson',
             }],
