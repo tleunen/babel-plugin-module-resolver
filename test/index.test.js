@@ -1046,6 +1046,27 @@ describe('module-resolver', () => {
       );
     });
 
+    // fix: https://github.com/tleunen/babel-plugin-module-resolver/issues/261
+    it('Alias with array of paths', () => {
+      testWithImport(
+        'testArr/tools',
+        '../test/tools',
+        {
+          babelrc: false,
+          plugins: [
+            [plugin, {
+              root: './src',
+              alias: {
+                testArr: ['./src', '/test', './test'],
+              },
+              cwd: 'packagejson',
+            }],
+          ],
+          filename: './test/testproject/src/app.js',
+        },
+      );
+    });
+
     describe('unknown filename', () => {
       const unknownFileTransformerOpts = {
         babelrc: false,
