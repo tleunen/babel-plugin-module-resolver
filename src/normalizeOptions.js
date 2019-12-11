@@ -31,7 +31,7 @@ function isRegExp(string) {
 
 const specialCwd = {
   babelrc: startPath => findBabelConfig.sync(startPath).file,
-  packagejson: startPath => pkgUp.sync(startPath),
+  packagejson: startPath => pkgUp.sync({ cwd: startPath }),
 };
 
 function normalizeCwd(optsCwd, currentFile) {
