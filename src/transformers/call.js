@@ -1,9 +1,5 @@
-import {
-  matchesPattern,
-  mapPathString,
-  isImportCall,
-} from '../utils';
-
+import { matchesPattern, isImportCall } from '../utils';
+import mapPathString from '../mapPath';
 
 export default function transformCall(nodePath, state) {
   if (state.moduleResolverVisited.has(nodePath)) {
@@ -11,8 +7,8 @@ export default function transformCall(nodePath, state) {
   }
 
   const calleePath = nodePath.get('callee');
-  const isNormalCall = state.normalizedOpts.transformFunctions.some(
-    pattern => matchesPattern(state.types, calleePath, pattern),
+  const isNormalCall = state.normalizedOpts.transformFunctions.some(pattern =>
+    matchesPattern(state.types, calleePath, pattern)
   );
 
   if (isNormalCall || isImportCall(state.types, nodePath)) {

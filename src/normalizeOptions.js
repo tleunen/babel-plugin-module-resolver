@@ -7,8 +7,6 @@ import glob from 'glob';
 import pkgUp from 'pkg-up';
 
 import { escapeRegExp } from './utils';
-import defaultResolvePath from './resolvePath';
-
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
 const defaultTransformedFunctions = [
@@ -33,22 +31,18 @@ function isRegExp(string) {
 
 const specialCwd = {
   babelrc: startPath => findBabelConfig.sync(startPath).file,
-  packagejson: startPath => pkgUp.sync(startPath),
+  packagejson: startPath => pkgUp.sync({ cwd: startPath }),
 };
 
 function normalizeCwd(optsCwd, currentFile) {
   let cwd;
 
   if (optsCwd in specialCwd) {
-    const startPath = (currentFile === 'unknown')
-      ? './'
-      : currentFile;
+    const startPath = currentFile === 'unknown' ? './' : currentFile;
 
     const computedCwd = specialCwd[optsCwd](startPath);
 
-    cwd = computedCwd
-      ? path.dirname(computedCwd)
-      : null;
+    cwd = computedCwd ? path.dirname(computedCwd) : null;
   } else {
     cwd = optsCwd;
   }
@@ -61,15 +55,14 @@ function normalizeRoot(optsRoot, cwd) {
     return [];
   }
 
-  const rootArray = Array.isArray(optsRoot)
-    ? optsRoot
-    : [optsRoot];
+  const rootArray = Array.isArray(optsRoot) ? optsRoot : [optsRoot];
 
   return rootArray
     .map(dirPath => path.resolve(cwd, dirPath))
     .reduce((resolvedDirs, absDirPath) => {
       if (glob.hasMagic(absDirPath)) {
-        const roots = glob.sync(absDirPath)
+        const roots = glob
+          .sync(absDirPath)
           .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
 
         return [...resolvedDirs, ...roots];
@@ -101,11 +94,10 @@ function getAliasSubstitute(value, isKeyRegExp) {
 
   const parts = value.split('\\\\');
 
-  return execResult => parts
-    .map(part =>
-      part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''),
-    )
-    .join('\\');
+  return execResult =>
+    parts
+      .map(part => part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''))
+      .join('\\');
 }
 
 function normalizeAlias(optsAlias) {
@@ -118,7 +110,7 @@ function normalizeAlias(optsAlias) {
   return aliasArray.reduce((aliasPairs, alias) => {
     const aliasKeys = Object.keys(alias);
 
-    aliasKeys.forEach((key) => {
+    aliasKeys.forEach(key => {
       const isKeyRegExp = isRegExp(key);
       aliasPairs.push([
         getAliasTarget(key, isKeyRegExp),
@@ -154,7 +146,6 @@ export default createSelector(
     const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
     const extensions = opts.extensions || defaultExtensions;
     const stripExtensions = opts.stripExtensions || extensions;
-    const resolvePath = opts.resolvePath || defaultResolvePath;
 
     return {
       cwd,
@@ -164,7 +155,7 @@ export default createSelector(
       transformFunctions,
       extensions,
       stripExtensions,
-      resolvePath,
+      customResolvePath: opts.resolvePath,
     };
-  },
+  }
 );

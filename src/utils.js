@@ -58,25 +58,6 @@ export function matchesPattern(types, calleePath, pattern) {
   return node.name === name;
 }
 
-export function mapPathString(nodePath, state) {
-  if (!state.types.isStringLiteral(nodePath)) {
-    return;
-  }
-
-  const sourcePath = nodePath.node.value;
-  const currentFile = state.file.opts.filename;
-
-  const modulePath = state.normalizedOpts.resolvePath(sourcePath, currentFile, state.opts);
-  if (modulePath) {
-    if (nodePath.node.pathResolved) {
-      return;
-    }
-
-    nodePath.replaceWith(state.types.stringLiteral(modulePath));
-    nodePath.node.pathResolved = true;
-  }
-}
-
 export function isImportCall(types, calleePath) {
   return types.isImport(calleePath.node.callee);
 }
