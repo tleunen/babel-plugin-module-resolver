@@ -1,6 +1,20 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [4.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.2.0...v4.0.0) (2019-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* The minimum node.js version that is now officially supported is Node 8.
+
+### Features
+
+* Add support for alias with array of paths ([#376](https://github.com/tleunen/babel-plugin-module-resolver/issues/376)) ([f2173ee](https://github.com/tleunen/babel-plugin-module-resolver/commit/f2173eea65e2f0835ba101058dfd6ee4e1167861))
+
+
+* Update dependencies ([#377](https://github.com/tleunen/babel-plugin-module-resolver/issues/377)) ([0cef5ee](https://github.com/tleunen/babel-plugin-module-resolver/commit/0cef5ee0493e3113292435cefcb40287277cdd51))
 
 <a name="3.2.0"></a>
 # [3.2.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.1.3...v3.2.0) (2019-02-11)
