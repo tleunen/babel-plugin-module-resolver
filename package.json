@@ -48,6 +48,7 @@
     "@zeit/git-hooks": "^0.1.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
+    "babel-plugin-tester": "^8.0.1",
     "common-tags": "^1.8.0",
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -59,7 +60,7 @@
     "standard-version": "^7.0.1"
   },
   "scripts": {
-    "lint": "eslint src test",
+    "lint": "eslint src",
     "compile": "babel src --out-dir lib",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
@@ -70,14 +71,18 @@
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js}": [
+    "!(tests/**/*).{js}": [
       "prettier-eslint --write",
       "git add"
     ]
   },
   "jest": {
     "testEnvironment": "node",
-    "testRegex": "/test/.*\\.test\\.js$",
+    "testRegex": "/tests/.*\\.test\\.js$",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/tests/fixtures/"
+    ],
     "collectCoverageFrom": [
       "src/**/*.js",
       "!src/log.js"
