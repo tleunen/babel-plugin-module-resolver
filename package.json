@@ -45,6 +45,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.7.4",
     "@babel/plugin-transform-modules-commonjs": "^7.7.5",
     "@babel/preset-env": "^7.7.6",
+    "@zeit/git-hooks": "^0.1.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
     "common-tags": "^1.8.0",
@@ -52,7 +53,6 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.19.1",
-    "husky": "^3.1.0",
     "jest": "^24.9.0",
     "lint-staged": "^9.5.0",
     "prettier-eslint-cli": "^5.0.0",
@@ -64,8 +64,10 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "prepublish": "npm run compile",
-    "release": "standard-version",
-    "precommit": "lint-staged"
+    "release": "standard-version"
+  },
+  "git": {
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{js}": [
