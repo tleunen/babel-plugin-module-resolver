@@ -61,9 +61,7 @@
   "scripts": {
     "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
-    "pretest": "npm run lint",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "prepublish": "npm run compile",
     "release": "standard-version",
