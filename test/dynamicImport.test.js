@@ -78,4 +78,21 @@ describe('import()', () => {
 
     expect(result.code).toBe('import("./test/testproject/src/components/Header/SubHeader");');
   });
+
+  it('should handle regex aliases', () => {
+    const code = 'import("./index.ts").then(() => {}).catch(() => {});';
+    const result = transform(code, {
+      babelrc: false,
+      plugins: [
+        '@babel/plugin-syntax-dynamic-import',
+        [plugin, {
+          alias: {
+            "(.+)\\.ts$": "\\1.js"
+          },
+        }],
+      ],
+    });
+
+    expect(result.code).toBe('import("./index.js").then(() => {}).catch(() => {});');
+  });
 });
