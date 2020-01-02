@@ -148,4 +148,21 @@ describe('import and export statement', () => {
       }
     `);
   });
+
+  describe('should resolve regex aliases', () => {
+    testImports(
+      './index.ts',
+      './index.js',
+      {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            alias: {
+              "(.+)\\.ts$": "\\1.js"
+            },
+          }],
+        ],
+      },
+    );
+  });
 });
