@@ -3,7 +3,8 @@ import plugin from '../src';
 
 
 const calls = [
-  'customMethod.something',
+  'customMethod.Module',
+  'customMethod.NonModule',
 ];
 
 describe('custom calls', () => {
@@ -16,7 +17,8 @@ describe('custom calls', () => {
           test: './test/testproject/test',
         },
         transformFunctions: [
-          'customMethod.something',
+          'customMethod.Module',
+          ['customMethod.NonModule', { isModulePath: false }],
         ],
       }],
     ],
@@ -59,13 +61,6 @@ describe('custom calls', () => {
         expect(result.code).toBe(`${name}(path, ...args);`);
       });
 
-      it('should handle an empty path', () => {
-        const code = `${name}('', ...args);`;
-        const result = transform(code, transformerOpts);
-
-        expect(result.code).toBe(`${name}('', ...args);`);
-      });
-
       it('should ignore the call if the method name is not fully matched (suffix)', () => {
         const code = `${name}.after("components/Sidebar/Footer", ...args);`;
         const result = transform(code, transformerOpts);
@@ -79,6 +74,26 @@ describe('custom calls', () => {
 
         expect(result.code).toBe(`before.${name}("components/Sidebar/Footer", ...args);`);
       });
+    });
+  });
+
+  describe('customMethod.Module', () => {
+    const name = 'customMethod.Module';
+    it('should handle an empty path', () => {
+      const code = `${name}('', ...args);`;
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe(`${name}('', ...args);`);
+    });
+  });
+
+  describe('customMethod.NonModule', () => {
+    const name = 'customMethod.NonModule';
+    it('should handle an empty path', () => {
+      const code = `${name}('', ...args);`;
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe(`${name}("./test/testproject/src", ...args);`);
     });
   });
 });
