@@ -132,7 +132,7 @@ function normalizeTransformFunctionsElement(optsTransformFunction) {
   }
 
   const finalOpts = { pattern, isModulePath: true };
-  if ('isModulePath' in opts) {
+  if (opts.isModulePath !== undefined) {
     finalOpts.isModulePath = opts.isModulePath;
   }
 
