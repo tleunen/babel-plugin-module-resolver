@@ -7,12 +7,16 @@ export default function transformCall(nodePath, state) {
   }
 
   const calleePath = nodePath.get('callee');
-  const isNormalCall = state.normalizedOpts.transformFunctions.some(pattern =>
+  const transformFunction = state.normalizedOpts.transformFunctions.find(({ pattern }) =>
     matchesPattern(state.types, calleePath, pattern)
   );
 
-  if (isNormalCall || isImportCall(state.types, nodePath)) {
+  if (transformFunction) {
     state.moduleResolverVisited.add(nodePath);
-    mapPathString(nodePath.get('arguments.0'), state);
+    const { isModulePath } = transformFunction;
+    mapPathString(nodePath.get('arguments.0'), state, { isModulePath });
+  } else if (isImportCall(state.types, nodePath)) {
+    state.moduleResolverVisited.add(nodePath);
+    mapPathString(nodePath.get('arguments.0'), state, { isModulePath: true });
   }
 }

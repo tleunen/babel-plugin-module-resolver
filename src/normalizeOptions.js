@@ -9,20 +9,20 @@ import pkgUp from 'pkg-up';
 import { escapeRegExp } from './utils';
 
 const defaultExtensions = ['.js', '.jsx', '.es', '.es6', '.mjs'];
-const defaultTransformedFunctions = [
-  'require',
-  'require.resolve',
-  'System.import',
+const defaultTransformFunctions = [
+  { pattern: 'require', isModulePath: true },
+  { pattern: 'require.resolve', isModulePath: true },
+  { pattern: 'System.import', isModulePath: true },
 
   // Jest methods
-  'jest.genMockFromModule',
-  'jest.mock',
-  'jest.unmock',
-  'jest.doMock',
-  'jest.dontMock',
-  'jest.setMock',
-  'require.requireActual',
-  'require.requireMock',
+  { pattern: 'jest.genMockFromModule', isModulePath: true },
+  { pattern: 'jest.mock', isModulePath: true },
+  { pattern: 'jest.unmock', isModulePath: true },
+  { pattern: 'jest.doMock', isModulePath: true },
+  { pattern: 'jest.dontMock', isModulePath: true },
+  { pattern: 'jest.setMock', isModulePath: true },
+  { pattern: 'require.requireActual', isModulePath: true },
+  { pattern: 'require.requireMock', isModulePath: true },
 ];
 
 function isRegExp(string) {
@@ -122,12 +122,30 @@ function normalizeAlias(optsAlias) {
   }, []);
 }
 
-function normalizeTransformedFunctions(optsTransformFunctions) {
-  if (!optsTransformFunctions) {
-    return defaultTransformedFunctions;
+function normalizeTransformFunctionsElement(optsTransformFunction) {
+  let pattern;
+  let opts;
+  if (Array.isArray(optsTransformFunction)) {
+    [pattern, opts] = optsTransformFunction;
+  } else {
+    [pattern, opts] = [optsTransformFunction, {}];
   }
 
-  return [...defaultTransformedFunctions, ...optsTransformFunctions];
+  const finalOpts = { pattern, isModulePath: true };
+  if (opts.isModulePath !== undefined) {
+    finalOpts.isModulePath = opts.isModulePath;
+  }
+
+  return finalOpts;
+}
+
+function normalizeTransformFunctions(optsTransformFunctions) {
+  if (!optsTransformFunctions) {
+    return defaultTransformFunctions;
+  }
+
+  return [...defaultTransformFunctions,
+    ...optsTransformFunctions.map(normalizeTransformFunctionsElement)];
 }
 
 function normalizeLoglevel(optsLoglevel) {
@@ -143,7 +161,7 @@ export default createSelector(
     const root = normalizeRoot(opts.root, cwd);
     const alias = normalizeAlias(opts.alias);
     const loglevel = normalizeLoglevel(opts.loglevel);
-    const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
+    const transformFunctions = normalizeTransformFunctions(opts.transformFunctions);
     const extensions = opts.extensions || defaultExtensions;
     const stripExtensions = opts.stripExtensions || extensions;
 

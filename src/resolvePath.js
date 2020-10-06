@@ -17,20 +17,24 @@ function getRelativePath(sourcePath, currentFile, absFileInRoot, opts) {
   return toLocalPath(toPosixPath(relativePath));
 }
 
-function findPathInRoots(sourcePath, { extensions, root }) {
+function findPathInRoots(sourcePath, { extensions, root }, { isModulePath }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
 
   root.some((basedir) => {
-    resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+    if (isModulePath) {
+      resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+    } else {
+      resolvedSourceFile = path.resolve(basedir, `./${sourcePath}`);
+    }
     return resolvedSourceFile !== null;
   });
 
   return resolvedSourceFile;
 }
 
-function resolvePathFromRootConfig(sourcePath, currentFile, opts) {
-  const absFileInRoot = findPathInRoots(sourcePath, opts);
+function resolvePathFromRootConfig(sourcePath, currentFile, opts, resolveOpts) {
+  const absFileInRoot = findPathInRoots(sourcePath, opts, resolveOpts);
 
   if (!absFileInRoot) {
     return null;
@@ -46,7 +50,7 @@ function checkIfPackageExists(modulePath, currentFile, extensions, loglevel) {
   }
 }
 
-function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
+function resolvePathFromAliasConfig(sourcePath, currentFile, opts, { isModulePath = true } = {}) {
   let aliasedSourceFile;
 
   opts.alias.find(([regExp, substitute]) => {
@@ -73,7 +77,10 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
         }
         return asf;
       })
-      .find(src => nodeResolvePath(src, path.dirname(currentFile), opts.extensions));
+      .find(src => {
+        return !isModulePath
+          || nodeResolvePath(src, path.dirname(currentFile), opts.extensions);
+      });
   }
 
   if (isRelativePath(aliasedSourceFile)) {
@@ -82,7 +89,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
     );
   }
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (isModulePath && process.env.NODE_ENV !== 'production') {
     checkIfPackageExists(aliasedSourceFile, currentFile, opts.extensions, opts.loglevel);
   }
 
@@ -94,7 +101,9 @@ const resolvers = [
   resolvePathFromRootConfig,
 ];
 
-export default function resolvePath(sourcePath, currentFile, opts) {
+export default function resolvePath(
+  sourcePath, currentFile, opts, { isModulePath = true } = {},
+) {
   if (isRelativePath(sourcePath)) {
     return sourcePath;
   }
@@ -107,7 +116,8 @@ export default function resolvePath(sourcePath, currentFile, opts) {
   let resolvedPath = null;
 
   resolvers.some((resolver) => {
-    resolvedPath = resolver(sourcePath, absoluteCurrentFile, normalizedOpts);
+    resolvedPath = resolver(
+      sourcePath, absoluteCurrentFile, normalizedOpts, { isModulePath });
     return resolvedPath !== null;
   });
 

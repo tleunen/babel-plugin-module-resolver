@@ -1,6 +1,6 @@
 import defaultResolvePath from './resolvePath';
 
-export default function mapPathString(nodePath, state) {
+export default function mapPathString(nodePath, state, resolveOpts) {
   if (!state.types.isStringLiteral(nodePath)) {
     return;
   }
@@ -9,7 +9,7 @@ export default function mapPathString(nodePath, state) {
   const currentFile = state.file.opts.filename;
   const resolvePath = state.normalizedOpts.customResolvePath || defaultResolvePath;
 
-  const modulePath = resolvePath(sourcePath, currentFile, state.opts);
+  const modulePath = resolvePath(sourcePath, currentFile, state.opts, resolveOpts);
   if (modulePath) {
     if (nodePath.node.pathResolved) {
       return;

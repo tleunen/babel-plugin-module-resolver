@@ -12,6 +12,13 @@ describe('module-resolver', () => {
     expect(result.code).toBe(`import something from "${output}";`);
   }
 
+  function testWithFunction(functionName, source, output, transformerOpts) {
+    const code = `${functionName}("${source}");`;
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe(`${functionName}("${output}");`);
+  }
+
   describe('exports', () => {
     describe('resolvePath', () => {
       it('should be a function', () => {
@@ -636,9 +643,13 @@ describe('module-resolver', () => {
         plugins: [
           [pluginWithMock, {
             alias: {
+              '~': './test/testproject/src',
               legacy: 'npm:legacy',
               'non-existing': 'this-package-does-not-exist',
             },
+            transformFunctions: [
+              ['customResolvePath', { isModulePath: false }],
+            ],
           }],
         ],
       };
@@ -668,6 +679,17 @@ describe('module-resolver', () => {
 
         expect(mockWarn.mock.calls.length).toBe(1);
         expect(mockWarn).toBeCalledWith(`Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`);
+      });
+
+      it("shouldn't print a warning for a non-module resolve", () => {
+        testWithFunction(
+          'customResolvePath',
+          '~/libs',
+          './test/testproject/src/libs',
+          missingAliasTransformerOpts,
+        );
+
+        expect(mockWarn.mock.calls.length).toBe(0);
       });
 
       describe('production environment', () => {

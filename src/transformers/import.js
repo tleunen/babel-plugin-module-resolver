@@ -6,5 +6,5 @@ export default function transformImport(nodePath, state) {
   }
   state.moduleResolverVisited.add(nodePath);
 
-  mapPathString(nodePath.get('source'), state);
+  mapPathString(nodePath.get('source'), state, { isModulePath: true });
 }
