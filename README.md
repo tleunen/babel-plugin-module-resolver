@@ -60,7 +60,7 @@ const plugins = [
         "test": "./test"
       }
     }
-    
+
   ]
 
 ];
@@ -77,12 +77,11 @@ Are you a plugin author (e.g. IDE integration)? We have [documented the exposed 
 
 ## ESLint plugin
 
-If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-import], and [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] to remove falsy unresolved modules. If you want to have warnings when aliased modules are being imported by their relative paths, you can use [eslint-plugin-module-resolver](https://github.com/HeroProtagonist/eslint-plugin-module-resolver). 
+If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-import], and [eslint-import-resolver-babel-module][eslint-import-resolver-babel-module] to remove falsy unresolved modules. If you want to have warnings when aliased modules are being imported by their relative paths, you can use [eslint-plugin-module-resolver](https://github.com/HeroProtagonist/eslint-plugin-module-resolver).
 
 ## Editors autocompletion
 
 - Atom: Uses [atom-autocomplete-modules][atom-autocomplete-modules] and enable the `babel-plugin-module-resolver` option.
-- IntelliJ/WebStorm: You can add custom resources root directories, make sure it matches what you have in this plugin.
 - VS Code: Configure the [path mapping](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping) in `jsconfig.json` (`tsconfig.json` for TypeScript), e.g.:
 
 ```js
@@ -98,6 +97,24 @@ If you're using ESLint, you should use [eslint-plugin-import][eslint-plugin-impo
 }
 ```
 
+- IntelliJ/WebStorm: You can mark your module directories as "resources root" e.g if you have `../../../utils/MyUtilFn` you can mark
+  `../../../utils` as "resources root". This has the problem that your alias also has to be named `utils`. The second option is to add
+  a `webpack.config.js` to your project and use it under File->Settings->Languages&Frameworks->JavaScript->Webpack. This will trick webstorm
+  into resolving the paths and you can use any alias you want e.g.:
+
+```js
+var path = require('path');
+
+module.exports = {
+  resolve: {
+    extensions: ['.js', '.json', '.vue'],
+    alias: {
+      utils: path.resolve(__dirname, '../../../utils/MyUtilFn'),
+    },
+  },
+};
+```
+
 
 ## License
 
@@ -110,7 +127,7 @@ MIT, see [LICENSE.md](/LICENSE.md) for details.
 - AppDirect
 - Callstack: [React Native Paper](https://github.com/callstack/react-native-paper)
 - Codility
-- Eleme: [Element](https://github.com/ElemeFE/element) 
+- Eleme: [Element](https://github.com/ElemeFE/element)
 - Expo: [Expo SDK](https://github.com/expo/expo/tree/master/packages/babel-preset-expo)
 - FormidableLabs: [Victory Native](https://github.com/FormidableLabs/victory-native)
 - OpenCollective: [OpenCollective](https://github.com/opencollective/frontend)
