@@ -18,7 +18,11 @@
 Install the plugin
 
 ```
-$ npm install --save-dev babel-plugin-module-resolver
+npm install --save-dev babel-plugin-module-resolver
+```
+or
+```
+yarn add --dev babel-plugin-module-resolver
 ```
 
 Specify the plugin in your `.babelrc` with the custom root or alias. Here's an example:
