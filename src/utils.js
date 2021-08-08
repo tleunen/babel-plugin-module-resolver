@@ -2,8 +2,18 @@ import path from 'path';
 import resolve from 'resolve';
 
 export function nodeResolvePath(modulePath, basedir, extensions) {
+  let modulePathWithoutQuery = modulePath;
+  let query = '';
+
+  if (modulePath.includes('?')) {
+    const queryIndex = modulePath.lastIndexOf('?');
+    modulePathWithoutQuery = modulePath.substr(0, queryIndex);
+    query = modulePath.substr(queryIndex);
+  }
+
   try {
-    return resolve.sync(modulePath, { basedir, extensions });
+    const result = resolve.sync(modulePathWithoutQuery, { basedir, extensions });
+    return result ? result + query : result;
   } catch (e) {
     return null;
   }
