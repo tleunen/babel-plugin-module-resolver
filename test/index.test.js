@@ -271,6 +271,49 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('non-standard relative double extension', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            resolveRelativePaths: true,
+            root: './test/testproject/src',
+            extensions: ['.ios.js', '.android.js', '.js'],
+          }],
+        ],
+      };
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          './rn',
+          './test/testproject/src/rn',
+          rootTransformerOpts,
+        );
+      });
+    });
+
+    describe('non-standard relative double extension without extension stripping', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            resolveRelativePaths: true,
+            root: './test/testproject/src',
+            extensions: ['.ios.js', '.android.js', '.js'],
+            stripExtensions: [],
+          }],
+        ],
+      };
+
+      it('should not resolve the file path with an unknown extension', () => {
+        testWithImport(
+          './rn',
+          './test/testproject/src/rn/index.ios.js',
+          rootTransformerOpts,
+        );
+      });
+    });
+
     describe('non-standard double extensions with strip extensions', () => {
       const rootTransformerOpts = {
         babelrc: false,

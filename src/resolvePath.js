@@ -77,9 +77,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   }
 
   if (isRelativePath(aliasedSourceFile)) {
-    return toLocalPath(toPosixPath(
-      mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
-    );
+    return toLocalPath(toPosixPath(mapToRelative(opts.cwd, currentFile, aliasedSourceFile)));
   }
 
   if (process.env.NODE_ENV !== 'production') {
@@ -89,13 +87,24 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   return aliasedSourceFile;
 }
 
-const resolvers = [
-  resolvePathFromAliasConfig,
-  resolvePathFromRootConfig,
-];
+function resolvePathFromRelativeConfig(sourcePath, currentFile, opts) {
+  if (!isRelativePath(sourcePath)) {
+    return null;
+  }
+
+  const absFileInRoot = nodeResolvePath(sourcePath, path.dirname(currentFile), opts.extensions);
+
+  if (!absFileInRoot) {
+    return null;
+  }
+
+  return getRelativePath(sourcePath, currentFile, absFileInRoot, opts);
+}
+
+const resolvers = [resolvePathFromAliasConfig, resolvePathFromRootConfig];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
-  if (isRelativePath(sourcePath)) {
+  if (!opts.resolveRelativePaths && isRelativePath(sourcePath)) {
     return sourcePath;
   }
 
@@ -106,7 +115,11 @@ export default function resolvePath(sourcePath, currentFile, opts) {
   const absoluteCurrentFile = path.resolve(currentFile);
   let resolvedPath = null;
 
-  resolvers.some((resolver) => {
+  const configuredResolvers = opts.resolveRelativePaths
+    ? [resolvePathFromRelativeConfig].concat(resolvers)
+    : resolvers;
+
+  configuredResolvers.some(resolver => {
     resolvedPath = resolver(sourcePath, absoluteCurrentFile, normalizedOpts);
     return resolvedPath !== null;
   });
