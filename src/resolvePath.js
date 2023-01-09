@@ -3,7 +3,13 @@ import path from 'path';
 import { warn } from './log';
 import mapToRelative from './mapToRelative';
 import normalizeOptions from './normalizeOptions';
-import { nodeResolvePath, replaceExtension, isRelativePath, toLocalPath, toPosixPath } from './utils';
+import {
+  nodeResolvePath,
+  replaceExtension,
+  isRelativePath,
+  toLocalPath,
+  toPosixPath,
+} from './utils';
 
 function getRelativePath(sourcePath, currentFile, absFileInRoot, opts) {
   const realSourceFileExtension = path.extname(absFileInRoot);
@@ -21,8 +27,9 @@ function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
 
-  root.some((basedir) => {
+  root.some(basedir => {
     resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+
     return resolvedSourceFile !== null;
   });
 
@@ -77,9 +84,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   }
 
   if (isRelativePath(aliasedSourceFile)) {
-    return toLocalPath(toPosixPath(
-      mapToRelative(opts.cwd, currentFile, aliasedSourceFile)),
-    );
+    return toLocalPath(toPosixPath(mapToRelative(opts.cwd, currentFile, aliasedSourceFile)));
   }
 
   if (process.env.NODE_ENV !== 'production') {
@@ -89,10 +94,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   return aliasedSourceFile;
 }
 
-const resolvers = [
-  resolvePathFromAliasConfig,
-  resolvePathFromRootConfig,
-];
+const resolvers = [resolvePathFromAliasConfig, resolvePathFromRootConfig];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
   if (isRelativePath(sourcePath)) {
@@ -106,7 +108,7 @@ export default function resolvePath(sourcePath, currentFile, opts) {
   const absoluteCurrentFile = path.resolve(currentFile);
   let resolvedPath = null;
 
-  resolvers.some((resolver) => {
+  resolvers.some(resolver => {
     resolvedPath = resolver(sourcePath, absoluteCurrentFile, normalizedOpts);
     return resolvedPath !== null;
   });
