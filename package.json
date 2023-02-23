@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-module-resolver",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "main": "lib/index.js",
   "description": "Module resolver plugin for Babel",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "https://github.com/tleunen/babel-plugin-module-resolver.git"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">= 16"
   },
   "files": [
     "lib"
@@ -33,30 +33,30 @@
     "import"
   ],
   "dependencies": {
-    "find-babel-config": "^1.2.0",
-    "glob": "^7.1.6",
+    "find-babel-config": "^2.0.0",
+    "glob": "^8.0.3",
     "pkg-up": "^3.1.0",
-    "reselect": "^4.0.0",
-    "resolve": "^1.13.1"
+    "reselect": "^4.1.7",
+    "resolve": "^1.22.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.5",
-    "@babel/core": "^7.7.5",
-    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
-    "@babel/plugin-transform-modules-commonjs": "^7.7.5",
-    "@babel/preset-env": "^7.7.6",
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.12",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.20.11",
+    "@babel/preset-env": "^7.20.2",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^24.9.0",
-    "common-tags": "^1.8.0",
+    "babel-jest": "^29.3.1",
+    "common-tags": "^1.8.2",
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.19.1",
-    "husky": "^3.1.0",
-    "jest": "^24.9.0",
-    "lint-staged": "^9.5.0",
+    "husky": "^4.3.6",
+    "jest": "^29.3.1",
+    "lint-staged": "^10.5.3",
     "prettier-eslint-cli": "^5.0.0",
-    "standard-version": "^8.0.1"
+    "standard-version": "^9.0.0"
   },
   "scripts": {
     "lint": "eslint src test",
@@ -66,13 +66,16 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "prepublish": "npm run compile",
-    "release": "standard-version",
-    "precommit": "lint-staged"
+    "release": "standard-version"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.{js}": [
-      "prettier-eslint --write",
-      "git add"
+      "prettier-eslint --write"
     ]
   },
   "jest": {

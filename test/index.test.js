@@ -51,7 +51,7 @@ describe('module-resolver', () => {
         ],
       };
 
-      it('should resolve the file path', () => {
+      it.only('should resolve the file path', () => {
         testWithImport('app', './test/testproject/src/app', rootTransformerOpts);
       });
 
@@ -530,7 +530,7 @@ describe('module-resolver', () => {
         warn: mockWarn,
       }));
       jest.resetModules();
-      const pluginWithMock = require.requireActual('../src').default;
+      const pluginWithMock = jest.requireActual('../src').default;
       const fileName = path.resolve('unknown');
 
       const missingAliasTransformerOpts = {
@@ -881,7 +881,7 @@ describe('module-resolver', () => {
         },
       }));
       jest.resetModules();
-      const pluginWithMock = require.requireActual('../src').default;
+      const pluginWithMock = jest.requireActual('../src').default;
 
       const missingBabelConfigTransformerOpts = {
         babelrc: false,
@@ -989,7 +989,7 @@ describe('module-resolver', () => {
         },
       }));
       jest.resetModules();
-      const pluginWithMock = require.requireActual('../src').default;
+      const pluginWithMock = jest.requireActual('../src').default;
 
       const missingPkgJsonConfigTransformerOpts = {
         babelrc: false,

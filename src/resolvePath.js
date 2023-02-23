@@ -29,6 +29,7 @@ function findPathInRoots(sourcePath, { extensions, root }) {
 
   root.some(basedir => {
     resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
+
     return resolvedSourceFile !== null;
   });
 

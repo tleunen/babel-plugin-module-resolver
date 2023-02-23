@@ -21,6 +21,10 @@ const defaultTransformedFunctions = [
   'jest.doMock',
   'jest.dontMock',
   'jest.setMock',
+  'jest.requireActual',
+  'jest.requireMock',
+
+  // Older Jest methods
   'require.requireActual',
   'require.requireMock',
 ];

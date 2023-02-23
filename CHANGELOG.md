@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v4.1.0...v5.0.0) (2023-01-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove support for Node < 16
+
+* Update dependencies and find-babel-config to fix json5 vulnerabilities ([#441](https://github.com/tleunen/babel-plugin-module-resolver/issues/441)) ([c43e71c](https://github.com/tleunen/babel-plugin-module-resolver/commit/c43e71c592710e4244eccaaa7f972a7464c58d23))
+
+## [4.1.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v4.0.0...v4.1.0) (2020-12-15)
+
+
+### Features
+
+* Add new jest methods ([#419](https://github.com/tleunen/babel-plugin-module-resolver/issues/419)) ([facf14c](https://github.com/tleunen/babel-plugin-module-resolver/commit/facf14c70208452b3f6ce26b9f034ec5d9240942)), closes [#407](https://github.com/tleunen/babel-plugin-module-resolver/issues/407)
+
 ## [4.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v3.2.0...v4.0.0) (2019-12-11)
 
 
