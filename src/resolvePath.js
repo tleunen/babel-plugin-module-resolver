@@ -97,7 +97,8 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
 const resolvers = [resolvePathFromAliasConfig, resolvePathFromRootConfig];
 
 export default function resolvePath(sourcePath, currentFile, opts) {
-  if (isRelativePath(sourcePath)) {
+  // `.` and `./` are specific paths, we can't transfrom them
+  if (isRelativePath(sourcePath) || sourcePath === '.' || sourcePath === './') {
     return sourcePath;
   }
 

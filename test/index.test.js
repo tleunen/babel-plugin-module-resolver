@@ -25,6 +25,15 @@ describe('module-resolver', () => {
 
         expect(result).toBe('./app');
       });
+
+      it('should not change a single dot import', () => {
+        const opts = {
+          root: ['./test/testproject/src/components'],
+        };
+        const result = resolvePath('.', './test/testproject/src/components/SideBar/Footer', opts);
+
+        expect(result).toBe('.');
+      });
     });
   });
 
