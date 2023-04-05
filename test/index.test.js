@@ -42,7 +42,7 @@ describe('module-resolver', () => {
         ],
       };
 
-      it.only('should resolve the file path', () => {
+      it('should resolve the file path', () => {
         testWithImport('app', './test/testproject/src/app', rootTransformerOpts);
       });
 
