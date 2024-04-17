@@ -3,7 +3,6 @@ import transformToCommonJsPlugin from '@babel/plugin-transform-modules-commonjs'
 import { stripIndent } from 'common-tags';
 import plugin from '../src';
 
-
 describe('import and export statement', () => {
   function testImport(source, output, transformerOpts) {
     it('with an import statement', () => {
@@ -31,10 +30,7 @@ describe('import and export statement', () => {
   function testImportWithCommonJSTransform(source, output, transformerOpts) {
     const transformerOptsWithCommonJs = {
       babelrc: false,
-      plugins: [
-        ...transformerOpts.plugins,
-        [transformToCommonJsPlugin, { noInterop: true }],
-      ],
+      plugins: [...transformerOpts.plugins, [transformToCommonJsPlugin, { noInterop: true }]],
     };
 
     it('with a transformed require statement', () => {
@@ -69,8 +65,7 @@ describe('import and export statement', () => {
           value: true
         });
         exports.something = void 0;
-        let something;
-        exports.something = something;
+        let something = exports.something = void 0;
       `);
     });
   }
@@ -83,13 +78,16 @@ describe('import and export statement', () => {
   const transformerOpts = {
     babelrc: false,
     plugins: [
-      [plugin, {
-        root: './test/testproject/src',
-        alias: {
-          test: './test/testproject/test',
-          '@babel/core': '@babel/core/lib',
+      [
+        plugin,
+        {
+          root: './test/testproject/src',
+          alias: {
+            test: './test/testproject/test',
+            '@babel/core': '@babel/core/lib',
+          },
         },
-      }],
+      ],
     ],
   };
 
@@ -97,41 +95,25 @@ describe('import and export statement', () => {
     testImports(
       'components/Header/SubHeader',
       './test/testproject/src/components/Header/SubHeader',
-      transformerOpts,
+      transformerOpts
     );
   });
 
   describe('should alias the path', () => {
-    testImports(
-      'test',
-      './test/testproject/test',
-      transformerOpts,
-    );
+    testImports('test', './test/testproject/test', transformerOpts);
   });
 
   describe('should not change a relative path', () => {
-    testImports(
-      './utils',
-      './utils',
-      transformerOpts,
-    );
+    testImports('./utils', './utils', transformerOpts);
   });
 
   describe('should handle an empty path', () => {
-    testImports(
-      '',
-      '',
-      transformerOpts,
-    );
+    testImports('', '', transformerOpts);
   });
 
   describe('should only apply the alias once', () => {
     // If this test breaks, consider selecting another package used by the plugin
-    testImports(
-      '@babel/core/transform',
-      '@babel/core/lib/transform',
-      transformerOpts,
-    );
+    testImports('@babel/core/transform', '@babel/core/lib/transform', transformerOpts);
   });
 
   describe('should ignore the call if a non-import statement is used', () => {
