@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v5.0.0...v5.0.1) (2024-04-17)
+
 ## [5.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v4.1.0...v5.0.0) (2023-01-09)
 
 
