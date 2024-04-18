@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.2](https://github.com/tleunen/babel-plugin-module-resolver/compare/v5.0.1...v5.0.2) (2024-04-18)
+
+
+### Bug Fixes
+
+* Revert reselect update to fix usage in node 16 ([#446](https://github.com/tleunen/babel-plugin-module-resolver/issues/446)) ([8923c48](https://github.com/tleunen/babel-plugin-module-resolver/commit/8923c480bec6882746b27bf6fcf66a076407740a))
+
 ### [5.0.1](https://github.com/tleunen/babel-plugin-module-resolver/compare/v5.0.0...v5.0.1) (2024-04-17)
 
 ## [5.0.0](https://github.com/tleunen/babel-plugin-module-resolver/compare/v4.1.0...v5.0.0) (2023-01-09)
