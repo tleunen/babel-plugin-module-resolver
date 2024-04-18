@@ -33,7 +33,7 @@
     "find-babel-config": "^2.1.1",
     "glob": "^9.3.3",
     "pkg-up": "^3.1.0",
-    "reselect": "^5.1.0",
+    "reselect": "^4.1.7",
     "resolve": "^1.22.8"
   },
   "devDependencies": {
