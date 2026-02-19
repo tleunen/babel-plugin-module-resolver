@@ -226,7 +226,7 @@ module.exports = {
 
 # Usage with create-react-app
 
-create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add plugins property within js loader like below. Note that plugins recieve an array.
+create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add plugins property within js loader like below. Note that plugins receive an array.
 
 ```js
 // Process JS with Babel.
