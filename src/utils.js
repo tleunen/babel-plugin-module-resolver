@@ -4,7 +4,7 @@ import resolve from 'resolve';
 export function nodeResolvePath(modulePath, basedir, extensions) {
   try {
     return resolve.sync(modulePath, { basedir, extensions });
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -27,7 +27,7 @@ export function toLocalPath(modulePath) {
 
 export function stripExtension(modulePath, stripExtensions) {
   let name = path.basename(modulePath);
-  stripExtensions.some(extension => {
+  stripExtensions.some((extension) => {
     if (name.endsWith(extension)) {
       name = name.slice(0, name.length - extension.length);
       return true;

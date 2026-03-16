@@ -4,9 +4,9 @@ import { warn } from './log';
 import mapToRelative from './mapToRelative';
 import normalizeOptions from './normalizeOptions';
 import {
+  isRelativePath,
   nodeResolvePath,
   replaceExtension,
-  isRelativePath,
   toLocalPath,
   toPosixPath,
 } from './utils';
@@ -27,7 +27,7 @@ function findPathInRoots(sourcePath, { extensions, root }) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
 
-  root.some(basedir => {
+  root.some((basedir) => {
     resolvedSourceFile = nodeResolvePath(`./${sourcePath}`, basedir, extensions);
 
     return resolvedSourceFile !== null;
@@ -74,13 +74,13 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
   // Alias with array of paths
   if (Array.isArray(aliasedSourceFile)) {
     return aliasedSourceFile
-      .map(asf => {
+      .map((asf) => {
         if (isRelativePath(asf)) {
           return toLocalPath(toPosixPath(mapToRelative(opts.cwd, currentFile, asf)));
         }
         return asf;
       })
-      .find(src => nodeResolvePath(src, path.dirname(currentFile), opts.extensions));
+      .find((src) => nodeResolvePath(src, path.dirname(currentFile), opts.extensions));
   }
 
   if (isRelativePath(aliasedSourceFile)) {
@@ -109,7 +109,7 @@ export default function resolvePath(sourcePath, currentFile, opts) {
   const absoluteCurrentFile = path.resolve(currentFile);
   let resolvedPath = null;
 
-  resolvers.some(resolver => {
+  resolvers.some((resolver) => {
     resolvedPath = resolver(sourcePath, absoluteCurrentFile, normalizedOpts);
     return resolvedPath !== null;
   });

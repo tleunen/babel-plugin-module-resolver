@@ -3,6 +3,14 @@ import path from 'path';
 import { transform } from '@babel/core';
 import plugin, { resolvePath } from '../src';
 
+const { mockWarn } = vi.hoisted(() => ({
+  mockWarn: vi.fn(),
+}));
+
+vi.mock('../src/log', () => ({
+  warn: mockWarn,
+}));
+
 describe('module-resolver', () => {
   function testWithImport(source, output, transformerOpts) {
     const code = `import something from "${source}";`;
@@ -59,7 +67,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
 
@@ -67,7 +75,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Header',
           './test/testproject/src/components/Header',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
 
@@ -75,7 +83,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Header/header.css',
           './test/testproject/src/components/Header/header.css',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
 
@@ -95,7 +103,7 @@ describe('module-resolver', () => {
         testWithImport(
           'libs/custom.modernizr3',
           './test/testproject/src/libs/custom.modernizr3',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
 
@@ -134,7 +142,7 @@ describe('module-resolver', () => {
         testWithImport(
           'something',
           './test/testproject/src/actions/something',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
 
@@ -164,7 +172,7 @@ describe('module-resolver', () => {
         testWithImport(
           'actions/something',
           './test/testproject/src/actions/something',
-          globRootTransformerOpts
+          globRootTransformerOpts,
         );
       });
 
@@ -172,7 +180,7 @@ describe('module-resolver', () => {
         testWithImport(
           'something',
           './test/testproject/src/actions/something',
-          globRootTransformerOpts
+          globRootTransformerOpts,
         );
       });
 
@@ -180,7 +188,7 @@ describe('module-resolver', () => {
         testWithImport(
           'SidebarFooterButton',
           './test/testproject/src/components/Sidebar/Footer/SidebarFooterButton',
-          globRootTransformerOpts
+          globRootTransformerOpts,
         );
       });
     });
@@ -234,7 +242,7 @@ describe('module-resolver', () => {
         testWithImport(
           'rn/index.ios.js',
           './test/testproject/src/rn/index.ios.js',
-          rootTransformerOpts
+          rootTransformerOpts,
         );
       });
     });
@@ -348,7 +356,7 @@ describe('module-resolver', () => {
         testWithImport(
           'awesome/components',
           './test/testproject/src/components',
-          aliasTransformerOpts
+          aliasTransformerOpts,
         );
       });
 
@@ -360,7 +368,7 @@ describe('module-resolver', () => {
         testWithImport(
           'awesome/components/Header',
           './test/testproject/src/components/Header',
-          aliasTransformerOpts
+          aliasTransformerOpts,
         );
       });
     });
@@ -369,7 +377,7 @@ describe('module-resolver', () => {
       testWithImport(
         'libs/custom.modernizr3',
         './test/testproject/src/libs/custom.modernizr3',
-        aliasTransformerOpts
+        aliasTransformerOpts,
       );
     });
 
@@ -377,7 +385,7 @@ describe('module-resolver', () => {
       testWithImport(
         'components/Header/header.css',
         './test/testproject/src/components/Header/header.css',
-        aliasTransformerOpts
+        aliasTransformerOpts,
       );
     });
 
@@ -410,17 +418,17 @@ describe('module-resolver', () => {
         testWithImport(
           '@namespace/foo-bar/component.js',
           './packages/bar/component.js',
-          aliasTransformerOpts
+          aliasTransformerOpts,
         );
       });
 
       describe('should support complex regular expressions', () => {
-        ['css', 'less', 'scss'].forEach(extension => {
+        ['css', 'less', 'scss'].forEach((extension) => {
           it(`should handle the alias with the ${extension} extension`, () => {
             testWithImport(
               `styles/style.${extension}`,
               `./style-proxy.${extension}`,
-              aliasTransformerOpts
+              aliasTransformerOpts,
             );
           });
         });
@@ -435,7 +443,7 @@ describe('module-resolver', () => {
           'single-backslash',
           // This is a string literal, so in the code it will actually be "pas\\sed"
           './pas/sed',
-          aliasTransformerOpts
+          aliasTransformerOpts,
         );
       });
 
@@ -449,7 +457,7 @@ describe('module-resolver', () => {
     });
 
     describe('with a function', () => {
-      const mockSubstitute = jest.fn();
+      const mockSubstitute = vi.fn();
       const regExpSubsituteOpts = {
         babelrc: false,
         plugins: [
@@ -480,7 +488,7 @@ describe('module-resolver', () => {
           index: 0,
           input: 'basic-function/something',
         });
-        expect(mockSubstitute).toBeCalledWith(execResult);
+        expect(mockSubstitute).toHaveBeenCalledWith(execResult);
       });
 
       it('should call the substitute with the right arguments (regexp)', () => {
@@ -489,7 +497,7 @@ describe('module-resolver', () => {
         testWithImport(
           '@regexp-function/something',
           './test/testproject/test',
-          regExpSubsituteOpts
+          regExpSubsituteOpts,
         );
 
         expect(mockSubstitute.mock.calls.length).toBe(1);
@@ -498,7 +506,7 @@ describe('module-resolver', () => {
           index: 0,
           input: '@regexp-function/something',
         });
-        expect(mockSubstitute).toBeCalledWith(execResult);
+        expect(mockSubstitute).toHaveBeenCalledWith(execResult);
       });
     });
 
@@ -525,12 +533,7 @@ describe('module-resolver', () => {
     });
 
     describe('missing packages warning', () => {
-      const mockWarn = jest.fn();
-      jest.mock('../src/log', () => ({
-        warn: mockWarn,
-      }));
-      jest.resetModules();
-      const pluginWithMock = jest.requireActual('../src').default;
+      const pluginWithMock = plugin;
       const fileName = path.resolve('unknown');
 
       const missingAliasTransformerOpts = {
@@ -557,19 +560,21 @@ describe('module-resolver', () => {
         testWithImport('legacy/lib', 'npm:legacy/lib', missingAliasTransformerOpts);
 
         expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith(`Could not resolve "npm:legacy/lib" in file ${fileName}.`);
+        expect(mockWarn).toHaveBeenCalledWith(
+          `Could not resolve "npm:legacy/lib" in file ${fileName}.`,
+        );
       });
 
       it('should print a warning for an unresolved package', () => {
         testWithImport(
           'non-existing/lib',
           'this-package-does-not-exist/lib',
-          missingAliasTransformerOpts
+          missingAliasTransformerOpts,
         );
 
         expect(mockWarn.mock.calls.length).toBe(1);
-        expect(mockWarn).toBeCalledWith(
-          `Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`
+        expect(mockWarn).toHaveBeenCalledWith(
+          `Could not resolve "this-package-does-not-exist/lib" in file ${fileName}.`,
         );
       });
 
@@ -582,7 +587,7 @@ describe('module-resolver', () => {
           testWithImport(
             'non-existing/lib',
             'this-package-does-not-exist/lib',
-            missingAliasTransformerOpts
+            missingAliasTransformerOpts,
           );
 
           expect(mockWarn.mock.calls.length).toBe(0);
@@ -759,7 +764,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
-          transformerOpts
+          transformerOpts,
         );
       });
 
@@ -790,7 +795,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
-          transformerOpts
+          transformerOpts,
         );
       });
     });
@@ -813,7 +818,7 @@ describe('module-resolver', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
-          transformerOpts
+          transformerOpts,
         );
       });
     });
@@ -875,33 +880,43 @@ describe('module-resolver', () => {
     });
 
     describe('missing babelrc in path (uses cwd)', () => {
-      jest.mock('find-babel-config', () => ({
-        sync: function findBabelConfigSync() {
-          return { file: null, config: null };
-        },
-      }));
-      jest.resetModules();
-      const pluginWithMock = jest.requireActual('../src').default;
+      let missingBabelConfigTransformerOpts;
 
-      const missingBabelConfigTransformerOpts = {
-        babelrc: false,
-        plugins: [
-          [
-            pluginWithMock,
-            {
-              root: '.',
-              cwd: 'babelrc',
+      beforeAll(async () => {
+        vi.doMock('find-babel-config', () => ({
+          default: {
+            sync: function findBabelConfigSync() {
+              return { file: null, config: null };
             },
+          },
+        }));
+        vi.resetModules();
+
+        const pluginWithMock = (await import('../src')).default;
+        missingBabelConfigTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [
+              pluginWithMock,
+              {
+                root: '.',
+                cwd: 'babelrc',
+              },
+            ],
           ],
-        ],
-        filename: './test/testproject/src/app.js',
-      };
+          filename: './test/testproject/src/app.js',
+        };
+      });
+
+      afterAll(() => {
+        vi.doUnmock('find-babel-config');
+      });
 
       it('should resolve the sub file path', () => {
         testWithImport(
           'test/testproject/src/components/Root',
           './components/Root',
-          missingBabelConfigTransformerOpts
+          missingBabelConfigTransformerOpts,
         );
       });
     });
@@ -983,33 +998,41 @@ describe('module-resolver', () => {
     });
 
     describe('missing package.json in path (uses cwd)', () => {
-      jest.mock('pkg-up', () => ({
-        sync: function pkgUpSync() {
-          return null;
-        },
-      }));
-      jest.resetModules();
-      const pluginWithMock = jest.requireActual('../src').default;
+      let missingPkgJsonConfigTransformerOpts;
 
-      const missingPkgJsonConfigTransformerOpts = {
-        babelrc: false,
-        plugins: [
-          [
-            pluginWithMock,
-            {
-              root: '.',
-              cwd: 'packagejson',
-            },
+      beforeAll(async () => {
+        vi.doMock('../src/findPackageJson', () => ({
+          default: function findPackageJson() {
+            return null;
+          },
+        }));
+        vi.resetModules();
+
+        const pluginWithMock = (await import('../src')).default;
+        missingPkgJsonConfigTransformerOpts = {
+          babelrc: false,
+          plugins: [
+            [
+              pluginWithMock,
+              {
+                root: '.',
+                cwd: 'packagejson',
+              },
+            ],
           ],
-        ],
-        filename: './test/testproject/src/app.js',
-      };
+          filename: './test/testproject/src/app.js',
+        };
+      });
+
+      afterAll(() => {
+        vi.doUnmock('../src/findPackageJson');
+      });
 
       it('should resolve the sub file path', () => {
         testWithImport(
           'test/testproject/src/components/Root',
           './components/Root',
-          missingPkgJsonConfigTransformerOpts
+          missingPkgJsonConfigTransformerOpts,
         );
       });
     });

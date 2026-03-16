@@ -12,12 +12,12 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x, 21.x]
+        node-version: [22.x, 24.x, 25.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
       - name: npm install, and build
@@ -29,7 +29,7 @@ jobs:
       - name: npm test
         run: npm run test:coverage
       - name: coverage
-        uses: codecov/codecov-action@v1.0.5
-        if: matrix.node-version == '13.x'
+        uses: codecov/codecov-action@v5
+        if: matrix.node-version == '26.x'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

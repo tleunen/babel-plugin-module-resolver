@@ -34,14 +34,14 @@ describe('function and method calls', () => {
     ],
   };
 
-  calls.forEach(name => {
+  calls.forEach((name) => {
     describe(name, () => {
       it('should resolve the path based on the root config', () => {
         const code = `${name}("components/Header/SubHeader", ...args);`;
         const result = transform(code, transformerOpts);
 
         expect(result.code).toBe(
-          `${name}("./test/testproject/src/components/Header/SubHeader", ...args);`
+          `${name}("./test/testproject/src/components/Header/SubHeader", ...args);`,
         );
       });
 
@@ -101,7 +101,7 @@ describe('function and method calls', () => {
     const result = transform(code, transformerOpts);
 
     expect(result.code).toBe(
-      'require["resolve"]("./test/testproject/src/components/Sidebar/Footer", ...args);'
+      'require["resolve"]("./test/testproject/src/components/Sidebar/Footer", ...args);',
     );
   });
 

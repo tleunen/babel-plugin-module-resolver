@@ -1,7 +1,10 @@
 # babel-plugin-module-resolver
+
 [![Maintenance Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![Build Status Linux][circleci-image]][circleci-url] [![Build Status Windows][appveyor-image]][appveyor-url] [![Coverage Status][coverage-image]][coverage-url]
 
 A [Babel](http://babeljs.io) plugin to add a new resolver for your modules when compiling your code using Babel. This plugin allows you to add new "root" directories that contain your modules. It also allows you to setup a custom alias for directories, specific files, or even other npm modules.
+
+This library requires Node 22 or newer.
 
 ## Description
 
@@ -27,28 +30,35 @@ Install the plugin
 ```
 npm install --save-dev babel-plugin-module-resolver
 ```
+
 or
+
 ```
 yarn add --dev babel-plugin-module-resolver
 ```
 
 Specify the plugin in your `.babelrc` with the custom root or alias. Here's an example:
+
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "root": ["./src"],
-      "alias": {
-        "test": "./test",
-        "underscore": "lodash"
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "alias": {
+          "test": "./test",
+          "underscore": "lodash"
+        }
       }
-    }]
+    ]
   ]
 }
 ```
 
 **.babelrc.js version**
 Specify the plugin in your `.babelrc.js` file with the custom root or alias. Here's an example:
+
 ```
 
 const plugins = [
@@ -66,8 +76,8 @@ const plugins = [
 ];
 
 ```
-Good example: // https://gist.github.com/nodkz/41e189ff22325a27fe6a5ca81df2cb91
 
+Good example: // https://gist.github.com/nodkz/41e189ff22325a27fe6a5ca81df2cb91
 
 ## Documentation
 
@@ -115,7 +125,6 @@ module.exports = {
 };
 ```
 
-
 ## License
 
 MIT, see [LICENSE.md](/LICENSE.md) for details.
@@ -142,19 +151,14 @@ Are you also using it? Send a PR!
 
 [status-image]: https://img.shields.io/badge/status-maintained-brightgreen.svg
 [status-url]: https://github.com/tleunen/babel-plugin-module-resolver
-
 [npm-image]: https://img.shields.io/npm/v/babel-plugin-module-resolver.svg
 [npm-url]: https://www.npmjs.com/package/babel-plugin-module-resolver
-
 [circleci-image]: https://img.shields.io/circleci/project/tleunen/babel-plugin-module-resolver/master.svg?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSItMTQyLjUgLTE0Mi41IDI4NSAyODUiPjxjaXJjbGUgcj0iMTQxLjciIGZpbGw9IiNERDQ4MTQiLz48ZyBpZD0iYSIgZmlsbD0iI0ZGRiI%2BPGNpcmNsZSBjeD0iLTk2LjQiIHI9IjE4LjkiLz48cGF0aCBkPSJNLTQ1LjYgNjguNGMtMTYuNi0xMS0yOS0yOC0zNC00Ny44IDYtNSA5LjgtMTIuMyA5LjgtMjAuNnMtMy44LTE1LjctOS44LTIwLjZjNS0xOS44IDE3LjQtMzYuNyAzNC00Ny44bDEzLjggMjMuMkMtNDYtMzUuMi01NS4zLTE4LjctNTUuMyAwYzAgMTguNyA5LjMgMzUuMiAyMy41IDQ1LjJ6Ii8%2BPC9nPjx1c2UgeGxpbms6aHJlZj0iI2EiIHRyYW5zZm9ybT0icm90YXRlKDEyMCkiLz48dXNlIHhsaW5rOmhyZWY9IiNhIiB0cmFuc2Zvcm09InJvdGF0ZSgyNDApIi8%2BPC9zdmc%2B
 [circleci-url]: https://circleci.com/gh/tleunen/babel-plugin-module-resolver
-
 [appveyor-image]: https://img.shields.io/appveyor/ci/tleunen/babel-plugin-module-resolver/master.svg?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48ZyBmaWxsPSIjMUJBMUUyIiB0cmFuc2Zvcm09InNjYWxlKDgpIj48cGF0aCBkPSJNMCAyLjI2NWw2LjUzOS0uODg4LjAwMyA2LjI4OC02LjUzNi4wMzd6Ii8%2BPHBhdGggZD0iTTYuNTM2IDguMzlsLjAwNSA2LjI5My02LjUzNi0uODk2di01LjQ0eiIvPjxwYXRoIGQ9Ik03LjMyOCAxLjI2MWw4LjY3LTEuMjYxdjcuNTg1bC04LjY3LjA2OXoiLz48cGF0aCBkPSJNMTYgOC40NDlsLS4wMDIgNy41NTEtOC42Ny0xLjIyLS4wMTItNi4zNDV6Ii8%2BPC9nPjwvc3ZnPg==
 [appveyor-url]: https://ci.appveyor.com/project/tleunen/babel-plugin-module-resolver
-
 [coverage-image]: https://codecov.io/gh/tleunen/babel-plugin-module-resolver/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/gh/tleunen/babel-plugin-module-resolver
-
 [eslint-import-resolver-babel-module]: https://github.com/tleunen/eslint-import-resolver-babel-module
 [eslint-plugin-import]: https://github.com/benmosher/eslint-plugin-import
 [atom-autocomplete-modules]: https://github.com/nkt/atom-autocomplete-modules

@@ -1,5 +1,4 @@
-/* eslint-env jest */
-import { transform } from '@babel/core'; // eslint-disable-line import/no-extraneous-dependencies
+import { transform } from '@babel/core';
 import plugin from '../src';
 
 // According to https://github.com/tc39/proposal-dynamic-import
@@ -11,14 +10,15 @@ describe('import()', () => {
       // We need to add the corresponding syntax plugin
       // in order to parse the `import()`-calls
       '@babel/plugin-syntax-dynamic-import',
-      [plugin, {
-        root: [
-          './test/testproject/src',
-        ],
-        alias: {
-          test: './test/testproject/test',
+      [
+        plugin,
+        {
+          root: ['./test/testproject/src'],
+          alias: {
+            test: './test/testproject/test',
+          },
         },
-      }],
+      ],
     ],
   };
 
@@ -26,7 +26,9 @@ describe('import()', () => {
     const code = 'import("components/Header/SubHeader").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe('import("./test/testproject/src/components/Header/SubHeader").then(() => {}).catch(() => {});');
+    expect(result.code).toBe(
+      'import("./test/testproject/src/components/Header/SubHeader").then(() => {}).catch(() => {});',
+    );
   });
 
   it('should alias the path', () => {
