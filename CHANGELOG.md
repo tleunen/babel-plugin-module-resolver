@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.3](https://github.com/tleunen/babel-plugin-module-resolver/compare/v5.0.2...v5.0.3) (2026-03-16)
+
+
+### Bug Fixes
+
+* `.` and `./` incorrectly converted ([#409](https://github.com/tleunen/babel-plugin-module-resolver/issues/409)) ([fa6d94e](https://github.com/tleunen/babel-plugin-module-resolver/commit/fa6d94e1bbf8849985ab8a3727181de6484ac003))
+* correct typo 'recieve' → 'receive' in DOCS.md ([#450](https://github.com/tleunen/babel-plugin-module-resolver/issues/450)) ([6131552](https://github.com/tleunen/babel-plugin-module-resolver/commit/6131552944efd468e119d87b0de41e09d2cac37a))
+
 ### [5.0.2](https://github.com/tleunen/babel-plugin-module-resolver/compare/v5.0.1...v5.0.2) (2024-04-18)
 
 
