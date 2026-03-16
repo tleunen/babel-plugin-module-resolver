@@ -95,7 +95,7 @@ describe('import and export statement', () => {
     testImports(
       'components/Header/SubHeader',
       './test/testproject/src/components/Header/SubHeader',
-      transformerOpts
+      transformerOpts,
     );
   });
 
@@ -117,17 +117,19 @@ describe('import and export statement', () => {
   });
 
   describe('should ignore the call if a non-import statement is used', () => {
-    const code = stripIndent`
-      function test() {
-        return "components/Sidebar/Footer";
-      }
-    `;
-    const result = transform(code, transformerOpts);
+    it('leaves non-import statements unchanged', () => {
+      const code = stripIndent`
+        function test() {
+          return "components/Sidebar/Footer";
+        }
+      `;
+      const result = transform(code, transformerOpts);
 
-    expect(result.code).toBe(stripIndent`
-      function test() {
-        return "components/Sidebar/Footer";
-      }
-    `);
+      expect(result.code).toBe(stripIndent`
+        function test() {
+          return "components/Sidebar/Footer";
+        }
+      `);
+    });
   });
 });

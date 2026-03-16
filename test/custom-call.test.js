@@ -1,24 +1,22 @@
-import { transform } from 'babel-core';
+import { transform } from '@babel/core';
 import plugin from '../src';
 
-
-const calls = [
-  'customMethod.something',
-];
+const calls = ['customMethod.something'];
 
 describe('custom calls', () => {
   const transformerOpts = {
     babelrc: false,
     plugins: [
-      [plugin, {
-        root: './test/testproject/src',
-        alias: {
-          test: './test/testproject/test',
+      [
+        plugin,
+        {
+          root: './test/testproject/src',
+          alias: {
+            test: './test/testproject/test',
+          },
+          transformFunctions: ['customMethod.something'],
         },
-        transformFunctions: [
-          'customMethod.something',
-        ],
-      }],
+      ],
     ],
   };
 
@@ -28,7 +26,9 @@ describe('custom calls', () => {
         const code = `${name}("components/Header/SubHeader", ...args);`;
         const result = transform(code, transformerOpts);
 
-        expect(result.code).toBe(`${name}("./test/testproject/src/components/Header/SubHeader", ...args);`);
+        expect(result.code).toBe(
+          `${name}("./test/testproject/src/components/Header/SubHeader", ...args);`,
+        );
       });
 
       it('should alias the path', () => {

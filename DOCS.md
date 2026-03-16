@@ -1,17 +1,17 @@
-* [Getting Started](#getting-started)
-* [Options](#options)
-  * [root](#root)
-  * [alias](#alias)
-  * [extensions](#extensions)
-  * [stripExtensions](#stripExtensions)
-  * [cwd](#cwd)
-  * [transformFunctions](#transformfunctions)
-  * [resolvePath](#resolvepath)
-* [Usage with Create React App](#usage-with-create-react-app)
-* [Usage with React Native](#usage-with-react-native)
-* [Usage with Proxyquire](#usage-with-proxyquire)
-* [Usage with Flow](#usage-with-flow)
-* [For plugin authors](#for-plugin-authors)
+- [Getting Started](#getting-started)
+- [Options](#options)
+  - [root](#root)
+  - [alias](#alias)
+  - [extensions](#extensions)
+  - [stripExtensions](#stripExtensions)
+  - [cwd](#cwd)
+  - [transformFunctions](#transformfunctions)
+  - [resolvePath](#resolvepath)
+- [Usage with Create React App](#usage-with-create-react-app)
+- [Usage with React Native](#usage-with-react-native)
+- [Usage with Proxyquire](#usage-with-proxyquire)
+- [Usage with Flow](#usage-with-flow)
+- [For plugin authors](#for-plugin-authors)
 
 # Getting Started
 
@@ -20,7 +20,9 @@ Install the plugin
 ```
 npm install --save-dev babel-plugin-module-resolver
 ```
+
 or
+
 ```
 yarn add --dev babel-plugin-module-resolver
 ```
@@ -30,13 +32,16 @@ Specify the plugin in your `.babelrc` with the custom root or alias. Here's an e
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "root": ["./src"],
-      "alias": {
-        "test": "./test",
-        "underscore": "lodash"
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "alias": {
+          "test": "./test",
+          "underscore": "lodash"
+        }
       }
-    }]
+    ]
   ]
 }
 ```
@@ -59,11 +64,14 @@ It is possible to specify an alias using a regular expression. To do that, eithe
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "alias": {
-        "^@namespace/foo-(.+)": "packages/\\1"
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "^@namespace/foo-(.+)": "packages/\\1"
+        }
       }
-    }]
+    ]
   ]
 }
 ```
@@ -81,20 +89,24 @@ If you need even more power over the aliased path, you can pass a function in th
 ```js
 module.exports = {
   plugins: [
-    ["module-resolver", {
-      alias: {
-        "foo": ([, name]) => `bar${name}`,
-        "^@namespace/foo-(.+)": ([, name]) => `packages/${name}`
-      }
-    }]
-  ]
-}
+    [
+      'module-resolver',
+      {
+        alias: {
+          foo: ([, name]) => `bar${name}`,
+          '^@namespace/foo-(.+)': ([, name]) => `packages/${name}`,
+        },
+      },
+    ],
+  ],
+};
 ```
 
 Using the config from this example:
-* `'foo'` will become `'bar'` (`name` is empty)
-* `'foo/baz'` will become `'bar/baz'` (`name` includes the slash in this case)
-* `'@namespace/foo-bar'` will become `'packages/bar'`
+
+- `'foo'` will become `'bar'` (`name` is empty)
+- `'foo/baz'` will become `'bar/baz'` (`name` includes the slash in this case)
+- `'@namespace/foo-bar'` will become `'packages/bar'`
 
 The only argument is the result of calling `RegExp.prototype.exec` on the matched path. It's an array with the matched string and all matched groups.
 
@@ -137,23 +149,33 @@ An array of extensions that will be stripped from file paths. Defaults to the `e
 ## cwd
 
 By default, the working directory is the one used for the resolver, but you can override it for your project.
-* The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
+
+- The custom value `babelrc` will make the plugin look for the closest babelrc configuration based on the file to parse.
+
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "cwd": "babelrc"
-    }]
+    [
+      "module-resolver",
+      {
+        "cwd": "babelrc"
+      }
+    ]
   ]
 }
 ```
-* The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
+
+- The custom value `packagejson` will make the plugin look for the closest `package.json` based on the file to parse.
+
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "cwd": "packagejson"
-    }]
+    [
+      "module-resolver",
+      {
+        "cwd": "packagejson"
+      }
+    ]
   ]
 }
 ```
@@ -165,8 +187,10 @@ Array of functions and methods that will have their first argument transformed. 
 ```json
 {
   "plugins": [
-    ["module-resolver", {
-      "transformFunctions": [
+    [
+      "module-resolver",
+      {
+        "transformFunctions": [
           "require",
           "require.resolve",
           "System.import",
@@ -175,8 +199,9 @@ Array of functions and methods that will have their first argument transformed. 
           "jest.unmock",
           "jest.doMock",
           "jest.dontMock"
-      ]
-    }]
+        ]
+      }
+    ]
   ]
 }
 ```
@@ -188,21 +213,24 @@ A function that is called to resolve each path in the project. By default `modul
 ```js
 module.exports = {
   plugins: [
-    ["module-resolver", {
-      extensions: [".js"],
-      resolvePath(sourcePath, currentFile, opts) {
-        /**
-         * The `opts` argument is the options object that is passed through the Babel config.
-         * opts = {
-         *   extensions: [".js"],
-         *   resolvePath: ...,
-         * }
-         */
-        return "resolvedPath";
-      }
-    }]
-  ]
-}
+    [
+      'module-resolver',
+      {
+        extensions: ['.js'],
+        resolvePath(sourcePath, currentFile, opts) {
+          /**
+           * The `opts` argument is the options object that is passed through the Babel config.
+           * opts = {
+           *   extensions: [".js"],
+           *   resolvePath: ...,
+           * }
+           */
+          return 'resolvedPath';
+        },
+      },
+    ],
+  ],
+};
 ```
 
 If you want to leave some paths as-is, then you can return `undefined` or any other falsy value from the function.
@@ -214,14 +242,17 @@ One of the [NPM log level options](https://docs.npmjs.com/misc/config#loglevel) 
 ```js
 module.exports = {
   plugins: [
-    ["module-resolver", {
-      alias: {
-        "dependency-string": "module-that-does-not-exist" // warning will not log
+    [
+      'module-resolver',
+      {
+        alias: {
+          'dependency-string': 'module-that-does-not-exist', // warning will not log
+        },
+        loglevel: 'silent',
       },
-      loglevel: 'silent'
-    }]
-  ]
-}
+    ],
+  ],
+};
 ```
 
 # Usage with create-react-app
@@ -250,7 +281,7 @@ create-react-app by default don't use .babelrc, so in webpack.config.dev.js, add
 
 # Usage with React Native
 
-To let the packager resolve the right module for each platform, you have to add the ```.ios.js```and ```.android.js``` extensions :
+To let the packager resolve the right module for each platform, you have to add the `.ios.js`and `.android.js` extensions :
 
 ```json
 {
@@ -268,17 +299,18 @@ To let the packager resolve the right module for each platform, you have to add 
 
 # Usage with Proxyquire
 
-If you use the mocking library [proxyquire](https://github.com/thlorenz/proxyquire), or otherwise need to define path strings which aren't direct arguments to  `transformFunctions`, you have a problem: the plug-in won't convert them.
+If you use the mocking library [proxyquire](https://github.com/thlorenz/proxyquire), or otherwise need to define path strings which aren't direct arguments to `transformFunctions`, you have a problem: the plug-in won't convert them.
 
 Because proxyquire expects paths not just as direct arguments, but also as object keys, simply adding proxyquire to `transformFunctions` isn't enough:
 
 ```js
-const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', { // this path will be converted
-    '~/modifiedPathToDependency': { mockVersionOfDependency } // this path won't be converted
+const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', {
+  // this path will be converted
+  '~/modifiedPathToDependency': { mockVersionOfDependency }, // this path won't be converted
 });
 ```
 
-The solution in this case is to use or create a function like Lodash's/Underscore's `_.identity`, which simply returns its argument.  Next, add it to `transformFunctions`, and then use it to convert the problematic path string:
+The solution in this case is to use or create a function like Lodash's/Underscore's `_.identity`, which simply returns its argument. Next, add it to `transformFunctions`, and then use it to convert the problematic path string:
 
 ```json
 "transformFunctions": [
@@ -288,9 +320,10 @@ The solution in this case is to use or create a function like Lodash's/Underscor
 ```
 
 ```js
-const resolvePath = x => x;
-const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', { // this path will be converted
-    [resolvePath('~/modifiedPathToDependency')]: { mockVersionOfDependency } // this path will be converted
+const resolvePath = (x) => x;
+const { functionToTest } = proxyquire('~/modifiedPathToTestedModule', {
+  // this path will be converted
+  [resolvePath('~/modifiedPathToDependency')]: { mockVersionOfDependency }, // this path will be converted
 });
 ```
 
@@ -324,8 +357,9 @@ directory tree:
 
 ```js
 // Located at src/store/actions
-import 'actions/User'
+import 'actions/User';
 ```
+
 ```
 module.system.node.resolve_dirname=src/store
 ```

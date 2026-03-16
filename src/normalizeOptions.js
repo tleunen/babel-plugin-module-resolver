@@ -1,10 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { createSelector } from 'reselect';
 
 import findBabelConfig from 'find-babel-config';
-import glob from 'glob';
-import pkgUp from 'pkg-up';
+import findPackageJson from './findPackageJson';
 
 import { escapeRegExp } from './utils';
 
@@ -24,6 +22,14 @@ const defaultTransformedFunctions = [
   'jest.requireActual',
   'jest.requireMock',
 
+  // vitest methods
+  'vi.mock',
+  'vi.doMock',
+  'vi.importActual',
+  'vi.importMock',
+  'vi.unmock',
+  'vi.doUnmock',
+
   // Older Jest methods
   'require.requireActual',
   'require.requireMock',
@@ -34,8 +40,8 @@ function isRegExp(string) {
 }
 
 const specialCwd = {
-  babelrc: startPath => findBabelConfig.sync(startPath).file,
-  packagejson: startPath => pkgUp.sync({ cwd: startPath }),
+  babelrc: (startPath) => findBabelConfig.sync(startPath).file,
+  packagejson: (startPath) => findPackageJson(startPath),
 };
 
 function normalizeCwd(optsCwd, currentFile) {
@@ -54,6 +60,10 @@ function normalizeCwd(optsCwd, currentFile) {
   return cwd || process.cwd();
 }
 
+function hasGlobMagic(pattern) {
+  return /[*?[\]{}]|(^|[^\\])[@?!+*]\(/.test(pattern);
+}
+
 function normalizeRoot(optsRoot, cwd) {
   if (!optsRoot) {
     return [];
@@ -62,12 +72,12 @@ function normalizeRoot(optsRoot, cwd) {
   const rootArray = Array.isArray(optsRoot) ? optsRoot : [optsRoot];
 
   return rootArray
-    .map(dirPath => path.resolve(cwd, dirPath))
+    .map((dirPath) => path.resolve(cwd, dirPath))
     .reduce((resolvedDirs, absDirPath) => {
-      if (glob.hasMagic(absDirPath)) {
-        const roots = glob
-          .sync(absDirPath)
-          .filter(resolvedPath => fs.lstatSync(resolvedPath).isDirectory());
+      if (hasGlobMagic(absDirPath)) {
+        const roots = fs
+          .globSync(absDirPath)
+          .filter((resolvedPath) => fs.lstatSync(resolvedPath).isDirectory());
 
         return [...resolvedDirs, ...roots];
       }
@@ -90,7 +100,7 @@ function getAliasSubstitute(value, isKeyRegExp) {
     return ([, match]) => {
       // Alias with array of paths
       if (Array.isArray(value)) {
-        return value.map(v => `${v}${match}`);
+        return value.map((v) => `${v}${match}`);
       }
       return `${value}${match}`;
     };
@@ -98,9 +108,9 @@ function getAliasSubstitute(value, isKeyRegExp) {
 
   const parts = value.split('\\\\');
 
-  return execResult =>
+  return (execResult) =>
     parts
-      .map(part => part.replace(/\\\d+/g, number => execResult[number.slice(1)] || ''))
+      .map((part) => part.replace(/\\\d+/g, (number) => execResult[number.slice(1)] || ''))
       .join('\\');
 }
 
@@ -114,7 +124,7 @@ function normalizeAlias(optsAlias) {
   return aliasArray.reduce((aliasPairs, alias) => {
     const aliasKeys = Object.keys(alias);
 
-    aliasKeys.forEach(key => {
+    aliasKeys.forEach((key) => {
       const isKeyRegExp = isRegExp(key);
       aliasPairs.push([
         getAliasTarget(key, isKeyRegExp),
@@ -138,28 +148,57 @@ function normalizeLoglevel(optsLoglevel) {
   return optsLoglevel || 'warn';
 }
 
-export default createSelector(
-  // The currentFile should have an extension; otherwise it's considered a special value
-  currentFile => (currentFile.includes('.') ? path.dirname(currentFile) : currentFile),
-  (_, opts) => opts,
-  (currentFile, opts) => {
-    const cwd = normalizeCwd(opts.cwd, currentFile);
-    const root = normalizeRoot(opts.root, cwd);
-    const alias = normalizeAlias(opts.alias);
-    const loglevel = normalizeLoglevel(opts.loglevel);
-    const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
-    const extensions = opts.extensions || defaultExtensions;
-    const stripExtensions = opts.stripExtensions || extensions;
+function getCacheKey(currentFile) {
+  return currentFile.includes('.') ? path.dirname(currentFile) : currentFile;
+}
 
-    return {
-      cwd,
-      root,
-      alias,
-      loglevel,
-      transformFunctions,
-      extensions,
-      stripExtensions,
-      customResolvePath: opts.resolvePath,
-    };
+function computeNormalizedOptions(currentFile, opts) {
+  const cwd = normalizeCwd(opts.cwd, currentFile);
+  const root = normalizeRoot(opts.root, cwd);
+  const alias = normalizeAlias(opts.alias);
+  const loglevel = normalizeLoglevel(opts.loglevel);
+  const transformFunctions = normalizeTransformedFunctions(opts.transformFunctions);
+  const extensions = opts.extensions || defaultExtensions;
+  const stripExtensions = opts.stripExtensions || extensions;
+
+  return {
+    cwd,
+    root,
+    alias,
+    loglevel,
+    transformFunctions,
+    extensions,
+    stripExtensions,
+    customResolvePath: opts.resolvePath,
+  };
+}
+
+let lastCacheKey;
+let lastOpts;
+let lastResult;
+let recomputations = 0;
+
+function normalizeOptions(currentFile, opts) {
+  const cacheKey = getCacheKey(currentFile);
+
+  if (cacheKey === lastCacheKey && opts === lastOpts) {
+    return lastResult;
   }
-);
+
+  lastCacheKey = cacheKey;
+  lastOpts = opts;
+  lastResult = computeNormalizedOptions(cacheKey, opts);
+  recomputations += 1;
+
+  return lastResult;
+}
+
+normalizeOptions.recomputations = () => recomputations;
+normalizeOptions.resetRecomputations = () => {
+  lastCacheKey = undefined;
+  lastOpts = undefined;
+  lastResult = undefined;
+  recomputations = 0;
+};
+
+export default normalizeOptions;

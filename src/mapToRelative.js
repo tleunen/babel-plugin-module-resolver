@@ -2,7 +2,6 @@ import path from 'path';
 
 import { toPosixPath } from './utils';
 
-
 export default function mapToRelative(cwd, currentFile, module) {
   let from = path.dirname(currentFile);
   let to = path.normalize(module);
