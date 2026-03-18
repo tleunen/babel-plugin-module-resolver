@@ -63,7 +63,7 @@ function resolvePathFromAliasConfig(sourcePath, currentFile, opts) {
       return false;
     }
 
-    aliasedSourceFile = substitute(execResult);
+    aliasedSourceFile = substitute(execResult, currentFile);
     return true;
   });
 
